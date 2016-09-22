@@ -89,12 +89,15 @@ def init_holes(space):  # Initializes the four outer walls of the board
         del shape
     return Holes
 
-def init_striker(space,x, passthrough,action):
+def init_striker(space,x, passthrough,action,Player):
     """Add a ball to the given space at a random position"""
 
     inertia = pymunk.moment_for_circle(Striker_Mass, 0, Striker_Radius, (0,0))
     body = pymunk.Body(Striker_Mass, inertia)
-    body.position = action[1]
+    if Player==1:
+        body.position = (action[1],Board_Size/10.0)
+    if Player==2:
+        body.position = (action[1],Board_Size - Board_Size/10.0)
     body.apply_force_at_world_point((cos(action[0])*action[2],sin(action[0])*action[2]),body.position+(Striker_Radius*0,Striker_Radius*0))
     #print body.position
     shape = pymunk.Circle(body, Striker_Radius, (0,0))

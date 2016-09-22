@@ -7,7 +7,19 @@ def is_Ended(space, Striker, Coins):
             return False
     return True
 
-def Play(State,Vis,Flip,action):
+'''
+Play S,A->S'
+
+Input: 
+
+State: {"Black_Locations":[],"White_Locations":[],"Red_Location":[],"Score":0}
+Action: [Angle,X,Force] Legal Actions: ? If action is illegal, take random action
+Player: 1 or 2
+Vis: Visualization? Will be handled later
+
+'''
+def Play(State,Vis,Player,action):
+
     
     pygame.init()
     clock = pygame.time.Clock()
@@ -22,6 +34,7 @@ def Play(State,Vis,Flip,action):
     Score = State["Score"]
 
 
+
     # pass through object // Dummy Object for handling collisions
     passthrough = pymunk.Segment(space.static_body, (0, 0), (0, 0), 5)
     passthrough.collision_type = 2
@@ -31,14 +44,14 @@ def Play(State,Vis,Flip,action):
     init_walls(space)
     Coins=init_coins(space,State["Black_Locations"],State["White_Locations"],State["Red_Location"],passthrough)
     Holes=init_holes(space)
-    Striker=init_striker(space,Board_Size/2+10, passthrough,action)
+    Striker=init_striker(space,Board_Size/2+10, passthrough,action,Player)
         
     if Vis==1:
         draw_options = pymunk.pygame_util.DrawOptions(screen)
 
 
     Ticks=0
-    while Ticks<1000: # fuse in case something goes wrong
+    while Ticks<=1000: # fuse in case something goes wrong
         Foul=False
         Foul_List=[]
         Ticks+=1
@@ -51,9 +64,6 @@ def Play(State,Vis,Flip,action):
         if Vis==1:
 
             screen.fill(Board_Color)
-
-
-
             space.debug_draw(draw_options)
         
         for hole in Holes:
@@ -76,19 +86,7 @@ def Play(State,Vis,Flip,action):
                         Score+=50
                         space.remove(coin,coin.body)
 
-
-
-
-
-
-
         space.step(1/10.0)
-
-
-
-
-
-
 
         #print space.shapes[1]
 
@@ -99,12 +97,9 @@ def Play(State,Vis,Flip,action):
             pygame.display.flip()
             clock.tick()
 
-
-
-
         # Do post processing and return the next State
 
-        if is_Ended(space,Striker,Coins):
+        if is_Ended(space,Striker,Coins) or Ticks==1000:
 
             print "Done"
             State_new={"Black_Locations":[],"White_Locations":[],"Red_Location":[],"Score":0}
@@ -142,13 +137,13 @@ if __name__ == '__main__':
     State={"Black_Locations":B,"White_Locations":W,"Red_Location":R,"Score":0}
 
     # Black Coins, White Coins, Red Coin, Visualization : On/Off, Score, Flip the board? 0 - no 1 - yes
-    action=(random.random()*6.28,(random.randrange(Board_Size/10,Board_Size-Board_Size/10),100), random.randrange(100,10000))
-    next_State=Play(State,1,0,action)
+    action=(random.random()*6.28,random.randrange(Board_Size/10,Board_Size-Board_Size/10), random.randrange(100,10000))
+    next_State=Play(State,1,2,action)
     it=1
     while 1:
-        action=(random.random()*6.28,(random.randrange(Board_Size/10,Board_Size-Board_Size/10),100), random.randrange(100,5000))
+        action=(random.random()*6.28,random.randrange(Board_Size/10,Board_Size-Board_Size/10), random.randrange(100,5000))
         
-        next_State=Play(next_State,1,0,action)
+        next_State=Play(next_State,1,2,action)
         print len(next_State["Black_Locations"]),len(next_State["White_Locations"]),len(next_State["Red_Location"])
         print "step"+str(it)
         it+=1
