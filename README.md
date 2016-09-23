@@ -3,14 +3,15 @@
 
 ## To Do
 
-- Validation
-- Timing
+- Validation - 
+- Timing (half a second) (server time)
+- Printing score
 - Decrease size of Visualization
 - Initial Formation
 - Better Wells
 - Separate 1 player and 2 player servers
-- Agent (Reachability)
-
+- Agent (Reachability) - better than random (100 + runs)
+- rn seed - server agent - make it deterministic and text
 
 ## License
 
