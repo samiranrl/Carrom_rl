@@ -3,8 +3,9 @@
 
 ## To Do
 
-- Validation and Timing
-- Track Score
+- Validation
+- Timing
+- Decrease size of Visualization
 - Initial Formation
 - Better Wells
 - Separate 1 player and 2 player servers
