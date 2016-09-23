@@ -3,12 +3,12 @@
 
 ## To Do
 
-
-- Fix Bugs in Server Client Logic
+- Validation and Timing
 - Track Score
 - Initial Formation
 - Better Wells
-- Agent
+- Separate 1 player and 2 player servers
+- Agent (Reachability)
 
 
 ## License
