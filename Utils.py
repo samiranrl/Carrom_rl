@@ -6,16 +6,17 @@ import pymunk
 import pymunk.pygame_util
 import random
 import sys
+import os
 from math import sqrt,sin,cos
 
 # Global Variables
 
-Static_Velocity_Threshold=2 # Velocity below which an object is considered to be static
+Static_Velocity_Threshold=1 # Velocity below which an object is considered to be static
 
 
 
 Board_Size=800
-Board_Damping=0.91# Tune how much the velocity falls
+Board_Damping=0.85# Tune how much the velocity falls
 
 
 Striker_Angle=(0,1)
@@ -24,15 +25,15 @@ Striker_Force=(5000)
 Board_Walls_Size=Board_Size*2/90
 Board_Size_Walls_Elasticity=0.9
 
-Coin_Mass=1
-Coin_Radius=Board_Size*1/70
+Coin_Mass=1.5  ## weight is 5 grams but pymunk dont have any unit for mass ... set a value which suit other paramater 
+Coin_Radius=15.01
 Coin_Elasticity=0.9
 
-Striker_Mass=1.5
-Striker_Radius=Board_Size*1.5/70
+Striker_Mass=3
+Striker_Radius=20.6
 Striker_Elasticity=0.9
 
-Hole_Radius=2*Coin_Radius
+Hole_Radius=22.21
 
 Striker_Color=[65,125,212]
 Hole_Color=[0,0,0]
@@ -95,9 +96,9 @@ def init_striker(space,x, passthrough,action,Player):
     inertia = pymunk.moment_for_circle(Striker_Mass, 0, Striker_Radius, (0,0))
     body = pymunk.Body(Striker_Mass, inertia)
     if Player==1:
-        body.position = (action[1],Board_Size/10.0)
+        body.position = (action[1],145)
     if Player==2:
-        body.position = (action[1],Board_Size - Board_Size/10.0)
+        body.position = (action[1],Board_Size - 136)
     body.apply_force_at_world_point((cos(action[0])*action[2],sin(action[0])*action[2]),body.position+(Striker_Radius*0,Striker_Radius*0))
     #print body.position
     shape = pymunk.Circle(body, Striker_Radius, (0,0))
@@ -180,13 +181,39 @@ def init_coins(space,coords_black,coords_white,coord_red,passthrough):
         del shape
     return Coins
 
+##load image in game
 
+"""def load_image(name, colorkey=None):
+    fullname = os.path.join('images', name)
+    try:
+        image = pygame.image.load(fullname)
+    except pygame.error, message:
+        print 'Cannot load image:', name
+        raise SystemExit, message
+    surface = pygame.display.set_mode((Board_Size, Board_Size))
+    image = image.convert()
+    if colorkey is not None:
+        if colorkey is -1:
+            colorkey = image.get_at((0,0))
+        image.set_colorkey(colorkey, RLEACCEL)
+    return image, image.get_rect()
 
+"""
 
+'''def load_image(name, colorkey=None):
+    img = pygame.image.load(name)
+    white = (255, 64, 64)
+    screen = pygame.display.set_mode((Board_Size, Board_Size))
+    screen.fill((white))
+    running = 1
+    screen.fill((white))
+    screen.blit(img,(0,0))
+    pygame.display.flip()'''
 
-
-
-
-
-
+class Background(pygame.sprite.Sprite):
+    def __init__(self, image_file, location):
+        pygame.sprite.Sprite.__init__(self)  #call Sprite initializer
+        self.image = pygame.image.load(image_file)
+        self.rect = self.image.get_rect()
+        self.rect.left, self.rect.top = location
 

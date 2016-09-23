@@ -1,5 +1,5 @@
 from Utils import *
-import time
+import time,pickle
 t=time.time()
 def is_Ended(space, Striker, Coins):
     for coin in space._get_shapes():
@@ -9,20 +9,18 @@ def is_Ended(space, Striker, Coins):
 
 '''
 Play S,A->S'
-
 Input: 
-
 State: {"Black_Locations":[],"White_Locations":[],"Red_Location":[],"Score":0}
 Action: [Angle,X,Force] Legal Actions: ? If action is illegal, take random action
 Player: 1 or 2
 Vis: Visualization? Will be handled later
-
 '''
-def Play(State,Vis,Player,action):
 
+def Play(State,Vis,Player,action):
     
     pygame.init()
     clock = pygame.time.Clock()
+
     if Vis==1:
         screen = pygame.display.set_mode((Board_Size, Board_Size))
         pygame.display.set_caption("Beta Carrom")
@@ -34,7 +32,6 @@ def Play(State,Vis,Player,action):
     Score = State["Score"]
 
 
-
     # pass through object // Dummy Object for handling collisions
     passthrough = pymunk.Segment(space.static_body, (0, 0), (0, 0), 5)
     passthrough.collision_type = 2
@@ -42,16 +39,20 @@ def Play(State,Vis,Player,action):
 
     init_space(space)
     init_walls(space)
-    Coins=init_coins(space,State["Black_Locations"],State["White_Locations"],State["Red_Location"],passthrough)
     Holes=init_holes(space)
-    Striker=init_striker(space,Board_Size/2+10, passthrough,action,Player)
+    ##added
+    BackGround = Background('use_layout.png', [-30,-30])
+
+    Coins=init_coins(space,State["Black_Locations"],State["White_Locations"],State["Red_Location"],passthrough)
+    #load_image("layout.jpg")
+    Striker=init_striker(space,Board_Size/2+10, passthrough,action, Player)
         
     if Vis==1:
         draw_options = pymunk.pygame_util.DrawOptions(screen)
 
 
     Ticks=0
-    while Ticks<=1000: # fuse in case something goes wrong
+    while Ticks<1000: # fuse in case something goes wrong
         Foul=False
         Foul_List=[]
         Ticks+=1
@@ -63,8 +64,13 @@ def Play(State,Vis,Player,action):
 
         if Vis==1:
 
-            screen.fill(Board_Color)
+            #screen.fill(Board_Color)
+            screen.fill([255, 255, 255])
+            screen.blit(BackGround.image, BackGround.rect)
             space.debug_draw(draw_options)
+        if Ticks%100==0:
+            pass
+            #print pygame.image.tostring(screen,"RGB")
         
         for hole in Holes:
             for coin in space._get_shapes():
@@ -86,6 +92,7 @@ def Play(State,Vis,Player,action):
                         Score+=50
                         space.remove(coin,coin.body)
 
+
         space.step(1/10.0)
 
         #print space.shapes[1]
@@ -93,13 +100,16 @@ def Play(State,Vis,Player,action):
         if Vis==1:
             font = pygame.font.Font(None, 25)
             text = font.render("SCORE: "+str(Score)+"  FPS: "+str(int(clock.get_fps()))+" REALTIME :"+ str(round(time.time()-t,2)) + "s", 1, (10, 10, 10))
-            screen.blit(text, (0,Board_Size/10,0,0))
+            screen.blit(text, (20,Board_Size/10,0,0))
             pygame.display.flip()
             clock.tick()
 
+
+
+
         # Do post processing and return the next State
 
-        if is_Ended(space,Striker,Coins) or Ticks==1000:
+        if is_Ended(space,Striker,Coins) and Ticks>10:
 
             print "Done"
             State_new={"Black_Locations":[],"White_Locations":[],"Red_Location":[],"Score":0}
@@ -126,7 +136,7 @@ def Play(State,Vis,Player,action):
 
 
 
-    
+
 
 if __name__ == '__main__':
     B=generate_coin_locations(9)
@@ -137,13 +147,15 @@ if __name__ == '__main__':
     State={"Black_Locations":B,"White_Locations":W,"Red_Location":R,"Score":0}
 
     # Black Coins, White Coins, Red Coin, Visualization : On/Off, Score, Flip the board? 0 - no 1 - yes
-    action=(random.random()*6.28,random.randrange(Board_Size/10,Board_Size-Board_Size/10), random.randrange(100,10000))
+    action=(random.random()*6.28,random.randrange(170,630), random.randrange(100,10000))
     next_State=Play(State,1,2,action)
     it=1
-    while 1:
-        action=(random.random()*6.28,random.randrange(Board_Size/10,Board_Size-Board_Size/10), random.randrange(100,5000))
+    States=[]
+    while it<5000:
+        action=(random.random()*6.28,random.randrange(170,630), random.randrange(1000,10000))
         
         next_State=Play(next_State,1,2,action)
+ 
         print len(next_State["Black_Locations"]),len(next_State["White_Locations"]),len(next_State["Red_Location"])
         print "step"+str(it)
         it+=1
