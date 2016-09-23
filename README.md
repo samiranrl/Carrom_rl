@@ -4,8 +4,6 @@
 ## To Do
 
 - Try Real World Parameters (Separating Visualization from Computation)
-- Eye Candy
-- Official Proportions
 - Server Client Logic
 - Agent
 
