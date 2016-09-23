@@ -1,12 +1,37 @@
 from Utils import *
-import time,pickle
+import time,datetime
+import socket
+import sys
+from thread import *
+import os
+import pickle
+
+HOST = '127.0.0.1'   # Symbolic name meaning all available interfaces
+PORT1 = 12121 # Arbitrary non-privileged port
+PORT2 = 34343  # Arbitrary non-privileged port
+
 t=time.time()
+
+dirname="Game"+str(datetime.datetime.now())
+dirname=dirname[0:22]
+os.makedirs(dirname)
+Screens=[]
+
+
 def is_Ended(space, Striker, Coins):
     for coin in space._get_shapes():
         if coin.body.velocity[0]>Static_Velocity_Threshold or coin.body.velocity[1]>Static_Velocity_Threshold:
             return False
     return True
 
+def requestAction(conn1) :
+    data=conn1.recv(1024)
+    return data
+    
+def sendState(state,conn1):
+    conn1.send(state)
+    return True
+    
 '''
 Play S,A->S'
 Input: 
@@ -16,8 +41,8 @@ Player: 1 or 2
 Vis: Visualization? Will be handled later
 '''
 
-def Play(State,Vis,Player,action):
-    
+def Play(State,Player,action):
+    Vis=1
     pygame.init()
     clock = pygame.time.Clock()
 
@@ -26,9 +51,6 @@ def Play(State,Vis,Player,action):
         pygame.display.set_caption("Beta Carrom")
 
     space = pymunk.Space(threaded=True)
-
-
-
     Score = State["Score"]
 
 
@@ -68,9 +90,8 @@ def Play(State,Vis,Player,action):
             screen.fill([255, 255, 255])
             screen.blit(BackGround.image, BackGround.rect)
             space.debug_draw(draw_options)
-        if Ticks%100==0:
-            pass
-            #print pygame.image.tostring(screen,"RGB")
+        if Ticks%3==0:
+            Screens.append(pygame.image.tostring(screen,"RGB"))
         
         for hole in Holes:
             for coin in space._get_shapes():
@@ -138,24 +159,86 @@ def Play(State,Vis,Player,action):
 
 
 
+def tuplise(s) :
+    return (float(s[0]),float(s[1]),float(s[2]))
+ 
+#SAMIRAN:IMPLEMENT last response of the agents are emplty.. account for that also
+def validate(action) :
+    return True
+
 if __name__ == '__main__':
     B=generate_coin_locations(9)
 
     W=generate_coin_locations(9)
 
     R=generate_coin_locations(1)
-    State={"Black_Locations":B,"White_Locations":W,"Red_Location":R,"Score":0}
+    numagent=2
 
+    s1=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        s1.bind((HOST, PORT1))
+    except socket.error as msg:
+        print 'Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
+        sys.exit()
+    s1.listen(1)
+    conn1,addr1=s1.accept()
+    
+    if numagent == 2:
+        s2=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            s2.bind((HOST, PORT2))
+        except socket.error as msg:
+            print 'Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
+            sys.exit()
+        s2.listen(1)
+        conn2,addr2=s2.accept()
+    
+
+    
+    
+    State={"Black_Locations":B,"White_Locations":W,"Red_Location":R,"Score":0}
+    next_State=State
     # Black Coins, White Coins, Red Coin, Visualization : On/Off, Score, Flip the board? 0 - no 1 - yes
-    action=(random.random()*6.28,random.randrange(170,630), random.randrange(100,10000))
-    next_State=Play(State,1,2,action)
     it=1
-    States=[]
-    while it<5000:
-        action=(random.random()*6.28,random.randrange(170,630), random.randrange(1000,10000))
-        
-        next_State=Play(next_State,1,2,action)
- 
-        print len(next_State["Black_Locations"]),len(next_State["White_Locations"]),len(next_State["Red_Location"])
-        print "step"+str(it)
-        it+=1
+    numagent=2
+    try:
+        while it<1005: # Number of Chances given to each player
+            #action=(random.random()*6.28,(random.randrange(Board_Size/10,Board_Size-Board_Size/10),100), random.randrange(100,5000))
+            sendState(str(next_State),conn1)
+            s=requestAction(conn1)
+            if not s :#response empty
+                print "Empty P1";
+            else :
+                action=tuplise(s.replace(" ","").split(','))
+            if(validate(action)) :
+                next_State=Play(next_State,1,action)
+            else:
+                print 'Agent 1 : Invalid action'
+            print len(next_State["Black_Locations"]),len(next_State["White_Locations"]),len(next_State["Red_Location"])
+            if numagent ==2:
+                sendState(str(next_State),conn2)
+                s=requestAction(conn2)
+                if not s: #response empty
+                    print "Empty P1";
+                else :
+                    action=tuplise(s.replace(" ","").split(','))
+                if(validate(action)) :
+                    next_State=Play(next_State,2,action)
+                else:
+                    print 'Agent 1 : Invalid action'
+                print len(next_State["Black_Locations"]),len(next_State["White_Locations"]),len(next_State["Red_Location"])
+                print "step"+str(it)
+            it+=1
+            print "Iteration: "+str(it)
+    finally:
+        s1.close()
+        s2.close()
+        conn1.close()
+        conn2.close()
+        conn2.close()
+        print "finishing up - saving screens...dont abort.."
+        f=open( dirname+"/dump.p", "wb" ) 
+        pickle.dump( Screens, f)
+        f.close()
+        print "Done"
+
