@@ -3,8 +3,11 @@
 
 ## To Do
 
-- Try Real World Parameters (Separating Visualization from Computation)
-- Server Client Logic
+
+- Fix Bugs in Server Client Logic
+- Track Score
+- Initial Formation
+- Better Wells
 - Agent
 
 
