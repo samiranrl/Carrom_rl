@@ -102,7 +102,7 @@ def Play(State,Vis,Player,action):
             text = font.render("SCORE: "+str(Score)+"  FPS: "+str(int(clock.get_fps()))+" REALTIME :"+ str(round(time.time()-t,2)) + "s", 1, (10, 10, 10))
             screen.blit(text, (20,Board_Size/10,0,0))
             pygame.display.flip()
-            clock.tick()
+            clock.tick(100)
 
 
 
