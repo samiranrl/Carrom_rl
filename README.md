@@ -13,6 +13,8 @@
 - Agent (Reachability) - better than random (100 + runs)
 - rn seed - server agent - make it deterministic and text
 - enception handle the connections, return error message with stuff to try in case it fails
+- 5 sent, no reciece timeout 
+- refactoring and naming convention
 
 ## License
 
