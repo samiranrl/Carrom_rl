@@ -3,18 +3,21 @@
 
 ## To Do
 
-- Validation - 
-- Timing (half a second) (server time)
+- Validation  
+- timeout as parameter
 - Printing score
-- Decrease size of Visualization
 - Initial Formation
 - Better Wells
-- Separate 1 player and 2 player servers
-- Agent (Reachability) - better than random (100 + runs)
-- rn seed - server agent - make it deterministic and text
+- Agent (Reachability) - better than random (100 + runs with random seeds) Scores and Timing
+- text
 - enception handle the connections, return error message with stuff to try in case it fails
 - 5 sent, no reciece timeout 
 - refactoring and naming convention
+- Add delay and describe action in visualization
+- Striker going in to hole rules of carrom
+- refactor play function
+- Coin goin in hole logic
+- Score Bug.
 
 ## License
 
