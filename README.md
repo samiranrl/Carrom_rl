@@ -3,21 +3,18 @@
 
 ## To Do
 
-- Validation  
-- timeout as parameter
-- Printing score
-- Initial Formation
-- Better Wells
-- Agent (Reachability) - better than random (100 + runs with random seeds) Scores and Timing
-- text
-- enception handle the connections, return error message with stuff to try in case it fails
-- 5 sent, no reciece timeout 
-- refactoring and naming convention
-- Add delay and describe action in visualization
-- Striker going in to hole rules of carrom
-- refactor play function
-- Coin goin in hole logic
-- Score Bug.
+- Actual carrom
+- Validation (To be done after actual carrom)
+- Timeout as parameter [TBD: low]
+- Printing score [TBD: low]
+- Initial Formation [TBD: low]
+- Better Wells/Visualization [TBD: med]
+- Agent (Reachability) - better than random (100 + runs with random seeds) Scores and Timing [TBD: High]
+- Separate 1 player and 2 player logic [TBD: High]
+- Exception handle the connections, return error message with stuff to try in case it fails - ?
+- Add delay and describe action in visualization [TBD: Med]
+- Striker going in to hole rules of carrom [Ask Sir]
+- Give Play function to students [TBD: High]
 
 ## License
 
