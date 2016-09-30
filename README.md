@@ -11,7 +11,6 @@ Rest:
 Me:
 
 
-- Pass messages to Player [TBD: High]
 - Test if putting objects on the same point clashes [TBD: High]
 - Separate 1 player and 2 player logic [TBD: High]
 - Give Play function to students [TBD: High]
