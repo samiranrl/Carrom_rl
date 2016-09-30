@@ -5,34 +5,24 @@
 Rest: 
 
 
-- Initial Formation [TBD: low]
-- C++? Bash? [Someone else]
-- Add delay and describe action in visualization [TBD: Med]
-- Printing score [TBD: low]
-- Agent [High]
-- Parallelization
-- Time limit of 1 strike, full rangeof motion
-
-Me:
+- Initial Formation [TBD: low] Ashish
+- C++? Bash? [Someone else] Sid
+- Printing score [TBD: low] Sam p1 score p2 score time
+- Agent [High] Sid
+- Parallelization better than random (100 + runs with random seeds) Scores and Timing [TBD: High] [Rough] Ashish
+- Time limit of 1 strike, full rangeof motion Samiran [3.5 times, striaght]
 
 
-
-- Fix Foul Logic [Done]
-- Fix Scores Bug [Done] 
-- Better Wells/Visualization 
-- [TBD: med] Fix moving Holes Bug [Done]
-- Separate 1 player and 2 player logic [TBD: High] [Done]
-- Agent (Reachability) - better than random (100 + runs with random seeds) Scores and Timing [TBD: High] [Rough]
-
-
-- Actual carrom [Later]
-- Validation (To be done after actual carrom) (Accept precision of actions only upto a certain point)
+- Actual carrom [Later] Samiran
+- Validation (To be done after actual carrom) (Accept precision of actions only upto a certain point) Samiran
 - Stochasticity [Later]
-- Striker going in to hole rules of carrom [Ask Sir]
-- Give Play function to students [TBD: High][Ask Sir]
+
+- Samiran
 - Optimize for speed
 - Verbose tag
 - print final state(hint, move the print function)
+
+- Mirro for p2
 
 
 
