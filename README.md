@@ -10,10 +10,11 @@ Rest:
 
 Me:
 
-- Give Play function to students [TBD: High]
+
 - Pass messages to Player [TBD: High]
 - Test if putting objects on the same point clashes [TBD: High]
 - Separate 1 player and 2 player logic [TBD: High]
+- Give Play function to students [TBD: High]
 - Agent (Reachability) - better than random (100 + runs with random seeds) Scores and Timing [TBD: High]
 - Better Wells/Visualization [TBD: med]
 - Add delay and describe action in visualization [TBD: Med]
