@@ -13,7 +13,7 @@ s.connect((host, port))
 
 while 1:
         tm = s.recv(1024)	
-        a=str(random.random()*6.28)+ ',' + str(random.randrange(170,630))+','+str(random.randrange(1000,10000))
+        a=str(random.random()*6.28)+ ',' + str(random.random())+','+str(random.random())
 	
 	try:
 		s.send(a)

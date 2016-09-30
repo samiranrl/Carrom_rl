@@ -12,9 +12,10 @@ PORT2 = 34343  # Arbitrary non-privileged port
 
 t=time.time()
 
+# Handle exceptions here
 
-global VIS
-VIS=1
+# Exception handlers here
+
 timeout_msg = "TIMED OUT"
 def is_Ended(space, Striker, Coins):
     for coin in space._get_shapes():
@@ -40,15 +41,15 @@ Input:
 State: {"Black_Locations":[],"White_Locations":[],"Red_Location":[],"Score":0}
 Action: [Angle,X,Force] Legal Actions: ? If action is illegal, take random action
 Player: 1 or 2
-VIS: VISualization? Will be handled later
+Vis: Visualization? Will be handled later
 '''
 
 def Play(State,Player,action):
-    global VIS
+    Vis=1
     pygame.init()
     clock = pygame.time.Clock()
 
-    if VIS==1:
+    if Vis==1:
         screen = pygame.display.set_mode((Board_Size, Board_Size))
         pygame.display.set_caption("Beta Carrom")
 
@@ -71,14 +72,15 @@ def Play(State,Player,action):
     #load_image("layout.jpg")
     Striker=init_striker(space,Board_Size/2+10, passthrough,action, Player)
         
-    if VIS==1:
+    if Vis==1:
         draw_options = pymunk.pygame_util.DrawOptions(screen)
 
 
     Ticks=0
+    Foul=False
+    Pocketed=[]
+
     while Ticks<1000: # fuse in case something goes wrong
-        Foul=False
-        Foul_List=[]
         Ticks+=1
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -86,40 +88,44 @@ def Play(State,Player,action):
             elif event.type == KEYDOWN and event.key == K_ESCAPE:
                 sys.exit(0)
 
-        if VIS==1:
+        if Vis==1:
 
             #screen.fill(Board_Color)
             screen.fill([255, 255, 255])
             screen.blit(BackGround.image, BackGround.rect)
             space.debug_draw(draw_options)
-
+        if Ticks%3==0:
+            Screens.append(pygame.image.tostring(screen,"RGB"))
         
         for hole in Holes:
             for coin in space._get_shapes():
+                if coin.color == Striker_Color and dist(hole.body.position,coin.body.position)<Hole_Radius-Striker_Radius+(Striker_Radius*0.75):
+                    Foul=True
+                    space.remove(coin,coin.body)
+
+
+        for hole in Holes:
+            for coin in space._get_shapes():
                 if dist(hole.body.position,coin.body.position)<Hole_Radius-Coin_Radius+(Coin_Radius*0.75):
-                    if coin.color == Striker_Color and dist(hole.body.position,coin.body.position)<Hole_Radius-Striker_Radius+(Striker_Radius*0.75):
-                        Foul=True
-                        space.remove(coin,coin.body)
-                    if Foul==True and coin.color in [White_Coin_Color,Red_Coin_Color,Black_Coin_Color]:
-                        Foul_List.append(coin)
-                        pass
                     if coin.color == Black_Coin_Color:
                         Score+=10
+                        Pocketed.append((coin,coin.body))
                         space.remove(coin,coin.body)
-
                     if coin.color == White_Coin_Color:
                         Score+=20
+                        Pocketed.append((coin,coin.body))
                         space.remove(coin,coin.body)
                     if coin.color == Red_Coin_Color:
                         Score+=50
+                        Pocketed.append((coin,coin.body))
                         space.remove(coin,coin.body)
 
 
-        space.step(1/8.0)
+        space.step(1/10.0)
 
         #print space.shapes[1]
 
-        if VIS==1:
+        if Vis==1:
             font = pygame.font.Font(None, 25)
             text = font.render("SCORE: "+str(Score)+"  FPS: "+str(int(clock.get_fps()))+" REALTIME :"+ str(round(time.time()-t,2)) + "s", 1, (10, 10, 10))
             screen.blit(text, (20,Board_Size/10,0,0))
@@ -143,14 +149,18 @@ def Play(State,Player,action):
                         State_new["White_Locations"].append(coin.body.position)
                     if coin.color == Red_Coin_Color:
                         State_new["Red_Location"].append(coin.body.position)
-
-            for coin in Foul_List:
+            if Foul==True:
+                for coin in Pocketed:
                     if coin.color == Black_Coin_Color:
-                        State_new["Black_Locations"].append(coin.body.position)
+                        State_new["Black_Locations"].append((0,0))
+                        Score-=10
                     if coin.color == White_Coin_Color:
-                        State_new["White_Locations"].append(coin.body.position)
+                        State_new["White_Locations"].append((0,0))
+                        Score-=20
                     if coin.color == Red_Coin_Color:
-                        State_new["Red_Location"].append(coin.body.position)
+                        State_new["Red_Location"].append((0,0))
+                        Score-=30
+            # What will happen if there is a clash?? Fix it later
 
             print "Turn Ended with Score: ", Score, " in ", Ticks, " Ticks"
             return State_new
@@ -161,7 +171,7 @@ def Play(State,Player,action):
 
 
 def tuplise(s) :
-    return (float(s[0]),float(s[1]),float(s[2]))
+    return (float(s[0]),170+(float(s[1])*(460)),float(s[2])*10000)
  
 #SAMIRAN:IMPLEMENT last response of the agents are emplty.. account for that also
 def validate(action) :
@@ -173,7 +183,10 @@ if __name__ == '__main__':
     W=generate_coin_locations(9)
 
     R=generate_coin_locations(1)
-    numagent=2
+    
+    numagent=int(sys.argv[2])
+   
+
     s1=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     timeout_period = 0.5
     try:
@@ -184,7 +197,7 @@ if __name__ == '__main__':
     s1.listen(1)
     conn1,addr1=s1.accept()
     conn1.settimeout(timeout_period);
-    
+
     if numagent == 2:
         s2=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
@@ -202,15 +215,17 @@ if __name__ == '__main__':
     score1 = 0
     reward2 = 0
     score2 = 0
-    State={"Black_Locations":B,"White_Locations":W,"Red_Location":R,"Score":0}
+    #State={"Black_Locations":B,"White_Locations":W,"Red_Location":R,"Score":0}
+    State={'White_Locations': [(501, 509), (302, 246), (485, 518), (352, 351), (278, 428), (280, 514), (444, 288), (455, 455), (259, 326)], 'Red_Location': [(539, 357)], 'Score': 0, 'Black_Locations': [(553, 432), (426, 440), (330, 290), (412, 488), (376, 408), (310, 485), (501, 313), (470, 398), (449, 371)]}
+  
     next_State=State
     # Black Coins, White Coins, Red Coin, VISualization : On/Off, Score, Flip the board? 0 - no 1 - yes
     it=1
     try:
-        while it<1005: # Number of Chances given to each player
+        while it<500: # Number of Chances given to each player
             #action=(random.random()*6.28,(random.randrange(Board_Size/10,Board_Size-Board_Size/10),100), random.randrange(100,5000))
             prevScore = next_State["Score"]
-            sendState(str(next_State) + "REWARD" + str(reward1),conn1)
+            sendState(str(next_State) + ";REWARD" + str(reward1),conn1)
             s=requestAction(conn1)
             if not s :#response empty
                 print "Empty P1";
@@ -226,9 +241,9 @@ if __name__ == '__main__':
             reward1 = next_State["Score"] - prevScore
             prevScore = next_State["Score"]
             score1 = score1 + reward1
-            print len(next_State["Black_Locations"]),len(next_State["White_Locations"]),len(next_State["Red_Location"])
+        
             if numagent ==2:
-                sendState(str(next_State)+"REWARD" + str(reward2),conn2)
+                sendState(str(next_State)+";REWARD" + str(reward2),conn2)
                 s=requestAction(conn2)
                 if not s: #response empty
                     print "Empty P1";
@@ -243,16 +258,21 @@ if __name__ == '__main__':
                     print 'Agent 1 : Invalid action'
                 reward2 = next_State["Score"] - prevScore
                 score2 = score2 + reward2
-                print len(next_State["Black_Locations"]),len(next_State["White_Locations"]),len(next_State["Red_Location"])
-                print "step"+str(it)
+                #print len(next_State["Black_Locations"]),len(next_State["White_Locations"]),len(next_State["Red_Location"])
+                print score1,score2, "step"+str(it)
+                
             it+=1
-            print "Iteration: "+str(it)
             
+        if winner==2:
+            print "Player 1 Timeout"
+        elif winner==1:
+            print "Player 2 Timeout"           
         if winner == 0 :
             if score1>score2:
                 winner= 1
             else:
                 winner = 2
+
         print "Winner is Player " + str(winner)
     finally:
         s1.close()

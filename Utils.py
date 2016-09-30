@@ -8,10 +8,11 @@ import random
 import sys
 import os
 from math import sqrt,sin,cos
+import ast
 
 # Global Variables
 
-Static_Velocity_Threshold=1 # Velocity below which an object is considered to be static
+Static_Velocity_Threshold=2 # Velocity below which an object is considered to be static
 
 
 
@@ -42,6 +43,18 @@ White_Coin_Color= [169,121,47]
 Red_Coin_Color=[169,53,53]
 Board_Walls_Color=[56,32,12]
 Board_Color=[242,209,158]
+
+def parse_state_message(msg):
+
+    s=msg.split(";REWARD")
+    s[0]=s[0].replace("Vec2d","")
+    reward=float(s[1])
+    State=ast.literal_eval(s[0])
+    return State, reward # Return next state and reward
+
+
+
+
 
 
 def dist(p1,p2):
