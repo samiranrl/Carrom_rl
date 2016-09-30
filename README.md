@@ -2,21 +2,36 @@
 > A Pygame+Pymunk Carrom Simulation Testbed for reinforcement learning.
 
 ## To Do
+Rest: 
+
+- Agent [High]
+- Initial Formation [TBD: low]
+
+Me:
+
+- Give Play function to students [TBD: High]
+- Pass messages to Player [TBD: High]
+- Test if putting objects on the same point clashes [TBD: High]
+- Agent (Reachability) - better than random (100 + runs with random seeds) Scores and Timing [TBD: High]
+- Separate 1 player and 2 player logic [TBD: High]
+- Better Wells/Visualization [TBD: med]
+- Add delay and describe action in visualization [TBD: Med]
+- Timeout as parameter [TBD: low]
+- Printing score [TBD: low]
+
+
 
 - Actual carrom [Later]
 - Validation (To be done after actual carrom) (Accept precision of actions only upto a certain point)
 - Stochasticity [Later]
-- Timeout as parameter [TBD: low]
-- Printing score [TBD: low]
-- Initial Formation [TBD: low]
-- Better Wells/Visualization [TBD: med]
-- Agent (Reachability) - better than random (100 + runs with random seeds) Scores and Timing [TBD: High]
-- Separate 1 player and 2 player logic [TBD: High]
-- Exception handle the connections, return error message with stuff to try in case it fails - ?
-- Add delay and describe action in visualization [TBD: Med]
 - Striker going in to hole rules of carrom [Ask Sir]
-- Give Play function to students [TBD: High]
-- Pass messages to Player [TBD: High]
+- Exception handle the connections, return error message with stuff to try in case it fails - [If required]
+- Deep_rl? Images as state [Later]
+- Player 2 agent [Ask Sir]
+
+
+
+
 
 ## License
 
