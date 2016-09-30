@@ -10,6 +10,7 @@ Rest:
 - Add delay and describe action in visualization [TBD: Med]
 - Printing score [TBD: low]
 - Agent [High]
+- Parallelization
 
 Me:
 
