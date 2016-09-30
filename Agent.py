@@ -35,6 +35,7 @@ while 1:
         try:
             if random.random()<0.2:
                 a=str(random.random()*6.28)+ ',' + str(random.random())+','+str(random.random())
+
             s.send(a)
         except:
             print "Error in sending:",  a

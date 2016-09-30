@@ -7,17 +7,17 @@ import pymunk.pygame_util
 import random
 import sys
 import os
-from math import sqrt,sin,cos
+from math import sqrt,sin,cos,tan
 import ast
 
 # Global Variables
 
-Static_Velocity_Threshold=2 # Velocity below which an object is considered to be static
+Static_Velocity_Threshold=1 # Velocity below which an object is considered to be static
 
 
 
 Board_Size=800
-Board_Damping=0.85# Tune how much the velocity falls
+Board_Damping=0.83# Tune how much the velocity falls
 
 
 Striker_Angle=(0,1)
@@ -56,7 +56,6 @@ def parse_state_message(msg):
 
 
 
-
 def dist(p1,p2):
     return sqrt(pow(p1[0]-p2[0],2)+pow(p1[1]-p2[1],2))
 
@@ -89,7 +88,7 @@ def init_walls(space):  # Initializes the four outer walls of the board
 
 def init_holes(space):  # Initializes the four outer walls of the board
     Holes=[]
-    for i in [(Board_Size/22, Board_Size/22),(Board_Size - Board_Size/22, Board_Size/22),(Board_Size - Board_Size/22, Board_Size - Board_Size/22),(Board_Size/22, Board_Size - Board_Size/22)]:
+    for i in [(39.1, 39.1),(760.9, 39.1),(760.9, 760.9),(39.1,760.9)]:
         inertia = pymunk.moment_for_circle(0.1, 0, Hole_Radius, (0,0))
         body = pymunk.Body(0.1, inertia)
         body.position = i

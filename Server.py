@@ -17,10 +17,13 @@ t=time.time()
 # Exception handlers here
 
 timeout_msg = "TIMED OUT"
+timeout_period = 0.5
 def is_Ended(space, Striker, Coins):
 	for coin in space._get_shapes():
-		if coin.body.velocity[0]>Static_Velocity_Threshold or coin.body.velocity[1]>Static_Velocity_Threshold:
+		if abs(coin.body.velocity[0])>Static_Velocity_Threshold or abs(coin.body.velocity[1])>Static_Velocity_Threshold:
 			return False
+	if abs(Striker.body.velocity[0]>Static_Velocity_Threshold) or abs(Striker.body.velocity[1])>Static_Velocity_Threshold:
+		return False
 	return True
 
 def requestAction(conn1) :
@@ -45,8 +48,8 @@ Vis: Visualization? Will be handled later
 '''
 
 def Play(State,Player,action):
-	print "Turn Started with Score: ", State["Score"]
-	print "Coins: ", len(next_State["Black_Locations"]),len(next_State["White_Locations"]),len(next_State["Red_Location"])
+	#print "Turn Started with Score: ", State["Score"]
+	#print "Coins: ", len(next_State["Black_Locations"]),len(next_State["White_Locations"]),len(next_State["Red_Location"])
 	
 
 	Vis=int(sys.argv[1])
@@ -84,7 +87,9 @@ def Play(State,Player,action):
 	Foul=False
 	Pocketed=[]
 
-	while Ticks<1000: # fuse in case something goes wrong
+
+	#print "Force: ",1000-+action[2]*1000
+	while 1: 
 		Ticks+=1
 		for event in pygame.event.get():
 			if event.type == QUIT:
@@ -98,6 +103,7 @@ def Play(State,Player,action):
 			screen.fill([255, 255, 255])
 			screen.blit(BackGround.image, BackGround.rect)
 			space.debug_draw(draw_options)
+
 
 		
 		for hole in Holes:
@@ -126,19 +132,29 @@ def Play(State,Player,action):
 
 		space.step(1/10.0)
 
-		#print space.shapes[1]
 
 		if Vis==1:
 			font = pygame.font.Font(None, 25)
 			text = font.render("SCORE: "+str(Score)+"  FPS: "+str(int(clock.get_fps()))+" REALTIME :"+ str(round(time.time()-t,2)) + "s", 1, (10, 10, 10))
 			screen.blit(text, (20,Board_Size/10,0,0))
+			if Ticks==1:
+				length=action[2]/100.0 # The length of the line denotes the action
+				startpos_x=action[1]
+				angle=action[0]
+				if Player==2:
+					startpos_y=145
+				else:
+					startpos_y=Board_Size - 136
+				endpos_x=(startpos_x+cos(angle)*length)
+				endpos_y=(startpos_y-(length)*sin(angle))
+				pygame.draw.line(screen, (100, 100, 0), (endpos_x, endpos_y), (startpos_x,startpos_y),3)
 			pygame.display.flip()
+			if Ticks==1:
+				time.sleep(1)
 			clock.tick()
 		
 		# Do post processing and return the next State
-		if is_Ended(space,Striker,Coins) and Ticks>10:
-
-			print "Done"
+		if is_Ended(space,Striker,Coins) or Ticks>600:
 			State_new={"Black_Locations":[],"White_Locations":[],"Red_Location":[],"Score":0}
 
 			for coin in space._get_shapes():
@@ -163,9 +179,11 @@ def Play(State,Player,action):
 			# What will happen if there is a clash?? Fix it later
 
 			print "Turn Ended with Score: ", Score, " in ", Ticks, " Ticks"
-			print "Coins: ", len(next_State["Black_Locations"]),len(next_State["White_Locations"]),len(next_State["Red_Location"])
+			print "Coins: ", len(next_State["Black_Locations"]),"B ", len(next_State["White_Locations"]),"W ",len(next_State["Red_Location"]),"R",
 			State_new["Score"]=Score
+
 			return State_new
+
 
 
 def don():
@@ -180,7 +198,8 @@ def don():
 
 
 def tuplise(s) :
-	return (float(s[0]),170+(float(s[1])*(460)),float(s[2])*10000)
+	return (float(s[0]),170+(float(s[1])*(460)),1000+float(s[2])*11000)
+# There is a min force with which you hit the striker: You cant give up turn: Ask sir is correct
  
 #SAMIRAN:IMPLEMENT last response of the agents are emplty.. account for that also
 def validate(action) :
@@ -192,7 +211,6 @@ if __name__ == '__main__':
    
 
 	s1=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	timeout_period = 0.5
 	try:
 		s1.bind((HOST, PORT1))
 	except socket.error as msg:
@@ -220,13 +238,13 @@ if __name__ == '__main__':
 	reward2 = 0
 	score2 = 0
 	#State={"Black_Locations":B,"White_Locations":W,"Red_Location":R,"Score":0, Message:" "}
-	State={'White_Locations': [(501, 509), (302, 246), (485, 518), (352, 351), (278, 428), (280, 514), (444, 288), (455, 455), (259, 326)], 'Red_Location': [(539, 357)], 'Score': 0, 'Black_Locations': [(553, 432), (426, 440), (330, 290), (412, 488), (376, 408), (310, 485), (501, 313), (470, 398), (449, 371)]}
+	State={'White_Locations': [(400, 400), (400, 400), (400, 400), (400, 400), (400, 400), (400, 400), (400, 400), (400, 400), (400, 400)], 'Red_Location': [(400, 400)], 'Score': 0, 'Black_Locations': [(400, 400), (400, 400), (400, 400), (400, 400), (400, 400), (400, 400), (400, 400), (400, 400), (400, 400)]}
   
 	next_State=State
 	# Black Coins, White Coins, Red Coin, VISualization : On/Off, Score, Flip the board? 0 - no 1 - yes
 	it=1
 	
-	while it<300: # Number of Chances given to each player
+	while it<500: # Number of Chances given to each player
 		it+=1
 		prevScore = next_State["Score"]
 		sendState(str(next_State) + ";REWARD" + str(reward1),conn1)
@@ -240,12 +258,15 @@ if __name__ == '__main__':
 			action=tuplise(s.replace(" ","").split(','))
 		if(validate(action)) :
 			next_State=Play(next_State,1,action)
+
 		else:
 			print 'Agent 1 : Invalid action'
 
 		reward1 = next_State["Score"] - prevScore
 		prevScore = next_State["Score"]
 		score1 = score1 + reward1
+		if numagent==1:
+			print " steps: "+str(it)
 	
 		if numagent ==2:
 			sendState(str(next_State)+";REWARD" + str(reward2),conn2)
@@ -259,8 +280,10 @@ if __name__ == '__main__':
 				action=tuplise(s.replace(" ","").split(','))
 			if(validate(action)) :
 				next_State=Play(next_State,2,action)
+
 			else:
 				print 'Agent 1 : Invalid action'
+
 			reward2 = next_State["Score"] - prevScore
 			score2 = score2 + reward2
 			
@@ -279,4 +302,8 @@ if __name__ == '__main__':
 			winner = 2
 
 	print "Winner is Player " + str(winner)
+	f=open("loga2.txt","a")
+	f.write(str(it)+" "+str(time.time()-t)+"\n")
+	f.close()
 	don()
+
