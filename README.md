@@ -26,6 +26,8 @@ Me:
 - Stochasticity [Later]
 - Striker going in to hole rules of carrom [Ask Sir]
 - Give Play function to students [TBD: High][Ask Sir]
+- Optimize for speed
+- Verbose tag
 
 
 
