@@ -23,7 +23,7 @@ Rest:
 - print final state(hint, move the print function)
 
 - Mirro for p2
-
+- 50 50 for 2 agent games
 
 
 
