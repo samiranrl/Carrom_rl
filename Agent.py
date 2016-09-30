@@ -38,4 +38,6 @@ while 1:
             s.send(a)
         except:
             print "Error in sending:",  a
+	    print "Closing Connection"
+	    break
 s.close()
