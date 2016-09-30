@@ -11,8 +11,11 @@ Rest:
 - Printing score [TBD: low]
 - Agent [High]
 - Parallelization
+- Time limit of 1 strike, full rangeof motion
 
 Me:
+
+
 
 - Fix Foul Logic [Done]
 - Fix Scores Bug [Done] 
