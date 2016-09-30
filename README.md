@@ -6,6 +6,7 @@ Rest:
 
 - Agent [High]
 - Initial Formation [TBD: low]
+- C++? Bash? [Someone else]
 
 Me:
 
