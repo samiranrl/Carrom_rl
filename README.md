@@ -3,8 +3,9 @@
 
 ## To Do
 
-- Actual carrom
-- Validation (To be done after actual carrom)
+- Actual carrom [Later]
+- Validation (To be done after actual carrom) (Accept precision of actions only upto a certain point)
+- Stochasticity [Later]
 - Timeout as parameter [TBD: low]
 - Printing score [TBD: low]
 - Initial Formation [TBD: low]
@@ -15,6 +16,7 @@
 - Add delay and describe action in visualization [TBD: Med]
 - Striker going in to hole rules of carrom [Ask Sir]
 - Give Play function to students [TBD: High]
+- Pass messages to Player [TBD: High]
 
 ## License
 
