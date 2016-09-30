@@ -28,6 +28,7 @@ Me:
 - Give Play function to students [TBD: High][Ask Sir]
 - Optimize for speed
 - Verbose tag
+- print final state(hint, move the print function)
 
 
 
