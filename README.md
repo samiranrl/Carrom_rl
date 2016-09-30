@@ -18,8 +18,8 @@ Me:
 - Fix Scores Bug [Done] 
 - Better Wells/Visualization 
 - [TBD: med] Fix moving Holes Bug [Done]
-- Separate 1 player and 2 player logic [TBD: High]
-- Agent (Reachability) - better than random (100 + runs with random seeds) Scores and Timing [TBD: High]
+- Separate 1 player and 2 player logic [TBD: High] [Done]
+- Agent (Reachability) - better than random (100 + runs with random seeds) Scores and Timing [TBD: High] [Rough]
 
 
 - Actual carrom [Later]
