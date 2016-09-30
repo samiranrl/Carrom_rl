@@ -2,22 +2,30 @@
 > A Pygame+Pymunk Carrom Simulation Testbed for reinforcement learning.
 
 ## To Do
+Rest: 
 
-- Validation  
-- timeout as parameter
-- Printing score
-- Initial Formation
-- Better Wells
-- Agent (Reachability) - better than random (100 + runs with random seeds) Scores and Timing
-- text
-- enception handle the connections, return error message with stuff to try in case it fails
-- 5 sent, no reciece timeout 
-- refactoring and naming convention
-- Add delay and describe action in visualization
-- Striker going in to hole rules of carrom
-- refactor play function
-- Coin goin in hole logic
-- Score Bug.
+
+- Initial Formation [TBD: low] Ashish
+- C++? Bash? [Someone else] Sid
+- Printing score [TBD: low] Sam p1 score p2 score time
+- Agent [High] Sid
+- Parallelization better than random (100 + runs with random seeds) Scores and Timing [TBD: High] [Rough] Ashish
+- Time limit of 1 strike, full rangeof motion Samiran [3.5 times, striaght]
+
+
+- Actual carrom [Later] Samiran
+- Validation (To be done after actual carrom) (Accept precision of actions only upto a certain point) Samiran
+- Stochasticity [Later]
+
+- Samiran
+- Optimize for speed
+- Verbose tag
+- print final state(hint, move the print function)
+
+- Mirro for p2
+- 50 50 for 2 agent games
+
+
 
 ## License
 
