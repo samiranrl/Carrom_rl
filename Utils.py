@@ -12,12 +12,12 @@ import ast
 
 # Global Variables
 
-Static_Velocity_Threshold=1 # Velocity below which an object is considered to be static
+Static_Velocity_Threshold=0.1 # Velocity below which an object is considered to be static
 
 
 
 Board_Size=800
-Board_Damping=0.83# Tune how much the velocity falls
+Board_Damping=0.75# Tune how much the velocity falls
 
 
 Striker_Angle=(0,1)

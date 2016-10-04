@@ -1,6 +1,7 @@
-for i in `seq 1 1`; do
+for i in `seq 1 10`; do
     echo "Turn: $i"
-    gnome-terminal -e "python Server.py $1 $2"
-    gnome-terminal -e "python Agent.py "
+    python Server.py $1 $2
+    sleep 5
+    python Agent.py 
     wait
 done

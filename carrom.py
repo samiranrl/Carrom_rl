@@ -1,10 +1,14 @@
 from Utils import *
 import time,pickle
 t=time.time()
+
+
 def is_Ended(space, Striker, Coins):
     for coin in space._get_shapes():
-        if coin.body.velocity[0]>Static_Velocity_Threshold or coin.body.velocity[1]>Static_Velocity_Threshold:
+        if abs(coin.body.velocity[0])>Static_Velocity_Threshold or abs(coin.body.velocity[1])>Static_Velocity_Threshold:
             return False
+    if abs(Striker.body.velocity[0]>Static_Velocity_Threshold) or abs(Striker.body.velocity[1])>Static_Velocity_Threshold:
+        return False
     return True
 
 '''
@@ -147,13 +151,13 @@ if __name__ == '__main__':
     State={"Black_Locations":B,"White_Locations":W,"Red_Location":R,"Score":0}
 
     # Black Coins, White Coins, Red Coin, Visualization : On/Off, Score, Flip the board? 0 - no 1 - yes
-    action=(random.random()*6.28,random.randrange(170,630), random.randrange(100,10000))
+    action=(0,400, random.randrange(1000,10000))
     next_State=Play(State,1,2,action)
     it=1
     States=[]
     while it<5000:
-        action=(random.random()*6.28,random.randrange(170,630), random.randrange(1000,10000))
-        
+        #action=(random.random()*6.28,random.randrange(170,630), random.randrange(1000,10000))
+        action=(0,400, random.randrange(1000,10000))
         next_State=Play(next_State,1,2,action)
  
         print len(next_State["Black_Locations"]),len(next_State["White_Locations"]),len(next_State["Red_Location"])
