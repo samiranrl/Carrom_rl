@@ -16,7 +16,10 @@ Samiran
 
 - Optimize for speed
 
-- Stochasticity [now]
+- Stochasticity [now] Server takes a random seed,
+
+- theta 
+
 
 
 
