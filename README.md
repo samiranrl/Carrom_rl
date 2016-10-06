@@ -5,27 +5,20 @@
 Rest: 
 
 
-- Initial Formation [TBD: low] Ashish
-- C++? Bash? [Someone else] Sid
-
-- Agent [High] Sid
-- Parallelization better than random (100 + runs with random seeds) Scores and Timing [TBD: High] [Rough] Ashish
-
-
-
 
 
 
 Samiran
 - Time limit of 1 strike, full rangeof motion Samiran [3.5 times, striaght]
-- Actual carrom [Later] Samiran
-- Validation (To be done after actual carrom) (Accept precision of actions only upto a certain point) Samiran
+- Actual carrom  Samiran
+
 - FLipping the board for Player 2
-- Printing score [TBD: low] Sam p1 score p2 score time
+
 - Optimize for speed
-- Verbose tag
-- Stochasticity [now]
-- print final state(hint, move the print function)
+
+- Stochasticity [now] Server takes a random seed,
+
+- theta 
 
 
 
