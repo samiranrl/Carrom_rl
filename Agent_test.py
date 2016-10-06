@@ -20,7 +20,7 @@ while 1:
         except:
             print "Something went wrong",tm
 
-        a=str(3.14*1.5)+ ',' + str(0.5)+','+str(1)
+        a=str(1.77345499594)+ ',' + str(0.782608695652)+','+str(0.5)
         try:
             
                 

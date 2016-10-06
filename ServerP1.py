@@ -22,12 +22,10 @@ Vis=int(sys.argv[1])
 
 timeout_msg = "TIMED OUT"
 timeout_period = 0.5
-def is_Ended(space, Striker, Coins):
-    for coin in space._get_shapes():
-        if abs(coin.body.velocity[0])>Static_Velocity_Threshold or abs(coin.body.velocity[1])>Static_Velocity_Threshold:
+def is_Ended(space):
+    for shape in space._get_shapes():
+        if abs(shape.body.velocity[0])>Static_Velocity_Threshold or abs(shape.body.velocity[1])>Static_Velocity_Threshold:
             return False
-    if abs(Striker.body.velocity[0]>Static_Velocity_Threshold) or abs(Striker.body.velocity[1])>Static_Velocity_Threshold:
-        return False
     return True
 
 def requestAction(conn1) :
@@ -62,7 +60,7 @@ def Play(State,Player,action):
 
     if Vis==1:
         screen = pygame.display.set_mode((Board_Size, Board_Size))
-        pygame.display.set_caption("Beta Carrom")
+        pygame.display.set_caption("Carrom RL Simulation")
 
     space = pymunk.Space(threaded=True)
     Score = State["Score"]
@@ -113,12 +111,14 @@ def Play(State,Player,action):
             space.debug_draw(draw_options)
 
         space.step(1/TIME_STEP)
-
+        #print Striker[0].position
         for hole in Holes:
-            for coin in space._get_shapes():
-                if coin.color == Striker_Color and dist(hole.body.position,coin.body.position)<Hole_Radius-Striker_Radius+(Striker_Radius*0.75):
-                    Foul=True
-                    space.remove(coin,coin.body)
+            if dist(hole.body.position,Striker[0].position)<Hole_Radius-Striker_Radius+(Striker_Radius*0.75):
+                Foul=True
+                for coin in space._get_shapes():
+                    if coin.color==Striker_Color:
+                        space.remove(coin,coin.body)
+                        break
 
 
         for hole in Holes:
@@ -153,7 +153,7 @@ def Play(State,Player,action):
             text = font.render("SCORE: "+str(Score)+", TIME ELAPSED : "+ str(round(time.time()-t,2)) + "s", 1, (10, 10, 10))
             screen.blit(text, (Board_Size/3,Board_Size/10,0,0))
             if Ticks==1:
-                length=action[2]/200.0 # The length of the line denotes the action
+                length=Striker_Radius+action[2]/500.0 # The length of the line denotes the action
                 startpos_x=action[1]
                 angle=action[0]
                 if Player==2:
@@ -162,14 +162,15 @@ def Play(State,Player,action):
                     startpos_y=Board_Size - 136
                 endpos_x=(startpos_x+cos(angle)*length)
                 endpos_y=(startpos_y-(length)*sin(angle))
-                pygame.draw.line(screen, (100, 100, 0), (endpos_x, endpos_y), (startpos_x,startpos_y),3)
+                pygame.draw.line(screen, (50,255,50), (endpos_x, endpos_y), (startpos_x,startpos_y),3)
+                pygame.draw.circle(screen,(50,255,50), (int(endpos_x), int(endpos_y)), 5)
             pygame.display.flip()
             if Ticks==1:
                 time.sleep(1)
             clock.tick()
         
         # Do post processing and return the next State
-        if is_Ended(space,Striker,Coins) or Ticks>1000:
+        if is_Ended(space) or Ticks>TICKS_LIMIT:
             State_new={"Black_Locations":[],"White_Locations":[],"Red_Location":[],"Score":0}
 
             for coin in space._get_shapes():

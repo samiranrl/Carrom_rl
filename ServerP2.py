@@ -24,12 +24,10 @@ Vis=int(sys.argv[1])
 
 timeout_msg = "TIMED OUT"
 timeout_period = 0.5
-def is_Ended(space, Striker, Coins):
-    for coin in space._get_shapes():
-        if abs(coin.body.velocity[0])>Static_Velocity_Threshold or abs(coin.body.velocity[1])>Static_Velocity_Threshold:
+def is_Ended(space):
+    for shape in space._get_shapes():
+        if abs(shape.body.velocity[0])>Static_Velocity_Threshold or abs(shape.body.velocity[1])>Static_Velocity_Threshold:
             return False
-    if abs(Striker.body.velocity[0]>Static_Velocity_Threshold) or abs(Striker.body.velocity[1])>Static_Velocity_Threshold:
-        return False
     return True
 
 def requestAction(conn1) :
@@ -57,14 +55,14 @@ def Play(State,Player,action):
     #print "Turn Started with Score: ", State["Score"]
     #print "Coins: ", len(next_State["Black_Locations"]),len(next_State["White_Locations"]),len(next_State["Red_Location"])
     
+
     global Vis
-    
     pygame.init()
     clock = pygame.time.Clock()
 
     if Vis==1:
         screen = pygame.display.set_mode((Board_Size, Board_Size))
-        pygame.display.set_caption("Beta Carrom")
+        pygame.display.set_caption("Carrom RL Simulation")
 
     space = pymunk.Space(threaded=True)
     Score = State["Score"]
@@ -95,7 +93,14 @@ def Play(State,Player,action):
 
 
     #print "Force: ",1000-+action[2]*1000
+    
     while 1: 
+
+        if Ticks%RENDER_RATE==0 and Vis==1:
+            Local_VIS=True
+        else:
+            Local_VIS=False
+
         Ticks+=1
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -103,55 +108,54 @@ def Play(State,Player,action):
             elif event.type == KEYDOWN and event.key == K_ESCAPE:
                 sys.exit(0)
 
-        if Vis==1:
-
-            #screen.fill(Board_Color)
-            screen.fill([255, 255, 255])
+        if Local_VIS==1:
             screen.blit(BackGround.image, BackGround.rect)
             space.debug_draw(draw_options)
 
-
-
-
-
-
-
         space.step(1/TIME_STEP)
-
-
-        
+        #print Striker[0].position
         for hole in Holes:
-            for coin in space._get_shapes():
-                if coin.color == Striker_Color and dist(hole.body.position,coin.body.position)<Hole_Radius-Striker_Radius+(Striker_Radius*0.75):
-                    Foul=True
-                    space.remove(coin,coin.body)
+            if dist(hole.body.position,Striker[0].position)<Hole_Radius-Striker_Radius+(Striker_Radius*0.75):
+                Foul=True
+                for coin in space._get_shapes():
+                    if coin.color==Striker_Color:
+                        space.remove(coin,coin.body)
+                        break
 
 
         for hole in Holes:
             for coin in space._get_shapes():
                 if dist(hole.body.position,coin.body.position)<Hole_Radius-Coin_Radius+(Coin_Radius*0.75):
                     if coin.color == Black_Coin_Color:
-                        Score+=10
+                        Score+=1
                         Pocketed.append((coin,coin.body))
                         space.remove(coin,coin.body)
                     if coin.color == White_Coin_Color:
-                        Score+=20
+                        Score+=1
                         Pocketed.append((coin,coin.body))
                         space.remove(coin,coin.body)
                     if coin.color == Red_Coin_Color:
-                        Score+=50
+                        Score+=3
                         Pocketed.append((coin,coin.body))
                         space.remove(coin,coin.body)
 
+        # for coin in space._get_shapes():
+        #     if abs(coin.body.position[0])>800 or abs(coin.body.position[1])>800:
+        #         if coin.color == Striker_Color:
+        #             space.remove(coin,coin.body)
+        #         elif coin.color in [Black_Coin_Color,White_Coin_Color,Red_Coin_Color]:
+        #             space.remove(coin,coin.body)
+        #             Pocketed.append((coin,coin.body))
+        #             Foul=True
+        #             print "Coin went outside board"
 
-        if Vis==1:
-            global score1
-            global score2
+
+        if Local_VIS==1:
             font = pygame.font.Font(None, 25)
-            text = font.render("P1: "+ str(score1)+"P2: "+ str(score2)+", TIME ELAPSED : "+ str(round(time.time()-t,2)) + "s", 1, (10, 10, 10))
-            screen.blit(text, (Board_Size/4,Board_Size/10,0,0))
+            text = font.render("SCORE: "+str(Score)+", TIME ELAPSED : "+ str(round(time.time()-t,2)) + "s", 1, (10, 10, 10))
+            screen.blit(text, (Board_Size/3,Board_Size/10,0,0))
             if Ticks==1:
-                length=action[2]/100.0 # The length of the line denotes the action
+                length=Striker_Radius+action[2]/500.0 # The length of the line denotes the action
                 startpos_x=action[1]
                 angle=action[0]
                 if Player==2:
@@ -160,59 +164,43 @@ def Play(State,Player,action):
                     startpos_y=Board_Size - 136
                 endpos_x=(startpos_x+cos(angle)*length)
                 endpos_y=(startpos_y-(length)*sin(angle))
-                pygame.draw.line(screen, (100, 100, 0), (endpos_x, endpos_y), (startpos_x,startpos_y),3)
+                pygame.draw.line(screen, (50,255,50), (endpos_x, endpos_y), (startpos_x,startpos_y),3)
+                pygame.draw.circle(screen,(50,255,50), (int(endpos_x), int(endpos_y)), 5)
             pygame.display.flip()
             if Ticks==1:
                 time.sleep(1)
             clock.tick()
         
         # Do post processing and return the next State
-        if is_Ended(space,Striker,Coins) or Ticks>600:
+        if is_Ended(space) or Ticks>TICKS_LIMIT:
             State_new={"Black_Locations":[],"White_Locations":[],"Red_Location":[],"Score":0}
 
-            # for coin in space._get_shapes():
-            #         if coin.color == Black_Coin_Color:
-            #             if abs(coin.body.position[0])>800 or abs(coin.body.position[1])>800:
-            #                 State_new["Black_Locations"].append((400,400))
-            #         else:
-            #             State_new["Black_Locations"].append(coin.body.position)
-
-            #         if coin.color == White_Coin_Color:
-            #             if abs(coin.body.position[0])>800 or abs(coin.body.position[1])>800:
-            #                 State_new["White_Locations"].append((400,400))
-            #             else:
-            #                 State_new["White_Locations"].append(coin.body.position)
-            #         if coin.color == Red_Coin_Color:
-            #             if abs(coin.body.position[0])>800 or abs(coin.body.position[1])>800:
-            #                 State_new["Red_Location"].append((400,400))
-            #             else:
-            #                 State_new["Red_Location"].append(coin.body.position)
             for coin in space._get_shapes():
-                if coin.color == Black_Coin_Color:
-                    State_new["Black_Locations"].append(coin.body.position)
-                if coin.color == White_Coin_Color:
-                    State_new["White_Locations"].append(coin.body.position)
-                if coin.color == Red_Coin_Color:
-                    State_new["Red_Location"].append(coin.body.position)
+                    if coin.color == Black_Coin_Color:
+                        State_new["Black_Locations"].append(coin.body.position)
+                    if coin.color == White_Coin_Color:
+                        State_new["White_Locations"].append(coin.body.position)
+                    if coin.color == Red_Coin_Color:
+                        State_new["Red_Location"].append(coin.body.position)
             if Foul==True:
                 print "Foul!"
                 for coin in Pocketed:
                     if coin[0].color == Black_Coin_Color:
                         State_new["Black_Locations"].append((400,400))
-                        Score-=10
+                        Score-=1
                     if coin[0].color == White_Coin_Color:
                         State_new["White_Locations"].append((400,400))
-                        Score-=20
+                        Score-=1
                     if coin[0].color == Red_Coin_Color:
                         State_new["Red_Location"].append((400,400))
-                        Score-=30
+                        Score-=3
             # What will happen if there is a clash?? Fix it later
 
-            #print "Turn Ended with Score: ", Score, " in ", Ticks, " Ticks"
-            
+            print "Turn Ended with Score: ", Score, " in ", Ticks, " Ticks"
+            print "Coins: ", len(State_new["Black_Locations"]),"B ", len(State_new["White_Locations"]),"W ",len(State_new["Red_Location"]),"R",
         
             State_new["Score"]=Score
-            
+
             return State_new
 
 

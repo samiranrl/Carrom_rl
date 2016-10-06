@@ -16,7 +16,8 @@ Static_Velocity_Threshold=1 # Velocity below which an object is considered to be
 
 MAX_FORCE=34000 # Don't Touch
 TIME_STEP=20.0 # (Lower is Faster) # Don't Touch 
-RENDER_RATE=10 # Render a frame every x Ticks
+TICKS_LIMIT=3000 # Don't Touch
+RENDER_RATE=5 # Render a frame every x Ticks
 
 
 Board_Size=800
@@ -125,7 +126,7 @@ def init_striker(space,x, passthrough,action,Player):
     shape.collision_type=2
     
     space.add(body, shape)
-    return shape
+    return [body,shape]
 
 def init_coins(space,coords_black,coords_white,coord_red,passthrough):
     #Adds coins to the board at the given coordinates 
