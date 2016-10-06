@@ -12,29 +12,29 @@ import ast
 
 # Global Variables
 
-Static_Velocity_Threshold=0.1 # Velocity below which an object is considered to be static
+Static_Velocity_Threshold=1 # Velocity below which an object is considered to be static
 
+MAX_FORCE=34000 # Don't Touch
+TIME_STEP=20.0 # (Lower is Faster) # Don't Touch 
+RENDER_RATE=10 # Render a frame every x Ticks
 
 
 Board_Size=800
-Board_Damping=0.75# Tune how much the velocity falls
+Board_Damping=0.95# Tune how much the velocity falls
 
-
-Striker_Angle=(0,1)
-Striker_Force=(5000)
 
 Board_Walls_Size=Board_Size*2/90
-Board_Size_Walls_Elasticity=0.9
+Board_Size_Walls_Elasticity=0.7
 
-Coin_Mass=1.5  ## weight is 5 grams but pymunk dont have any unit for mass ... set a value which suit other paramater 
+Coin_Mass=1  ## weight is 5 grams but pymunk dont have any unit for mass ... set a value which suit other paramater 
 Coin_Radius=15.01
-Coin_Elasticity=0.9
+Coin_Elasticity=0.5
 
-Striker_Mass=3
+Striker_Mass=2.8
 Striker_Radius=20.6
-Striker_Elasticity=0.9
+Striker_Elasticity=0.7
 
-Hole_Radius=22.21
+Hole_Radius=22.51
 
 Striker_Color=[65,125,212]
 Hole_Color=[0,0,0]
@@ -74,10 +74,11 @@ def init_space(space):
     space.threads=2
 
 def init_walls(space):  # Initializes the four outer walls of the board
-    walls = [pymunk.Segment(space.static_body, (0, 0), (0, Board_Size), Board_Walls_Size)
-        ,pymunk.Segment(space.static_body, (0,0), (Board_Size, 0), Board_Walls_Size)
-        ,pymunk.Segment(space.static_body, (Board_Size, Board_Size), (Board_Size, 0), Board_Walls_Size)
-        ,pymunk.Segment(space.static_body, (Board_Size, Board_Size), (0,Board_Size), Board_Walls_Size)
+    body= pymunk.Body(body_type=pymunk.Body.STATIC)
+    walls = [pymunk.Segment(body, (0, 0), (0, Board_Size), Board_Walls_Size)
+        ,pymunk.Segment(body, (0,0), (Board_Size, 0), Board_Walls_Size)
+        ,pymunk.Segment(body, (Board_Size, Board_Size), (Board_Size, 0), Board_Walls_Size)
+        ,pymunk.Segment(body, (Board_Size, Board_Size), (0,Board_Size), Board_Walls_Size)
         ]  
     for wall in walls:
         wall.color = Board_Walls_Color

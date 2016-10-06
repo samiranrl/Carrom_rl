@@ -97,7 +97,7 @@ def Play(State,Player,action):
 			elif event.type == KEYDOWN and event.key == K_ESCAPE:
 				sys.exit(0)
 
-		if Vis==1:
+		if Vis==1 and Ticks%3==0:
 
 			#screen.fill(Board_Color)
 			screen.fill([255, 255, 255])
@@ -133,7 +133,7 @@ def Play(State,Player,action):
 		space.step(1/10.0)
 
 
-		if Vis==1:
+		if Vis==1 and Ticks%3==0 :
 			font = pygame.font.Font(None, 25)
 			text = font.render("SCORE: "+str(Score)+"  FPS: "+str(int(clock.get_fps()))+" REALTIME :"+ str(round(time.time()-t,2)) + "s", 1, (10, 10, 10))
 			screen.blit(text, (20,Board_Size/10,0,0))
@@ -179,7 +179,8 @@ def Play(State,Player,action):
 			# What will happen if there is a clash?? Fix it later
 
 			print "Turn Ended with Score: ", Score, " in ", Ticks, " Ticks"
-			print "Coins: ", len(next_State["Black_Locations"]),"B ", len(next_State["White_Locations"]),"W ",len(next_State["Red_Location"]),"R",
+			print "Coins: ", len(State_new["Black_Locations"]),"B ", len(State_new["White_Locations"]),"W ",len(State_new["Red_Location"]),"R",
+		
 			State_new["Score"]=Score
 
 			return State_new
@@ -198,7 +199,8 @@ def don():
 
 
 def tuplise(s) :
-	return (float(s[0]),170+(float(s[1])*(460)),1000+float(s[2])*11000)
+
+	return (float(s[0]),170+(float(s[1])*(460)),1000+float(s[2])*MAX_FORCE)
 # There is a min force with which you hit the striker: You cant give up turn: Ask sir is correct
  
 #SAMIRAN:IMPLEMENT last response of the agents are emplty.. account for that also
