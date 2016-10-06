@@ -2,23 +2,19 @@
 > A Pygame+Pymunk Carrom Simulation Testbed for reinforcement learning.
 
 ## To Do
-Rest: 
-
-
-
 
 
 Samiran
-- Time limit of 1 strike, full rangeof motion Samiran [3.5 times, striaght]
-- Actual carrom  Samiran
 
 - FLipping the board for Player 2
+
+- Actual carrom  Samiran
 
 - Optimize for speed
 
 - Stochasticity [now] Server takes a random seed,
 
-- theta 
+- theta (should I fix this?)
 
 
 
