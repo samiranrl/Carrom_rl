@@ -77,7 +77,7 @@ while 1:
 
             
         if  len(S["White_Locations"])!=0 or len(S["Black_Locations"])!=0 or len(S["Red_Location"])!=0:
-            to_hit_list=S["White_Locations"]+S["Black_Locations"]+S["Red_Location"]
+            to_hit_list=S["White_Locations"]+S["Red_Location"]
             to_hit = to_hit_list[get_coin_max_sep(to_hit_list)]
             hole,dist1 = find_nearest_hole(to_hit)
             angle_to_hole = math.atan2((to_hit[1]-hole[1]),(to_hit[0]-hole[0]))

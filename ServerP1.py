@@ -64,6 +64,7 @@ def Play(State,Player,action):
 
     space = pymunk.Space(threaded=True)
     Score = State["Score"]
+    prevScore = State["Score"]
 
 
     # pass through object // Dummy Object for handling collisions
@@ -91,7 +92,8 @@ def Play(State,Player,action):
 
 
     #print "Force: ",1000-+action[2]*1000
-    
+    Queen_Pocketed=False
+    Queen_Flag=False
     while 1: 
 
         if Ticks%RENDER_RATE==0 and Vis==1:
@@ -133,19 +135,10 @@ def Play(State,Player,action):
                         Pocketed.append((coin,coin.body))
                         space.remove(coin,coin.body)
                     if coin.color == Red_Coin_Color:
-                        Score+=3
+                        #Score+=3
                         Pocketed.append((coin,coin.body))
                         space.remove(coin,coin.body)
-
-        # for coin in space._get_shapes():
-        #     if abs(coin.body.position[0])>800 or abs(coin.body.position[1])>800:
-        #         if coin.color == Striker_Color:
-        #             space.remove(coin,coin.body)
-        #         elif coin.color in [Black_Coin_Color,White_Coin_Color,Red_Coin_Color]:
-        #             space.remove(coin,coin.body)
-        #             Pocketed.append((coin,coin.body))
-        #             Foul=True
-        #             print "Coin went outside board"
+                        Queen_Pocketed=True
 
 
         if Local_VIS==1:
@@ -191,15 +184,24 @@ def Play(State,Player,action):
                         Score-=1
                     if coin[0].color == Red_Coin_Color:
                         State_new["Red_Location"].append((400,400))
-                        Score-=3
+                        #Score-=3
             # What will happen if there is a clash?? Fix it later
 
-            print "Turn Ended with Score: ", Score, " in ", Ticks, " Ticks"
-            print "Coins: ", len(State_new["Black_Locations"]),"B ", len(State_new["White_Locations"]),"W ",len(State_new["Red_Location"]),"R",
-        
-            State_new["Score"]=Score
 
-            return State_new
+        
+
+            if (Queen_Pocketed==True and Foul==False):
+                if Score-prevScore>0:
+                    Score+=3
+                    print "Queen pocketed and covered in one shot"
+                else:
+                    Queen_Flag=True
+
+
+            State_new["Score"]=Score
+            print "Turn Ended with Score: ", Score, " in ", Ticks, " Ticks"
+            print "Coins: ", len(State_new["Black_Locations"]),"B ", len(State_new["White_Locations"]),"W ",len(State_new["Red_Location"]),"R"
+            return State_new,Queen_Flag
 
 
 
@@ -275,26 +277,38 @@ if __name__ == '__main__':
         else :
             action=tuplise(s.replace(" ","").split(','))
             
-        next_State=Play(next_State,1,validate(action))
-
-
+        next_State,Queen_Flag=Play(next_State,1,validate(action))
         reward1 = next_State["Score"] - prevScore
         prevScore = next_State["Score"]
-        score1 = score1 + reward1
+        score1 += reward1
         print " turns: "+str(it)
+        if Queen_Flag: # Extra turn
+            print "Pocketed Queen, pocket any coin in this turn to cover it"
+            it+=1
+            prevScore = next_State["Score"]
+            sendState(str(next_State) + ";REWARD" + str(reward1),conn1)
+            s=requestAction(conn1)
+            if not s :#response empty
+                print "Empty P1";
+            elif s == timeout_msg:
+                winner = 2
+                break
+            else :
+                action=tuplise(s.replace(" ","").split(','))    
+            next_State,Queen_Flag=Play(next_State,1,validate(action))
+            reward1 = next_State["Score"] - prevScore
+            prevScore = next_State["Score"]
+            if reward1>0:
+                score1+=3
+                print "Sucessfully covered the queen"
+            else:
+                print "Could not cover the queen"
+                next_State["Red_Location"].append((400,400))
+            score1+= reward1
+            print " turns: "+str(it)
 
-        if score1+score2==21:
+        if len(next_State["Black_Locations"])==0 and len(next_State["White_Locations"])==0:
             break
-
-    if winner==2:
-        print "Player 1 Timeout"
-    elif winner==1:
-        print "Player 2 Timeout"           
-    if winner == 0 :
-        if score1>score2:
-            winner= 1
-        else:
-            winner = 2
 
     print "Cleared Board in " + str(it)," turns."
     f=open("loga2.txt","a")

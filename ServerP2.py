@@ -17,6 +17,7 @@ global score2
 
 
 global Vis
+
 Vis=int(sys.argv[1])
 # Handle exceptions here
 
@@ -51,6 +52,7 @@ Player: 1 or 2
 Vis: Visualization? Will be handled later
 '''
 
+
 def Play(State,Player,action):
     #print "Turn Started with Score: ", State["Score"]
     #print "Coins: ", len(next_State["Black_Locations"]),len(next_State["White_Locations"]),len(next_State["Red_Location"])
@@ -66,6 +68,7 @@ def Play(State,Player,action):
 
     space = pymunk.Space(threaded=True)
     Score = State["Score"]
+    prevScore=State["Score"]
 
 
     # pass through object // Dummy Object for handling collisions
@@ -93,8 +96,11 @@ def Play(State,Player,action):
 
 
     #print "Force: ",1000-+action[2]*1000
-    
+    Queen_Pocketed=False
+    Queen_Flag=False
     while 1: 
+        global score1
+        global score2
 
         if Ticks%RENDER_RATE==0 and Vis==1:
             Local_VIS=True
@@ -116,10 +122,11 @@ def Play(State,Player,action):
         #print Striker[0].position
         for hole in Holes:
             if dist(hole.body.position,Striker[0].position)<Hole_Radius-Striker_Radius+(Striker_Radius*0.75):
-                Foul=True
-                for coin in space._get_shapes():
-                    if coin.color==Striker_Color:
-                        space.remove(coin,coin.body)
+                for shape in space._get_shapes():
+                    if shape.color==Striker_Color:
+                        Foul=True
+                        print "Foul, Striker in hole"
+                        space.remove(shape,shape.body)
                         break
 
 
@@ -130,30 +137,27 @@ def Play(State,Player,action):
                         Score+=1
                         Pocketed.append((coin,coin.body))
                         space.remove(coin,coin.body)
+                        if Player==1:
+                            Foul=True
+                            print "Foul, Player 1 pocketed black"
                     if coin.color == White_Coin_Color:
                         Score+=1
                         Pocketed.append((coin,coin.body))
                         space.remove(coin,coin.body)
+                        if Player==2:
+                            Foul=True
+                            print "Foul, Player 2 pocketed white"
                     if coin.color == Red_Coin_Color:
-                        Score+=3
+                        #Score+=3
                         Pocketed.append((coin,coin.body))
                         space.remove(coin,coin.body)
-
-        # for coin in space._get_shapes():
-        #     if abs(coin.body.position[0])>800 or abs(coin.body.position[1])>800:
-        #         if coin.color == Striker_Color:
-        #             space.remove(coin,coin.body)
-        #         elif coin.color in [Black_Coin_Color,White_Coin_Color,Red_Coin_Color]:
-        #             space.remove(coin,coin.body)
-        #             Pocketed.append((coin,coin.body))
-        #             Foul=True
-        #             print "Coin went outside board"
+                        Queen_Pocketed=True
 
 
         if Local_VIS==1:
             font = pygame.font.Font(None, 25)
-            text = font.render("SCORE: "+str(Score)+", TIME ELAPSED : "+ str(round(time.time()-t,2)) + "s", 1, (10, 10, 10))
-            screen.blit(text, (Board_Size/3,Board_Size/10,0,0))
+            text = font.render("Player 1: "+str(score1)+" Player 2: "+str(score2)+" TIME ELAPSED : "+ str(round(time.time()-t,2)) + "s", 1, (10, 10, 10))
+            screen.blit(text, (Board_Size/4,Board_Size/10,0,0))
             if Ticks==1:
                 length=Striker_Radius+action[2]/500.0 # The length of the line denotes the action
                 startpos_x=action[1]
@@ -183,7 +187,6 @@ def Play(State,Player,action):
                     if coin.color == Red_Coin_Color:
                         State_new["Red_Location"].append(coin.body.position)
             if Foul==True:
-                print "Foul!"
                 for coin in Pocketed:
                     if coin[0].color == Black_Coin_Color:
                         State_new["Black_Locations"].append((400,400))
@@ -193,15 +196,20 @@ def Play(State,Player,action):
                         Score-=1
                     if coin[0].color == Red_Coin_Color:
                         State_new["Red_Location"].append((400,400))
-                        Score-=3
-            # What will happen if there is a clash?? Fix it later
+                        #Score-=3
 
-            print "Turn Ended with Score: ", Score, " in ", Ticks, " Ticks"
-            print "Coins: ", len(State_new["Black_Locations"]),"B ", len(State_new["White_Locations"]),"W ",len(State_new["Red_Location"]),"R",
-        
+            if (Queen_Pocketed==True and Foul==False):
+                if Score-prevScore>0:
+                    Score+=3
+                    print "Queen pocketed and covered in one shot"
+                else:
+                    Queen_Flag=True
+
+            
+            print "Turn ended in ", Ticks, " Ticks"
             State_new["Score"]=Score
 
-            return State_new
+            return State_new,Queen_Flag
 
 
 
@@ -240,7 +248,7 @@ def validate(action) :
         print "Invalid position, taking random position"
         force=random.random()               
 
-    action=(angle,170+(position*460),1000+force*MAX_FORCE)
+    action=(angle,170+(position*460),MIN_FORCE+force*MAX_FORCE)
     return action
 
 if __name__ == '__main__':
@@ -269,37 +277,71 @@ if __name__ == '__main__':
 
     global score1
     global score2
+
     winner = 0
     reward1 = 0
     score1 = 0
     reward2 = 0
     score2 = 0
-    #State={"Black_Locations":B,"White_Locations":W,"Red_Location":R,"Score":0, Message:" "}
+
     State={'White_Locations': [(400,368),(437,420), (372,428),(337,367), (402,332), (463,367), (470,437), (405,474), (340,443)], 'Red_Location': [(400, 403)], 'Score': 0, 'Black_Locations': [(433,385),(405,437), (365,390), (370,350), (432,350), (467,402), (437,455), (370,465), (335,406)]}
     next_State=State
-    # Black Coins, White Coins, Red Coin, VISualization : On/Off, Score, Flip the board? 0 - no 1 - yes
+
     it=1
     
     while it<200: # Number of Chances given to each player
+     
         if it>150:
             global Vis
-            Vis=1
+            Vis=1 # To Be removed
+
         it+=1
         prevScore = next_State["Score"]
         sendState(str(next_State) + ";REWARD" + str(reward1),conn1)
         s=requestAction(conn1)
         if not s :#response empty
-            print "Empty P1";
+            print "Empty response from Player 1";
         elif s == timeout_msg:
             winner = 2
             break
         else :
             action=tuplise(s.replace(" ","").split(','))
-        next_State=Play(next_State,1,validate(action))
+        next_State,Queen_Flag=Play(next_State,1,validate(action))
+        print "Coins: ", len(next_State["Black_Locations"]),"B ", len(next_State["White_Locations"]),"W ",len(next_State["Red_Location"]),"R"
 
         reward1 = next_State["Score"] - prevScore
         prevScore = next_State["Score"]
         score1 = score1 + reward1
+        if Queen_Flag:
+            print "Pocketed Queen, pocket any coin in this turn to cover it"
+            prevScore = next_State["Score"]
+            sendState(str(next_State) + ";REWARD" + str(reward1),conn1)
+            s=requestAction(conn1)
+            if not s :#response empty
+                print "Empty response from Player 1";
+            elif s == timeout_msg:
+                winner = 2
+                break
+            else :
+                action=tuplise(s.replace(" ","").split(','))
+            next_State,Queen_Flag=Play(next_State,1,validate(action))
+            print "Coins: ", len(next_State["Black_Locations"]),"B ", len(next_State["White_Locations"]),"W ",len(next_State["Red_Location"]),"R"
+
+
+            reward1 = next_State["Score"] - prevScore
+            if reward1>0:
+                score1+=3
+                print "Sucessfully covered the queen"
+            else:
+                print "Could not cover the queen"
+                next_State["Red_Location"].append((400,400))
+            prevScore = next_State["Score"]
+            score1 = score1 + reward1
+
+
+
+        if len(next_State["Black_Locations"])==0 or len(next_State["White_Locations"])==0:
+            break
 
         sendState(str(next_State)+";REWARD" + str(reward2),conn2)
         s=requestAction(conn2)
@@ -311,14 +353,40 @@ if __name__ == '__main__':
         else :
             action=tuplise(s.replace(" ","").split(','))
 
-        next_State=Play(next_State,2,validate(action))
+        next_State,Queen_Flag=Play(next_State,2,validate(action))
+        print "Coins: ", len(next_State["Black_Locations"]),"B ", len(next_State["White_Locations"]),"W ",len(next_State["Red_Location"]),"R"
 
         reward2 = next_State["Score"] - prevScore
         score2 = score2 + reward2
+        if Queen_Flag:
+            prevScore = next_State["Score"]
+            print "Pocketed Queen, pocket any coin in this turn to cover it"
+            sendState(str(next_State)+";REWARD" + str(reward2),conn2)
+            s=requestAction(conn2)
+            if not s: #response empty
+                print "Empty P1";
+            elif s == timeout_msg:
+                winner = 1
+                break
+            else :
+                action=tuplise(s.replace(" ","").split(','))
+
+            next_State,Queen_Flag=Play(next_State,2,validate(action))
+            print "Coins: ", len(next_State["Black_Locations"]),"B ", len(next_State["White_Locations"]),"W ",len(next_State["Red_Location"]),"R"
+
+
+            reward2 = next_State["Score"] - prevScore
+            if reward2>0:
+                score2+=3
+                print "Sucessfully covered the queen"
+            else:
+                print "Could not cover the queen"
+                next_State["Red_Location"].append((400,400))
+            score2 = score2 + reward2
         
-        print "P1: ",score1," P2: ", score2, " step "+str(it)
+        print "P1 score: ",score1," P2 score: ", score2, " Turn "+str(it)
         print "Coins: ", len(next_State["Black_Locations"]),"B ", len(next_State["White_Locations"]),"W ",len(next_State["Red_Location"]),"R"
-        if score1+score2==320:
+        if len(next_State["Black_Locations"])==0 or len(next_State["White_Locations"])==0:
             break
 
     if winner==2:
@@ -326,12 +394,18 @@ if __name__ == '__main__':
     elif winner==1:
         print "Player 2 Timeout"           
     if winner == 0 :
-        if score1>score2:
+        if len(next_State["White_Locations"])==0:
             winner= 1
-        else:
+            msg = "Winner is Player " + str(winner)
+        elif len(next_State["Black_Locations"])==0:
             winner = 2
+            msg = "Winner is Player " + str(winner)
+        else:
+            msg = "Draw"
 
-    print "Winner is Player " + str(winner)
+
+
+    
     f=open("loga2.txt","a")
     f.write(str(it)+" "+str(time.time()-t)+"\n")
     f.close()
