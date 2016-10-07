@@ -5,16 +5,36 @@ import sys
 from thread import *
 import os
 import pickle
-
-HOST = '127.0.0.1'   # Symbolic name meaning all available interfaces
-PORT1 = 12121 # Arbitrary non-privileged port
-PORT2 = 34343  # Arbitrary non-privileged port
-
-t=time.time()
+import argparse
 
 
 global Vis
-Vis=int(sys.argv[1])
+global Total_Ticks
+
+Total_Ticks=0
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-v', '--Visualization', dest="Vis", type=int,
+                        default=0,
+                        help='Visualization')
+
+parser.add_argument('-p1', '--port1', dest="PORT1", type=int,
+                        default=12121,
+                        help='Port 1')
+
+
+args=parser.parse_args()
+
+
+Vis=args.Vis
+PORT1=args.PORT1
+
+
+HOST = '127.0.0.1'   # Symbolic name meaning all available interfaces
+
+t=time.time()
+
 
 # Handle exceptions here
 
@@ -197,7 +217,8 @@ def Play(State,Player,action):
                 else:
                     Queen_Flag=True
 
-
+            global Total_Ticks
+            Total_Ticks+=Ticks
             State_new["Score"]=Score
             print "Turn Ended with Score: ", Score, " in ", Ticks, " Ticks"
             print "Coins: ", len(State_new["Black_Locations"]),"B ", len(State_new["White_Locations"]),"W ",len(State_new["Red_Location"]),"R"
@@ -300,7 +321,7 @@ if __name__ == '__main__':
             prevScore = next_State["Score"]
             if reward1>0:
                 score1+=3
-                print "Sucessfully covered the queen"
+                print "Successfully covered the queen"
             else:
                 print "Could not cover the queen"
                 next_State["Red_Location"].append((400,400))
@@ -311,8 +332,8 @@ if __name__ == '__main__':
             break
 
     print "Cleared Board in " + str(it)," turns."
-    f=open("loga2.txt","a")
-    f.write(str(it)+" "+str(time.time()-t)+"\n")
+    f=open("logS1.txt","a")
+    f.write(str(it)+" "+str(round(time.time()-t,0))+" "+str(Total_Ticks)+"\n")
     f.close()
     don()
 
