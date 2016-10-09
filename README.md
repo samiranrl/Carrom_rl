@@ -30,7 +30,7 @@ Samiran
 - Running experiments in parallel
 - An improved agent
 - Refactoring and cleaning up code
-
+- Ensuring that it runs on SL-2 Machines
 
 ## License
 
