@@ -1,5 +1,7 @@
 Carrom_rl
 =========
+
+[![Join the chat at https://gitter.im/Carrom_rl/Lobby](https://badges.gitter.im/Carrom_rl/Lobby.svg)](https://gitter.im/Carrom_rl/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 > A Carrom Simulator testbed for artificial intelligence .
 
 ## Introduction
