@@ -6,7 +6,7 @@ A Carrom Simulator testbed for artificial intelligence .
 
 ## Introduction
 
-This is the 0.1 release of Carrom_rl - A Carrom Simulator, which provides an interface, that allows you to design agents that play single player, and two player carrom. This is the course project for [CS 747 - Foundations of Intelligent and Learning Agents](https://www.cse.iitb.ac.in/~shivaram/teaching/cs747-a2016/index.html){:target="_blank"} , taught by [Prof. Shivaram Kalyanakrishnan](https://www.cse.iitb.ac.in/~shivaram/){:target="_blank"}  at IIT Bombay.
+This is the 0.1 release of Carrom_rl - A Carrom Simulator, which provides an interface, that allows you to design agents that play single player, and two player carrom. This is the course project for [CS 747 - Foundations of Intelligent and Learning Agents](https://www.cse.iitb.ac.in/~shivaram/teaching/cs747-a2016/index.html), taught by [Prof. Shivaram Kalyanakrishnan](https://www.cse.iitb.ac.in/~shivaram/)  at IIT Bombay.
 
 Feedback/suggestions/bugs are welcome.
 
