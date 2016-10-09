@@ -48,7 +48,7 @@ The goal of single player carrom is to design an agent, that clears the board as
 ### Doubles Server
 The goal of doubles is to design an agent, that wins against an opponent in a game of carrom(by pocketing his coins first), adhering to the following rules:
 
-- The player to start/break must target white coins only. The other player must target black. Players' score increase by one when they pocket thier own coin.
+- The player to start/break must target white coins only. The other player must target black. Players' score increase by one when they pocket their own coin. You get to strike in alterate turn unless you pocket the queen(see below)
 - If the player pockets his opponent's coin, it counts as a foul. All coins pocketed that turn are kept in the center, and the score does not increase.
 - If all the coins are pocketed except the queen, the other player wins the match.
 - If you manage to pocket all of your own coins, and the opponent pockets and covers the queen, you win the match.
@@ -59,7 +59,18 @@ The goal of doubles is to design an agent, that wins against an opponent in a ga
 
 ## The agent and the environment
 
-Formal definition
+We formally define the carrom environment in the context of reinforcement learning. The State is a list of current coin positions (x,y) coordinates returned to the user. If a coin is not present, it is assumed to be pocketed in one of the previous strikes. The state also includes the current score of the player. The action is a three dimentional vector: [angle,position,force]
+
+- angle : The angle of the striker. Accepts values in the range 0-1.25pi and 1.75pi to 2pi. 
+- position: The position of 
+
+
+In case problem, the server generates the action as random
+Mirroring in case of 2 player
+
+The server accepts 10^-4 units os precision in the actions. The sever also adds a gaussian noise to the actions.
+
+
 
 ## Quick Start
 
@@ -68,9 +79,6 @@ Formal definition
 ## What to submit?
 
 ## To Do
-
-
-Samiran
 
 - Fix Theta 
 - Handle exceptions on closing the connection
