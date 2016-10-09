@@ -24,7 +24,7 @@ The full description, and list of rules and regulations can be found at http://w
 
 ### Why Carrom? 
 
-It is a challenging domain in the artificial intelligence:
+It is a challenging domain in artificial intelligence:
 
 - The state space  is continious
 - The action space is continious, with added noise
