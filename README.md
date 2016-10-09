@@ -1,22 +1,33 @@
-# Carrom_rl
-> A Pygame+Pymunk Carrom Simulation Testbed for reinforcement learning.
+Carrom_rl
+=========
+> A Carrom Simulator testbed for artificial intelligence .
+
+## Introduction
+
+## Rules
+
+### 1 Player Server
+
+### 2 Player Server
+
+## Getting Started
+
+## Sample Agents
+
+## What to submit?
 
 ## To Do
 
 
 Samiran
 
-- FLipping the board for Player 2
-
-- Actual carrom  Samiran
-
-- Optimize for speed
-
-- Stochasticity [now] Server takes a random seed,
-
-- theta (should I fix this?)
-
-
+- Fix Theta 
+- Handle exceptions on closing the connection
+- Add Gitter
+- Save Visualization to a file
+- Running experiments in parallel
+- An improved agent
+- Refactoring and cleaning up code
 
 
 ## License
