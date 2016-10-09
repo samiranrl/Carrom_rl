@@ -6,13 +6,15 @@ A Carrom Simulator testbed for artificial intelligence .
 
 ## Introduction
 
-This is the 0.1 release of Carrom_rl - A Carrom Simulator, which provides an interface, that allows you to design agents that play single player, and two player carrom. This was built as a course project for [CS 747 - Foundations of Intelligent and Learning Agents](https://www.cse.iitb.ac.in/~shivaram/teaching/cs747-a2016/index.html), taught by Prof. Shivaram Kalyanakrishnan.
+This is the 0.1 release of Carrom_rl - A Carrom Simulator, which provides an interface, that allows you to design agents that play single player, and two player carrom. This is the course project for [CS 747 - Foundations of Intelligent and Learning Agents](https://www.cse.iitb.ac.in/~shivaram/teaching/cs747-a2016/index.html), taught by [Prof. Shivaram Kalyanakrishnan](https://www.cse.iitb.ac.in/~shivaram/) at IIT Bombay.
 
-Feedback/suggestions/bug reports are welcome, please contact me at:
+Feedback/suggestions/bug reports are welcome.
 
 ## Carrom
 
-Whoever plays first, or breaks, is always white. The object of the game is to sink all of your pieces, using the heavier 'striker', in any of the pockets before your opponent. Your turn continues as long as you keep sinking your pieces - luck shots count and all combinations are permitted.
+You are given a board (screenshot)
+The objective of the game is to sink all of your pieces, using the heavier 'striker', in any of the pockets before your opponent. 
+The full list of rules and regulations can fe found at
 
 
 ### Why Carrom? 
@@ -27,12 +29,16 @@ It is a challenging domain in the artificial intelligence context:
 Also, Carrom is uniquely Indian!
 
 ## Rules
-Rules are slightly tweaked in the interest of making the domain suitable for learning? For a full list: go to. The specific rules which are implemented are as follows:
+We slightly modify the rules of the game to make it suitable for learning. 
 
 ### 1 Player Server
 The goal of the 1 Player server is to clear the board as fast as possible.
 
 ### 2 Player Server
+
+## The agent and the environment
+
+Formal definition
 
 ## Quick Start
 
