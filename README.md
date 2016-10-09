@@ -15,6 +15,7 @@ Feedback/suggestions/bugs are welcome.
 You are given a board:
 ![Carrom Board](https://i.ytimg.com/vi/LvryHWCgK0s/maxresdefault.jpg)
 Image Source: https://i.ytimg.com/vi/LvryHWCgK0s/maxresdefault.jpg
+
 The objective of the game is to use a  striker disk with a flick of the finger to sink the lighter called carrom men/coins, into one of the corner pockets. A carrom set contains 19 coins in three distinct colours: white and black for the player's and red for the queen.
 The aim of the game is to pocket one's own nine coins and the queen before your opponent. (The first player may only pocket white)
 
@@ -33,7 +34,7 @@ It is a challenging domain in the artificial intelligence:
 ## Rules
 We slightly modify the rules of the game.
 
-### 1 Player Server
+### Single Player Server
 The goal of single player carrom is to design an agent, that clears the board as fast as possible, adhering to the following rules:
 
 - Both the white and black coins are treated as the player's. Each coin pocketed increase your score by 1.
@@ -44,7 +45,7 @@ The goal of single player carrom is to design an agent, that clears the board as
 - A covered queen will increase your score by three points
 - If the striker goes into the hole, it counts as a foul. All the pocketed coins in that turn are placed in the center. The score does not increase.
 
-### 2 Player Server
+### Doubles Server
 The goal of doubles is to design an agent, that wins against an opponent in a game of carrom(by pocketing his coins first), adhering to the following rules:
 
 - The player to start/break must target white coins only. The other player must target black. Players' score increase by one when they pocket thier own coin.
