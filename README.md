@@ -1,6 +1,8 @@
 Carrom_rl
 =========
-> A Carrom Simulator testbed for artificial intelligence .
+A Carrom Simulator testbed for artificial intelligence .
+
+[![Gitter](https://badges.gitter.im/Carrom_rl/Lobby.svg)](https://gitter.im/Carrom_rl/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge)
 
 ## Introduction
 
