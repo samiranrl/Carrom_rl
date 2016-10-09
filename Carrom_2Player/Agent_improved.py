@@ -62,14 +62,14 @@ def find_nearest_hole(coin) :
 
 def get_most_suitable_x(list_of_x,coin_list,to_hit, angle_to_hole) :
     max_max_travelable_dist = 0
-    random.shuffle(list_of_x)
+    # random.shuffle(list_of_x)
     index = 0
     
-    y = 145
-    x=to_hit[0] + (y-to_hit[1])*math.tan(angle_to_hole)
-    x = max(min(630,x),170)
-    return x,dist(to_hit,(x,y))
-    '''  
+    # y = 145
+    # x=to_hit[0] + (y-to_hit[1])*math.tan(angle_to_hole)
+    # x = max(min(630,x),170)
+    # return x,dist(to_hit,(x,y))
+
     for i in range (0,len(list_of_x)) :
         unobstructed_distance = (to_hit[0] - list_of_x[i])*(to_hit[0] - list_of_x[i]) + (to_hit[1] - 145)*(to_hit[1] - 145)
         #angle = math.atan2((to_hit[1]-145),(to_hit[0]-list_of_x[i]))
@@ -89,7 +89,7 @@ def get_most_suitable_x(list_of_x,coin_list,to_hit, angle_to_hole) :
             max_max_travelable_dist = unobstructed_distance
             index = i
     return list_of_x[index], max_max_travelable_dist
-    '''
+
 
 
 #170:630
@@ -103,7 +103,10 @@ while 1:
 
             
         if  len(S["White_Locations"])!=0 or len(S["Black_Locations"])!=0 or len(S["Red_Location"])!=0:
-            to_hit_list=S["White_Locations"]+S["Black_Locations"]+S["Red_Location"]
+            if port==12121:
+                to_hit_list=S["White_Locations"]+S["Red_Location"]
+            else:
+                to_hit_list=S["Black_Locations"]+S["Red_Location"]
             to_hit = to_hit_list[get_coin_max_sep(to_hit_list)]
             hole,dist1 = find_nearest_hole(to_hit)
             angle_to_hole = math.atan2((to_hit[1]-hole[1]),(to_hit[0]-hole[0]))
@@ -115,7 +118,7 @@ while 1:
             if angle < 0:
                 angle = angle + 2*3.14
             #a=str(angle)+ ',' + str(float(x-170)/float(460))+','+str(0.5)
-            a=str(angle)+ ',' + str(float(x-170)/float(460))+','+str(0.5) # Remove in actual test
+            a=str(angle)+ ',' + str(float(x-170)/float(460))+','+str(random.random()/1.25) # Remove in actual test
             #a=str(angle)+ ',' + str(float(x-170)/float(460))+','+str(0.5*dist2/800) # Remove in actual test
         else:
             a=None

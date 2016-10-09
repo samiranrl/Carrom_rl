@@ -40,10 +40,8 @@ while 1:
         try: 
             
             if  S["White_Locations"]!=None or S["Black_Locations"]!=None or S["Red_Location"]!=None:
-                if port==12121:
-                    to_hit=random.choice(S["White_Locations"]+S["Red_Location"])
-                else:
-                    to_hit=random.choice(S["Black_Locations"]+S["Red_Location"])
+                to_hit=random.choice(S["White_Locations"]+S["Red_Location"]+S["Black_Locations"])
+
                 loc = (400,145)
                 angle=math.atan2((to_hit[1]-loc[1]),(to_hit[0]-loc[0]))
                 if angle < 0:
