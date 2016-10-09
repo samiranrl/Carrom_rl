@@ -6,15 +6,18 @@ A Carrom Simulator testbed for artificial intelligence .
 
 ## Introduction
 
-This is the 0.1 release of Carrom_rl - A Carrom Simulator, which provides an interface, that allows you to design agents that play single player, and two player carrom. This is the course project for [CS 747 - Foundations of Intelligent and Learning Agents](https://www.cse.iitb.ac.in/~shivaram/teaching/cs747-a2016/index.html), taught by [Prof. Shivaram Kalyanakrishnan](https://www.cse.iitb.ac.in/~shivaram/)  at IIT Bombay.
+This is the 0.1 release of Carrom_rl - A Carrom Simulator, which provides an interface that allows you to design agents that play single player, and two player carrom. This is the course project for [CS 747 - Foundations of Intelligent and Learning Agents](https://www.cse.iitb.ac.in/~shivaram/teaching/cs747-a2016/index.html), taught by [Prof. Shivaram Kalyanakrishnan](https://www.cse.iitb.ac.in/~shivaram/) at IIT Bombay.
 
 Feedback/suggestions/bugs are welcome.
 
 ## Carrom
 
-You are given a board (screenshot)
-The objective of the game is to sink all of your pieces, using the heavier 'striker', in any of the pockets before your opponent. 
-The full list of rules and regulations can fe found at
+You are given a board 
+![Carrom Board](https://i.ytimg.com/vi/LvryHWCgK0s/maxresdefault.jpg)
+The objective of the game is to use a  striker disk with a flick of the finger to sink the lighter called carrom men, into one of the corner pockets. A carrom set contains 19 carrom men in three distinct colours: white and black for the player's and red for the queen.
+The aim of the game is to pocket one's own nine carrom men and the Queen before your opponent. (Whoever plays first must only pocket white)
+
+The full description, and list of rules and regulations can be found at http://www.carrom.org/
 
 
 ### Why Carrom? 
