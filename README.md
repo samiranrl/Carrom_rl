@@ -11,7 +11,8 @@ An open source Carrom Simulator interface for testing intelligent/learning agent
 
 This is the 1.0 release of Carrom_rl - A Carrom Simulator, which provides an interface that allows you to design agents that that play carrom. It is built in python, using pygame + pymunk. This is the course project for [CS 747 - Foundations of Intelligent and Learning Agents](https://www.cse.iitb.ac.in/~shivaram/teaching/cs747-a2016/index.html), taught by [Prof. Shivaram Kalyanakrishnan](https://www.cse.iitb.ac.in/~shivaram/) at IIT Bombay.
 
-Feedback/bugs are welcome. Enjoy!
+Bugs can be reported [here](https://github.com/samiranrl/Carrom_rl/issues).
+Feedback is welcome. Enjoy!
 
 ## Carrom
 
