@@ -1,14 +1,14 @@
 Carrom_rl
 =========
 
-A Carrom Simulator testbed for artificial intelligence .
+An open source Carrom Simulator interface for testing intelligent/learning agents.
 
 [![Join the chat at https://gitter.im/Carrom_rl/Lobby](https://badges.gitter.im/Carrom_rl/Lobby.svg)](https://gitter.im/Carrom_rl/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
 ## Introduction
 
-This is the 0.1 release of Carrom_rl - A Carrom Simulator, which provides an interface that allows you to design agents that play single player, and two player carrom(more on this later). This is the course project for [CS 747 - Foundations of Intelligent and Learning Agents](https://www.cse.iitb.ac.in/~shivaram/teaching/cs747-a2016/index.html), taught by [Prof. Shivaram Kalyanakrishnan](https://www.cse.iitb.ac.in/~shivaram/) at IIT Bombay.
+This is the 0.1 release of Carrom_rl - A Carrom two player Simulator, which provides an interface that allows you to design agents that connect to single player and doubles carrom servers, to play a game. It is built in python, using pygame + pymunk. This is the course project for [CS 747 - Foundations of Intelligent and Learning Agents](https://www.cse.iitb.ac.in/~shivaram/teaching/cs747-a2016/index.html), taught by [Prof. Shivaram Kalyanakrishnan](https://www.cse.iitb.ac.in/~shivaram/) at IIT Bombay.
 
 Feedback/suggestions/bugs are welcome.
 
@@ -17,7 +17,7 @@ Feedback/suggestions/bugs are welcome.
 ![Carrom Board](https://i.ytimg.com/vi/LvryHWCgK0s/maxresdefault.jpg)
 Image Source: https://i.ytimg.com/vi/LvryHWCgK0s/maxresdefault.jpg
 
-The objective of the game is to use a  striker disk with a flick of the finger to sink the lighter called carrom men/coins, into one of the corner pockets. A carrom set contains 19 coins in three distinct colours: white and black for the player's and red for the queen.
+The objective of the game is to use a striker disk with a flick of the finger to sink the lighter called carrom men/coins, into one of the corner pockets. A carrom set contains 19 coins in three distinct colours: white and black corresponding to each player and red for the queen.
 The aim of the game is to pocket one's own nine coins and the queen before your opponent. (The first player may only pocket white)
 
 The full description, and list of rules and regulations can be found at http://www.carrom.org/
@@ -25,7 +25,7 @@ The full description, and list of rules and regulations can be found at http://w
 
 ### Why Carrom? 
 
-It is a challenging domain in artificial intelligence:
+It is a challenging domain:
 
 - The state space  is continious
 - The action space is continious, with added noise
@@ -49,6 +49,8 @@ The goal of single player carrom is to design an agent, that clears the board as
 - A covered queen will increase your score by three points
 - If the striker goes into the hole, it counts as a foul. All the pocketed coins in that turn are placed in the center. The score does not increase.
 
+The simulation displays the current score of the player, and the time elapsed since the server was initialized.
+
 ### Doubles Server
 
 <img src="p2.gif" width="300" height="300">
@@ -64,20 +66,42 @@ The goal of doubles is to design an agent, that wins against an opponent in a ga
 - A covered queen will increase your score by three points
 - If the striker goes into the hole, it counts as a foul. All the pocketed coins in that turn are placed in the center. The score does not increase.
 
+The simulation displays the current score of player 1 and player 2, and the time elapsed since the server was initialized.
+
 ## The agent and the environment
 
-We formally define the carrom environment in the context of reinforcement learning. The State is a list of current coin positions (x,y) coordinates returned to the user. If a coin is not present, it is assumed to be pocketed in one of the previous strikes. The state also includes the current score of the player. The action is a three dimentional vector: [angle,position,force]
 
-- angle : The angle of the striker. Accepts values in the range 0-1.25pi and 1.75pi to 2pi. 
-- position: The position of 
+### State
 
+We formally define the carrom environment in the reinforcement learning context. The State is a list of current coin positions (x,y) coordinates returned to the user, and the current score of the player. If a coin is not present, it is assumed to be pocketed in one of the previous strikes. The state also includes the current score of the player. An example of the state is:
 
-In case problem, the server generates the action as random
-Mirroring in case of 2 player
+'"State={'White_Locations': [(400,368),(437,420), (372,428),(337,367), (402,332), (463,367), (470,437), (405,474), (340,443)], 'Red_Location': [(400, 403)], 'Score': 0, 'Black_Locations': [(433,385),(405,437), (365,390), (370,350), (432,350), (467,402), (437,455), (370,465), (335,406)]}"'
 
-The server accepts 10^-4 units os precision in the actions. The sever also adds a gaussian noise to the actions.
+It is returned in the form of a string to the agent, which must be parsed. The logic for parsing such a state is built in the sample agent for your reference. 
 
+### Action
 
+The action is a three dimentional vector: [angle,position,force]
+
+- angle : The angle gives the direction (in radians), where you want to strike the striker. Accepts floats in the range [0-3.925] and 5.495 to 6.28. 
+- position: The legally valid x position of the striker on the board. Accepts floats between [0-1] (normalized). 0 is the extreme left position, and 1 is the exteme right. 
+
+[](http://www.carrom.org/pix/wrong.gif)
+
+(When placing the striker on the board to shoot, the striker must touch both 'base lines' (see left diagram), either covering the red circle completely, or not touching it at all. The striker may not touch the diagonal arrow line.)
+
+Source: http://www.carrom.org/game/?subcat=11
+
+- force: The force with with you want to hit the striker. Accepts floats between [0-1] (normalized)
+
+example action
+
+### Server
+
+- If an illegal parameter is passed to the server, it generates it at random, uniformly within the range
+- The server accepts four decimal places of precision. 
+- The server also adds a zero mean gaussian noise to the actions.
+- If you are Player 2 - on the opposite side of the board, the state you recieve is "mirrored" assuming you are playing from player 1's perspective. You don't have to write separate agents for Player 1 and Player 2.
 
 ## Quick Start
 
@@ -85,16 +109,21 @@ The server accepts 10^-4 units os precision in the actions. The sever also adds 
 
 ## What to submit?
 
+Python is preferred. 
+
+
+
+
 ## To Do
 
 - Fix Theta 
 - Handle exceptions on closing the connection
 - Save Visualization to a file
-- Running experiments in parallel
-- An improved agent
+- Test if scores are updated properly
 - Refactoring and cleaning up code
-- Ensuring that it runs on SL-2 Machines
-- Add rule to not sink queen in the beginning
+- SL-2 Machines
+- Add visualization speedup parameter(with ranges)
+
 
 ## License
 
