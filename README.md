@@ -8,7 +8,7 @@ An open source Carrom Simulator interface for testing intelligent/learning agent
 
 ## Introduction
 
-This is the 1.0 release of Carrom_rl - A Carrom Simulator, which provides an interface that allows you to design agents that connect to single player and doubles carrom servers, to play carrom. It is built in python, using pygame + pymunk. This is the course project for [CS 747 - Foundations of Intelligent and Learning Agents](https://www.cse.iitb.ac.in/~shivaram/teaching/cs747-a2016/index.html), taught by [Prof. Shivaram Kalyanakrishnan](https://www.cse.iitb.ac.in/~shivaram/) at IIT Bombay.
+This is the 1.0 release of Carrom_rl - A Carrom Simulator, which provides an interface that allows you to design agents that that play carrom. It is built in python, using pygame + pymunk. This is the course project for [CS 747 - Foundations of Intelligent and Learning Agents](https://www.cse.iitb.ac.in/~shivaram/teaching/cs747-a2016/index.html), taught by [Prof. Shivaram Kalyanakrishnan](https://www.cse.iitb.ac.in/~shivaram/) at IIT Bombay.
 
 Feedback/suggestions/bugs are welcome.
 
@@ -25,7 +25,7 @@ The full description and list of rules and regulations can be found at http://ww
 
 It is a challenging domain:
 
-- The state space  is continuous
+- The state space is continuous
 - The action space is continuous, with added noise
 - The agent must adhere to the rules of carrom
 - In the two-player case, the agent must plan a strategy against an adversary, a multi-agent system.
