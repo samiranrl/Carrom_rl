@@ -511,7 +511,7 @@ if __name__ == '__main__':
         pass
     
     f=open("logS2.txt","a")
-    f.write(str(it)+" "+str(round(time.time()-t,0))+" "+str(winner)+" "+str(score1)+" "+str(score2)+" "+str(Total_Ticks)+"\n")
+    f.write(str(it)+" "+str(round(time.time()-t,0))+" "+str(winner)+" "+str(score1)+" "+str(score2)+"\n")
     f.close()
     don()
 
