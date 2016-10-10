@@ -341,7 +341,7 @@ if __name__ == '__main__':
             reward1 = next_State["Score"] - prevScore
             prevScore = next_State["Score"]
             if reward1>0:
-                score1+=3
+                next_State["Score"]+=3
                 print "Successfully covered the queen"
             else:
                 print "Could not cover the queen"
