@@ -4,31 +4,42 @@ import subprocess, os, time, shutil, math, random
 import numpy as np
 from signal import SIGKILL
 
+
+
+
+Ports=[]
+
+for i in range(30000):
+
+    Ports.append(10000+i)
+
+
 def server_client():
     for i in range(0,50) :
-        pros = []
         p1 = None
         p2 = None
         try:
-            cmd = "python ServerP2.py -rs " +str(i)+" -s 1 -p1 12422 -p2 54353"
+            port1=str(random.choice(Ports))
+            port2=str(random.choice(Ports))
+            print p1,p2
+            cmd = "python ServerP2.py -rs " +str(i)+" -s 1 -p1 "+ port1 +" -p2 "+ port2
             print cmd
             cmd = os.path.join(cmd)
             p1 = subprocess.Popen(cmd.split(' '), shell=False)
             print 'Instance Launched'
             time.sleep(1)
-            agentCmd = "python Agent_random.py -p 12422"
+            agentCmd = "python Agent_random.py -p " + port1
             print agentCmd
             agentCmd = os.path.join(agentCmd)
             p2 = subprocess.Popen(agentCmd.split(' '), shell=False)
             print 'Agent1 Launched'
-            agent2Cmd = "python Agent_improved.py -p 54353"
+            time.sleep(1)
+            agent2Cmd = "python Agent_improved.py -p " + port2
             print agent2Cmd
             agent2Cmd = os.path.join(agent2Cmd)
             p3 = subprocess.Popen(agent2Cmd.split(' '), shell=False)
             print 'Agent2 Launched'
-            pros.append(p1)
-            pros.append(p2)
-            pros.append(p3)
+
             p1.communicate()
         except Exception as e:
             print e
