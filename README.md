@@ -37,7 +37,7 @@ We slightly modify the rules of the game.
 
 ### Single Player Server
 
-<img src="p1.gif" width="300" height="300">
+<img src="Images/p1.gif" width="300" height="300">
 
 The goal of single player carrom is to design an agent, that clears the board as fast as possible, adhering to the following rules:
 
@@ -53,7 +53,7 @@ The simulation displays the current score of the player, and the time elapsed si
 
 ### Doubles Server
 
-<img src="p2.gif" width="300" height="300">
+<img src="Images/p2.gif" width="300" height="300">
 
 The goal of doubles is to design an agent, that wins against an opponent in a game of carrom(by pocketing his coins first), adhering to the following rules:
 
@@ -92,9 +92,13 @@ The action is a three dimentional vector: [angle,position,force]
 
 Source: http://www.carrom.org/game/?subcat=11
 
-- force: The force with with you want to hit the striker. Accepts floats between [0-1] (normalized)
+- force: The force with with you want to hit the striker. Accepts floats between [0-1] (normalized). The maximimum force makes the striker cover a distance of 3.5 times the width of the board, starting from the center, striking the walls 4 times, and touching nothing else. There is a minimum force with which you strike (even if you pass 0)
 
-example action
+For example, you want to play a shot from the centre of the board, with and angle of approximately 72 degrees and 70% of the maximum force.
+You will pass the action [0.8 * 3.14/2, 0.5, 0.7]. It will look like this:
+
+<img src="Images/example.gif" width="300" height="300">
+
 
 ### Server
 
@@ -102,10 +106,41 @@ example action
 - The server accepts four decimal places of precision. 
 - The server also adds a zero mean gaussian noise to the actions.
 - If you are Player 2 - on the opposite side of the board, the state you recieve is "mirrored" assuming you are playing from player 1's perspective. You don't have to write separate agents for Player 1 and Player 2.
+- The server has a timeout of 0.5 seconds. If any agent does takes more time to send an action, the other agent is considered as the winner. In the single player case, it ends the game.
+- When a game finished, a log file is written in the format:
+
+### Sample Agents
+
 
 ## Quick Start
 
-## Sample Agents
+Install main dependences: pygame (1.9.2) and pymunk (5.0)
+```
+sudo apt-get install python-pip
+sudo pip install pygame
+sudo pip install pymunk
+```
+
+Fork the repo/download it.
+```
+git clone https://github.com/samiranrl/Carrom_rl.git
+```
+
+Start the one player server. Server and agent must be launched from separate terminals.
+```
+cd Carrom_rl/Carrom_1Player/
+python ServerP1.py -p 12121 -v 1
+python Agent_random.py -p 12121
+```
+Start the doubles server. Server and agents must be launched from separate terminals.
+```
+cd Carrom_rl/Carrom_2Player/
+python ServerP1.py -p1 12121 -p2 34343 -v 1
+python Agent_random.py -p 12121
+python Agent_improved.py -p 34343
+```
+
+
 
 ## What to submit?
 
@@ -118,7 +153,7 @@ Python is preferred.
 
 - Fix Theta 
 - Handle exceptions on closing the connection
-- Save Visualization to a file
+- Add replayer
 - Test if scores are updated properly
 - Refactoring and cleaning up code
 - SL-2 Machines
