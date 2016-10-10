@@ -106,17 +106,40 @@ You will pass the action [0.8 * 3.14/2, 0.5, 0.7]. It will look like this:
 - The server accepts four decimal places of precision. 
 - The server also adds a zero mean gaussian noise to the actions.
 - If you are Player 2 - on the opposite side of the board, the state you recieve is "mirrored" assuming you are playing from player 1's perspective. You don't have to write separate agents for Player 1 and Player 2.
+- When a game finished, a log file is written in the format:
+
+### Sample Agents
+
 
 ## Quick Start
 
-git clone https://github.com/samiranrl/Carrom_rl.git or download the repo
+Install main dependences: pygame (1.9.2) and pymunk (5.0)
+```
 sudo apt-get install python-pip
-sudo pip install pygame (1.9.2)
-sudo pip install pymunk (5.0)
+sudo pip install pygame
+sudo pip install pymunk
+```
+
+Fork the repo/download it.
+```
+git clone https://github.com/samiranrl/Carrom_rl.git
+```
+
+Start the one player server. Server and agent must be launched from separate terminals.
+```
+cd Carrom_rl/Carrom_1Player/
+python ServerP1.py -p 12121 -v 1
+python Agent_random.py -p 12121
+```
+Start the doubles server. Server and agents must be launched from separate terminals.
+```
+cd Carrom_rl/Carrom_2Player/
+python ServerP1.py -p1 12121 -p2 34343 -v 1
+python Agent_random.py -p 12121
+python Agent_improved.py -p 34343
+```
 
 
-
-## Sample Agents
 
 ## What to submit?
 
