@@ -1,14 +1,10 @@
 Carrom_rl
 =========
-<<<<<<< HEAD
+
 A Carrom Simulator testbed for artificial intelligence .
 
-[![Gitter](https://badges.gitter.im/Carrom_rl/Lobby.svg)](https://gitter.im/Carrom_rl/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge)
-=======
-
 [![Join the chat at https://gitter.im/Carrom_rl/Lobby](https://badges.gitter.im/Carrom_rl/Lobby.svg)](https://gitter.im/Carrom_rl/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-> A Carrom Simulator testbed for artificial intelligence .
->>>>>>> 4a353c1019656e524ed72fcfbab4c106f606b037
+
 
 ## Introduction
 
@@ -41,6 +37,9 @@ It is a challenging domain in artificial intelligence:
 We slightly modify the rules of the game.
 
 ### Single Player Server
+
+![Carrom 1 player](p1.gif)
+
 The goal of single player carrom is to design an agent, that clears the board as fast as possible, adhering to the following rules:
 
 - Both the white and black coins are treated as the player's. Each coin pocketed increase your score by 1.
@@ -52,6 +51,9 @@ The goal of single player carrom is to design an agent, that clears the board as
 - If the striker goes into the hole, it counts as a foul. All the pocketed coins in that turn are placed in the center. The score does not increase.
 
 ### Doubles Server
+
+![Carrom 2 player](p2.gif)
+
 The goal of doubles is to design an agent, that wins against an opponent in a game of carrom(by pocketing his coins first), adhering to the following rules:
 
 - The player to start/break must target white coins only. The other player must target black. Players' score increase by one when they pocket their own coin. You get to strike in alterate turn unless you pocket the queen(see below)
