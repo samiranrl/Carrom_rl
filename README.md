@@ -109,6 +109,13 @@ You will pass the action [0.8 * 3.14/2, 0.5, 0.7]. It will look like this:
 
 ## Quick Start
 
+git clone https://github.com/samiranrl/Carrom_rl.git or download the repo
+sudo apt-get install python-pip
+sudo pip install pygame (1.9.2)
+sudo pip install pymunk (5.0)
+
+
+
 ## Sample Agents
 
 ## What to submit?
