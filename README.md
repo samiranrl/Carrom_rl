@@ -115,21 +115,21 @@ You will pass the action [0.8 * 3.14/2, 0.5, 0.7]. It will look like this:
 #### Parameters
 The single player server takes the following parameters:
 ```
--v [1/0] -- Turn visualization on/off [Default: 0]
--p [n] -- The port the agent connects to. Must enter a valid port [Default: 12121]
+-v  [1/0] -- Turn visualization on/off [Default: 0]
+-p  [n] -- The port the agent connects to. Must enter a valid port [Default: 12121]
 -rr [1-20] -- Render rate, render every x frame. A higher number results in faster visualization, but choppy frames. Only used if -v is set to 1 [Default: 10]
--s [1/0] -- Turn noise on/off. The final agent will be evaluated with noise. [Default: 1]
+-s  [1/0] -- Turn noise on/off. The final agent will be evaluated with noise. [Default: 1]
 -rs [n] -- A random seed passed to the server rng [Default: 0]
 
 ```
 
 The doubles server takes the following parameters:
 ```
--v [1/0] -- Turn visualization on/off [Default: 0]
--p1 [n] -- The port player 1(who strikes first) connects to. Must enter a valid port [Default: 12121]
+-v  [1/0]  -- Turn visualization on/off [Default: 0]
+-p1 [n]  -- The port player 1(who strikes first) connects to. Must enter a valid port [Default: 12121]
 -p2 [n] -- The port player 2 connects to. Must enter a valid port [Default: 34343]
 -rr [1-20] -- Render rate, render every x frame. A higher number results in faster visualization, but choppy frames. Only used if -v is set to 1 [Default: 10]
--s [1/0] -- Turn noise on/off. The final agent will be evaluated with noise. [Default: 1]
+-s  [1/0] -- Turn noise on/off. The final agent will be evaluated with noise. [Default: 1]
 -rs [n] -- A random seed passed to the server rng [Default: 0]
 
 ```
