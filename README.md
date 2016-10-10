@@ -14,7 +14,6 @@ Feedback/suggestions/bugs are welcome.
 
 ## Carrom
 
-You are given a board:
 ![Carrom Board](https://i.ytimg.com/vi/LvryHWCgK0s/maxresdefault.jpg)
 Image Source: https://i.ytimg.com/vi/LvryHWCgK0s/maxresdefault.jpg
 
@@ -38,7 +37,7 @@ We slightly modify the rules of the game.
 
 ### Single Player Server
 
-![Carrom 1 player](p1.gif)
+<img src="p1.gif" width="300" height="300">
 
 The goal of single player carrom is to design an agent, that clears the board as fast as possible, adhering to the following rules:
 
@@ -52,7 +51,7 @@ The goal of single player carrom is to design an agent, that clears the board as
 
 ### Doubles Server
 
-![Carrom 2 player](p2.gif)
+<img src="p2.gif" width="300" height="300">
 
 The goal of doubles is to design an agent, that wins against an opponent in a game of carrom(by pocketing his coins first), adhering to the following rules:
 
