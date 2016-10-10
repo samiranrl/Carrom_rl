@@ -88,9 +88,9 @@ The action is a three dimentional vector: [angle,position,force]
 - angle : The angle gives the direction (in radians), where you want to strike the striker. Accepts floats in the range 0-3.925 and 5.495 - 6.28 (including boundaries)
 - position: The legally valid x position of the striker on the board. Accepts floats in the range 0-1 (normalized, including boundaries). 0 is the extreme left position, and 1 is the extreme right. 
 
-[](http://www.carrom.org/pix/wrong.gif)
+![Wrong](http://www.carrom.org/pix/wrong.gif)
 
-*(When placing the striker on the board to shoot, the striker must touch both 'base lines' (see above diagram), either covering the red circle completely or not touching it at all. The striker may not touch the diagonal arrow line.)
+(When placing the striker on the board to shoot, the striker must touch both 'base lines' (see above diagram), either covering the red circle completely or not touching it at all. The striker may not touch the diagonal arrow line.)
 
 Source: http://www.carrom.org/game/?subcat=11
 
