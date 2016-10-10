@@ -4,6 +4,7 @@ Carrom_rl
 An open source Carrom Simulator interface for testing intelligent/learning agents.
 
 [![Join the chat at https://gitter.im/Carrom_rl/Lobby](https://badges.gitter.im/Carrom_rl/Lobby.svg)](https://gitter.im/Carrom_rl/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
 
 
 ## Introduction
@@ -185,7 +186,3 @@ Agent code, and script to run it, for single player and doubles. Python is prefe
 - Add replayer
 - Test if scores are updated properly
 - Refactoring and cleaning up code
-
-## License
-
-[![GNU GPL v3.0](http://www.gnu.org/graphics/gplv3-127x51.png)](http://www.gnu.org/licenses/gpl.html)
