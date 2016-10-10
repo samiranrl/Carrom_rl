@@ -137,7 +137,7 @@ The doubles server takes the following parameters:
 
 ### Sample Agents
 
-There are 2 Sample agents to get you started. Tweak as you see fit.
+There are 2 Sample agents to get you started.
 
 - Agent_random samples the action space uniformly at random.
 - Agent_improved has built in logic to target the coins into the pocket, and performs significantly better than random.
