@@ -1,8 +1,14 @@
 Carrom_rl
 =========
+<<<<<<< HEAD
 A Carrom Simulator testbed for artificial intelligence .
 
 [![Gitter](https://badges.gitter.im/Carrom_rl/Lobby.svg)](https://gitter.im/Carrom_rl/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge)
+=======
+
+[![Join the chat at https://gitter.im/Carrom_rl/Lobby](https://badges.gitter.im/Carrom_rl/Lobby.svg)](https://gitter.im/Carrom_rl/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+> A Carrom Simulator testbed for artificial intelligence .
+>>>>>>> 4a353c1019656e524ed72fcfbab4c106f606b037
 
 ## Introduction
 
