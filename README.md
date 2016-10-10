@@ -35,7 +35,7 @@ It is a challenging domain:
 ## Rules
 We slightly modify the rules of the game.
 
-### Single Player Server
+### Single Player
 
 <img src="Images/p1.gif" width="300" height="300">
 
@@ -51,7 +51,7 @@ The goal of single player carrom is to design an agent, that clears the board as
 
 The simulation displays the current score of the player, and the time elapsed since the server was initialized.
 
-### Doubles Server
+### Doubles
 
 <img src="Images/p2.gif" width="300" height="300">
 
@@ -75,7 +75,9 @@ The simulation displays the current score of player 1 and player 2, and the time
 
 We formally define the carrom environment in the reinforcement learning context. The State is a list of current coin positions (x,y) coordinates returned to the user, and the current score of the player. If a coin is not present, it is assumed to be pocketed in one of the previous strikes. The state also includes the current score of the player. An example of the state is:
 
-'"State={'White_Locations': [(400,368),(437,420), (372,428),(337,367), (402,332), (463,367), (470,437), (405,474), (340,443)], 'Red_Location': [(400, 403)], 'Score': 0, 'Black_Locations': [(433,385),(405,437), (365,390), (370,350), (432,350), (467,402), (437,455), (370,465), (335,406)]}"'
+```
+"State={'White_Locations': [(400,368),(437,420), (372,428),(337,367), (402,332), (463,367), (470,437), (405,474), (340,443)], 'Red_Location': [(400, 403)], 'Score': 0, 'Black_Locations': [(433,385),(405,437), (365,390), (370,350), (432,350), (467,402), (437,455), (370,465), (335,406)]}"
+```
 
 It is returned in the form of a string to the agent, which must be parsed. The logic for parsing such a state is built in the sample agent for your reference. 
 
@@ -107,9 +109,38 @@ You will pass the action [0.8 * 3.14/2, 0.5, 0.7]. It will look like this:
 - The server also adds a zero mean gaussian noise to the actions.
 - If you are Player 2 - on the opposite side of the board, the state you recieve is "mirrored" assuming you are playing from player 1's perspective. You don't have to write separate agents for Player 1 and Player 2.
 - The server has a timeout of 0.5 seconds. If any agent does takes more time to send an action/sends an empty message, the other agent is considered the winner. In the single player case, it ends the game.
-- When a game finished, a log file is written in the format:
+- When a game finished, a log file is written in the format: "number_of_strikes real_time_taken" called logS1.txt in the single player case, and "number_of_strikes real_time_taken winner player_1_score player_2_score" called logS2.txt in the doubles case.
+-  The ports the agents use to connect to the server can be specified in the parameters. 
+
+#### Parameters
+The single player server takes the following parameters:
+```
+-v [1/0] -- Turn visualization on/off [Default: 0]
+-p [n] -- The port the agent connects to. Must enter a valid port [Default: 12121]
+-rr [1-20] -- Render rate, render every x frame. A higher number results in faster visualization, but choppy frames. Only used if -v is set to 1 [Default: 10]
+-s [1/0] -- Turn noise on/off. The final agent will be evaluated with noise. [Default: 1]
+-rs [n] -- A random seed passed to the server rng [Default: 0]
+
+```
+
+The doubles server takes the following parameters:
+```
+-v [1/0] -- Turn visualization on/off [Default: 0]
+-p1 [n] -- The port player 1(who strikes first) connects to. Must enter a valid port [Default: 12121]
+-p2 [n] -- The port player 2 connects to. Must enter a valid port [Default: 34343]
+-rr [1-20] -- Render rate, render every x frame. A higher number results in faster visualization, but choppy frames. Only used if -v is set to 1 [Default: 10]
+-s [1/0] -- Turn noise on/off. The final agent will be evaluated with noise. [Default: 1]
+-rs [n] -- A random seed passed to the server rng [Default: 0]
+
+```
+
 
 ### Sample Agents
+
+There are 2 Sample agents provided: Agent_random and Agent_improved.
+
+- Agent_random samples the action space uniformly at random.
+- Agent_improved has built in logic to target the coins into the pocket.
 
 
 ## Quick Start
@@ -139,9 +170,6 @@ python ServerP1.py -p1 12121 -p2 34343 -v 1
 python Agent_random.py -p 12121
 python Agent_improved.py -p 34343
 ```
-
-
-
 ## What to submit?
 
 Python is preferred. 
