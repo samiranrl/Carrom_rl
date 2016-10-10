@@ -177,7 +177,7 @@ python Agent_improved.py -p 34343
 ```
 ## What to submit?
 
-Agent code, and script to run it for single player and doubles. Python is preferred. If you are using another language, you must write the logic of connecting to the server on your own. You can use the sample agent as a template.
+Agent code, and script to run it, for single player and doubles. Python is preferred. If you are using another language, you must write the logic of connecting to the server on your own. You can use the sample agent as a template.
 
 
 ## To Do
