@@ -137,11 +137,16 @@ The doubles server takes the following parameters:
 
 ### Sample Agents
 
-There are 2 Sample agents provided: Agent_random and Agent_improved.
+There are 2 Sample agents provided to get you started. Tweak as you see fit.
 
 - Agent_random samples the action space uniformly at random.
 - Agent_improved has built in logic to target the coins into the pocket.
 
+The agents use one parameter:
+
+```
+-p [n] -- The port the agent connects to. Must enter a valid port [Default: 12121]
+```
 
 ## Quick Start
 
