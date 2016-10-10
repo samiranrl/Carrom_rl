@@ -37,7 +37,7 @@ We slightly modify the rules of the game.
 
 ### Single Player Server
 
-<img src="p1.gif" width="300" height="300">
+<img src="Images/p1.gif" width="300" height="300">
 
 The goal of single player carrom is to design an agent, that clears the board as fast as possible, adhering to the following rules:
 
@@ -53,7 +53,7 @@ The simulation displays the current score of the player, and the time elapsed si
 
 ### Doubles Server
 
-<img src="p2.gif" width="300" height="300">
+<img src="Images/p2.gif" width="300" height="300">
 
 The goal of doubles is to design an agent, that wins against an opponent in a game of carrom(by pocketing his coins first), adhering to the following rules:
 
@@ -92,9 +92,13 @@ The action is a three dimentional vector: [angle,position,force]
 
 Source: http://www.carrom.org/game/?subcat=11
 
-- force: The force with with you want to hit the striker. Accepts floats between [0-1] (normalized)
+- force: The force with with you want to hit the striker. Accepts floats between [0-1] (normalized). The maximimum force makes the striker cover a distance of 3.5 times the width of the board, starting from the center, striking the walls 4 times, and touching nothing else.
 
-example action
+For example, you want to play a shot from the centre of the board, with and angle of approximately 72 degrees and 70% of the maximum force.
+You will pass the action [0.8 * 3.14/2, 0.5, 0.7]. It will look like this:
+
+<img src="Images/example.gif" width="300" height="300">
+
 
 ### Server
 
@@ -118,7 +122,7 @@ Python is preferred.
 
 - Fix Theta 
 - Handle exceptions on closing the connection
-- Save Visualization to a file
+- Add replayer
 - Test if scores are updated properly
 - Refactoring and cleaning up code
 - SL-2 Machines
