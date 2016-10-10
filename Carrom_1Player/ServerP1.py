@@ -366,7 +366,7 @@ if __name__ == '__main__':
 
     print "Cleared Board in " + str(it)," turns."
     f=open("logS1.txt","a")
-    f.write(str(it)+" "+str(round(time.time()-t,0))+" "+str(Total_Ticks)+"\n")
+    f.write(str(it)+" "+str(round(time.time()-t,0))+"\n")
     f.close()
     don()
 
