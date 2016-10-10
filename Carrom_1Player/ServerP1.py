@@ -16,9 +16,13 @@ Total_Ticks=0
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-v', '--Visualization', dest="Vis", type=int,
+parser.add_argument('-v', '--visualization', dest="Vis", type=int,
                         default=0,
-                        help='Visualization')
+                        help='Visualization on/off')
+
+parser.add_argument('-rr', '--', dest="RENDER_RATE", type=int,
+                        default=10,
+                        help='Render every nth frame')
 
 parser.add_argument('-p', '--port', dest="PORT1", type=int,
                         default=12121,
@@ -35,7 +39,7 @@ parser.add_argument('-s', '--stochasticity', dest="stochasticity", type=int,
 
 args=parser.parse_args()
 
-
+RENDER_RATE=args.RENDER_RATE
 Vis=args.Vis
 PORT1=args.PORT1
 
@@ -73,7 +77,12 @@ def requestAction(conn1) :
         return data
     
 def sendState(state,conn1):
-    conn1.send(state)
+    try:
+        conn1.send(state)
+    except socket.error:
+        print "Aborting, player timeout"
+        sys.exit()
+
     return True
     
 '''
@@ -251,18 +260,16 @@ def don():
 
 def tuplise(s) :
 
-    return (float(s[0]),float(s[1]),float(s[2]))
-# There is a min force with which you hit the striker: You cant give up turn: Ask sir is correct
- 
-#SAMIRAN:IMPLEMENT last response of the agents are emplty.. account for that also
+    return (round(float(s[0]),4),round(float(s[1]),4),round(float(s[2]),4))
+
 def validate(action) :
     print "Action Recieved: ",action
     angle=action[0]
     position=action[1]
     force=action[2]
-    if angle<0 or angle >3.14*2:
+    if angle<0 or angle >3.14*2 or (angle<3.14*1.75 and angle>3.14*1.25):
         print "Invalid Angle, taking random angle"
-        angle=random.random()*2*3.14
+        angle=random.random()*3.14
     if position<0 or position>1:
         print "Invalid position, taking random position"
         position=random.random()    
@@ -312,10 +319,11 @@ if __name__ == '__main__':
         sendState(str(next_State) + ";REWARD" + str(reward1),conn1)
         s=requestAction(conn1)
         if not s :#response empty
-            print "Empty P1";
+            print "No response from player 1"
+            sys.exit()
         elif s == timeout_msg:
-            winner = 2
-            break
+            print "No response from player 1"
+            sys.exit()
         else :
             action=tuplise(s.replace(" ","").split(','))
             

@@ -18,11 +18,14 @@ parser.add_argument('-v', '--Visualization', dest="Vis", type=int,
 parser.add_argument('-p1', '--port1', dest="PORT1", type=int,
                         default=12121,
                         help='Port 1')
+
 parser.add_argument('-p2', '--port2', dest="PORT2", type=int,
                         default=34343,
                         help='Port 2')
 
-
+parser.add_argument('-rr', '--', dest="RENDER_RATE", type=int,
+                        default=10,
+                        help='Render every nth frame')
 
 parser.add_argument('-s', '--stochasticity', dest="stochasticity", type=int,
                         default=1,
@@ -35,6 +38,7 @@ parser.add_argument('-rs', '--random-seed', dest="RNG_SEED", type=int,
 
 args=parser.parse_args()
 
+RENDER_RATE=args.RENDER_RATE
 
 Vis=args.Vis
 PORT1=args.PORT1
@@ -85,7 +89,11 @@ def requestAction(conn1) :
         return data
     
 def sendState(state,conn1):
-    conn1.send(state)
+    try:
+        conn1.send(state)
+    except socket.error:
+        print "Player timeout"
+
     return True
     
 '''
@@ -99,9 +107,7 @@ Vis: Visualization? Will be handled later
 
 
 def Play(State,Player,action):
-    #print "Turn Started with Score: ", State["Score"]
-    #print "Coins: ", len(next_State["Black_Locations"]),len(next_State["White_Locations"]),len(next_State["Red_Location"])
-    
+  
 
     global Vis
     pygame.init()
@@ -293,7 +299,7 @@ def transform_action(action):
 
 def tuplise(s) :
     try:
-        return (float(s[0]),float(s[1]),float(s[2]))
+        return (round(float(s[0]),4),round(float(s[1]),4),round(float(s[2]),4))
     except:
         print "Invalid action, Taking Random"
         return (random.random()*2*3.14,random.random(),random.random())
@@ -305,9 +311,9 @@ def validate(action) :
     angle=action[0]
     position=action[1]
     force=action[2]
-    if angle<0 or angle >3.14*2:
+    if angle<0 or angle >3.14*2 or (angle<3.14*1.75 and angle>3.14*1.25):
         print "Invalid Angle, taking random angle"
-        angle=random.random()*2*3.14
+        angle=random.random()*3.14
     if position<0 or position>1:
         print "Invalid position, taking random position"
         position=random.random()    
@@ -373,9 +379,12 @@ if __name__ == '__main__':
         sendState(str(next_State) + ";REWARD" + str(reward1),conn1)
         s=requestAction(conn1)
         if not s :#response empty
-            print "Empty response from Player 1";
+            print "No response from player 1"
+            winner=2
+            break
         elif s == timeout_msg:
-            winner = 2
+            print "Timeout from player 1"
+            winner=2
             break
         else :
             action=tuplise(s.replace(" ","").split(','))
@@ -393,9 +402,12 @@ if __name__ == '__main__':
             sendState(str(next_State) + ";REWARD" + str(reward1),conn1)
             s=requestAction(conn1)
             if not s :#response empty
-                print "Empty response from Player 1";
+                print "No response from player 1"
+                winner=2
+                break
             elif s == timeout_msg:
-                winner = 2
+                print "Timeout from player 1"
+                winner=2
                 break
             else :
                 action=tuplise(s.replace(" ","").split(','))
@@ -421,12 +433,17 @@ if __name__ == '__main__':
         sendState(str(transform_state(next_State))+";REWARD" + str(reward2),conn2)
         s=requestAction(conn2)
         if not s: #response empty
-            print "Empty response from Player 2";
+            print "No response from Player 2";
+            winner=1
+            break
         elif s == timeout_msg:
+            print "Timeout from Player 2";
             winner = 1
             break
         else :
             action=transform_action(tuplise(s.replace(" ","").split(',')))
+
+
 
         next_State,Queen_Flag=Play(next_State,2,validate(action))
         print "Coins: ", len(next_State["Black_Locations"]),"B ", len(next_State["White_Locations"]),"W ",len(next_State["Red_Location"]),"R"
@@ -440,12 +457,15 @@ if __name__ == '__main__':
             sendState(str(transform_state(next_State))+";REWARD" + str(reward2),conn2)
             s=requestAction(conn2)
             if not s: #response empty
-                print "Empty response from Player 2";
+                print "No response from Player 2";
+                winner=1
+                break
             elif s == timeout_msg:
+                print "Timeout from Player 2";
                 winner = 1
                 break
             else :
-                action=transform_action( tuplise(s.replace(" ","").split(',')))
+                action=transform_action(tuplise(s.replace(" ","").split(',')))
 
             next_State,Queen_Flag=Play(next_State,2,validate(action))
             print "Coins: ", len(next_State["Black_Locations"]),"B ", len(next_State["White_Locations"]),"W ",len(next_State["Red_Location"]),"R"
@@ -485,8 +505,10 @@ if __name__ == '__main__':
         else:
             msg = "Draw"
 
-
-    print msg
+    try:
+        print msg
+    except NameError:
+        pass
     
     f=open("logS2.txt","a")
     f.write(str(it)+" "+str(round(time.time()-t,0))+" "+str(winner)+" "+str(score1)+" "+str(score2)+" "+str(Total_Ticks)+"\n")

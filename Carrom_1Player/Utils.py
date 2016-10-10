@@ -18,7 +18,7 @@ MIN_FORCE=1000 # Don't Touch
 MAX_FORCE=34000 # Don't Touch
 TIME_STEP=20.0 # (Lower is Faster) # Don't Touch 
 TICKS_LIMIT=3000 # Don't Touch
-RENDER_RATE=15 # Render a frame every x Ticks
+
 
 
 Board_Size=800

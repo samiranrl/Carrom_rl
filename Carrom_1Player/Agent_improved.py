@@ -126,7 +126,7 @@ while 1:
         else:
             a=None
         try:
-            print a + ":::" + str(to_hit) + "+++" + str(loc)
+            #print a + ":::" + str(to_hit) + "+++" + str(loc)
             s.send(a)
         except:
             print "Error in sending:",  a
