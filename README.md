@@ -106,7 +106,7 @@ You will pass the action [0.8 * 3.14/2, 0.5, 0.7]. It will look like this:
 - The server accepts four decimal places of precision. 
 - The server also adds a zero mean gaussian noise to the actions.
 - If you are Player 2 - on the opposite side of the board, the state you recieve is "mirrored" assuming you are playing from player 1's perspective. You don't have to write separate agents for Player 1 and Player 2.
-- The server has a timeout of 0.5 seconds. If any agent does takes more time to send an action, the other agent is considered as the winner. In the single player case, it ends the game.
+- The server has a timeout of 0.5 seconds. If any agent does takes more time to send an action/sends an empty message, the other agent is considered the winner. In the single player case, it ends the game.
 - When a game finished, a log file is written in the format:
 
 ### Sample Agents
@@ -151,14 +151,9 @@ Python is preferred.
 
 ## To Do
 
-- Fix Theta 
-- Handle exceptions on closing the connection
 - Add replayer
 - Test if scores are updated properly
 - Refactoring and cleaning up code
-- SL-2 Machines
-- Add visualization speedup parameter(with ranges)
-
 
 ## License
 
