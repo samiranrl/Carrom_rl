@@ -92,7 +92,7 @@ The action is a three dimentional vector: [angle,position,force]
 
 Source: http://www.carrom.org/game/?subcat=11
 
-- force: The force with with you want to hit the striker. Accepts floats between [0-1] (normalized). The maximimum force makes the striker cover a distance of 3.5 times the width of the board, starting from the center, striking the walls 4 times, and touching nothing else.
+- force: The force with with you want to hit the striker. Accepts floats between [0-1] (normalized). The maximimum force makes the striker cover a distance of 3.5 times the width of the board, starting from the center, striking the walls 4 times, and touching nothing else. There is a minimum force with which you strike (even if you pass 0)
 
 For example, you want to play a shot from the centre of the board, with and angle of approximately 72 degrees and 70% of the maximum force.
 You will pass the action [0.8 * 3.14/2, 0.5, 0.7]. It will look like this:
