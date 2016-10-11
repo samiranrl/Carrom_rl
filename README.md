@@ -87,8 +87,8 @@ It is returned in the form of a string to the agent, which must be parsed. The l
 
 The action is a three dimentional vector: [position,angle,force]
 
-- angle : The angle gives the direction (in degrees), where you want to hit the striker. Accepts floats in the range -45 to 225 (including boundaries)
 - position: The legally valid x position of the striker on the board. Accepts floats in the range 0-1 (normalized, including boundaries). 0 is the extreme left legal position, and 1 is the extreme right. 
+- angle : The angle gives the direction (in degrees), where you want to hit the striker. Accepts floats in the range -45 to 225 (including boundaries)
 - force: The fractional force with which you want to hit the striker. Accepts floats between 0-1 (normalized, including boundaries). The maximum force makes the striker cover a distance of 3.5 times the width of the board, starting from the center at an angle of 0, striking the walls 4 times, and touching nothing else. There is a minimum force with which you strike (even if you pass 0)
 
 The following examples demonstrate some shots you can perform:
