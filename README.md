@@ -195,7 +195,6 @@ The function for computing the next state, given a state and action is provided,
 ```
 cd Carrom_rl/One_Step/
 python simulation.py
-
 ```
 
 ## What to submit?
