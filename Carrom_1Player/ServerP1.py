@@ -267,7 +267,7 @@ def don():
 
 def tuplise(s) :
 
-    return (round(float(s[0]),4),round(float(s[1]),4),round(float(s[2]),4))
+    return (round(float(s[1]),4),round(float(s[0]),4),round(float(s[2]),4))
 
 def validate(action) :
     print "Action Recieved: ",action

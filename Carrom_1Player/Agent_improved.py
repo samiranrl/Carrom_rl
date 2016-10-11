@@ -121,7 +121,7 @@ while 1:
             if angle>=315 and angle<=360:
                 angle=angle-360
 
-            a=str(angle)+ ',' + str(float(x-170)/float(460))+','+str(0.5)
+            a=str(float(x-170)/float(460))+','+str(angle)+ ','+str(0.5)
 	    print a
             
             #a=str(angle)+ ',' + str(float(x-170)/float(460))+','+str(0.5)

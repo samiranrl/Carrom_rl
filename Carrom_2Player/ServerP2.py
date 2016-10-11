@@ -311,7 +311,7 @@ def transform_action(action):
 
 def tuplise(s) :
     try:
-        return (round(float(s[0]),4),round(float(s[1]),4),round(float(s[2]),4))
+        return (round(float(s[1]),4),round(float(s[0]),4),round(float(s[2]),4))
     except:
         print "Invalid action, Taking Random"
         return (random.random()*2*3.14,random.random(),random.random())
