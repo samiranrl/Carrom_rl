@@ -94,15 +94,17 @@ The action is a three dimentional vector: [angle,position,force]
 Examples: you want to play a shot from the center of the board with an angle of approximately 72 degrees and 70% of the maximum force.
 You will pass the action [72, 0.5, 0.7]. It will look like this:
 
-<img src="Images/example.gif" width="300" height="300">
+<img src="Images/example.gif" width="300" height="300"><img src="Images/example2.gif" width="300" height="300"><img src="Images/example3.gif" width="300" height="300">
 
 For the action [200,0.75,0.3]: 
 
-<img src="Images/example2.gif" width="300" height="300">
+
 
 For the action [-18,0,0.7]: 
 
-<img src="Images/example3.gif" width="300" height="300">
+[72, 0.5, 0.7] |[200,0.75,0.3] |  [-18,0,0.7]
+------------ | -------------  | -------------
+<img src="Images/example.gif" width="300" height="300">|<img src="Images/example.gif" width="300" height="300">|<img src="Images/example.gif" width="300" height="300">
 
 ### Server Rules
 
