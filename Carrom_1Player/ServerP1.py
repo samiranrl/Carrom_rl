@@ -372,7 +372,7 @@ if __name__ == '__main__':
             print " turns: "+str(it)
         if len(next_State["Black_Locations"])==0 and len(next_State["White_Locations"])==0:
             if len(next_State["Red_Location"])>0:
-                next_State("Black_Locations").append((400,400))
+                next_State["Black_Locations"].append((400,400))
                 next_State["Score"]-=1
                 print "Failed to clear queen, getting another turn"
             else:
