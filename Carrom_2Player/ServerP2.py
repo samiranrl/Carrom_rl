@@ -250,11 +250,15 @@ def Play(State,Player,action):
                         #Score-=3
 
             if (Queen_Pocketed==True and Foul==False):
-                if Score-prevScore>0:
-                    Score+=3
-                    print "Player " + str(Player) + ": Queen pocketed and covered in one shot"
-                else: 
-                    Queen_Flag=True
+                if len(State_new["Black_Locations"]) + len(State_new["White_Locations"]) == 18:
+                    print "The queen cannot be the first to be pocketed: Player ", Player
+                    State_new["Red_Location"].append((400,400))
+                else:
+                    if Score-prevScore>0:
+                        Score+=3
+                        print "Queen pocketed and covered in one shot"
+                    else:
+                        Queen_Flag=True
 
             
             print "Player " + str(Player) + ": Turn ended in ", Ticks, " Ticks"

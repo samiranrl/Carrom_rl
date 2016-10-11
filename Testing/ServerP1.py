@@ -308,7 +308,7 @@ if __name__ == '__main__':
     reward2 = 0
     score2 = 0
     #State={"Black_Locations":B,"White_Locations":W,"Red_Location":R,"Score":0, Message:" "}
-    State={'White_Locations': [(400,368),(437,420), (372,428),(337,367), (402,332), (463,367), (470,437), (405,474), (340,443)], 'Red_Location': [(400, 403)], 'Score': 0, 'Black_Locations': [(433,385),(405,437), (365,390), (370,350), (432,350), (467,402), (437,455), (370,465), (335,406)]}  
+    State={'White_Locations': [(700,700),(700,700), (700,700),(700,700),(700,700),(700,700),(700,700),(700,700),(700,700)], 'Red_Location': [(400, 403)], 'Score': 0, 'Black_Locations': [(700,700),(700,700),(700,700),(700,700),(700,700),(700,700),(700,700),(700,700),(700,700),]}  
     next_State=State
     # Black Coins, White Coins, Red Coin, VISualization : On/Off, Score, Flip the board? 0 - no 1 - yes
     it=1
