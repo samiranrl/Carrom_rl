@@ -19,7 +19,7 @@ Feedback is welcome. Enjoy!
 ![Carrom Board](https://i.ytimg.com/vi/LvryHWCgK0s/maxresdefault.jpg)
 Image Source: https://i.ytimg.com/vi/LvryHWCgK0s/maxresdefault.jpg
 
-The high-level objective is to use a striker disk with a flick of the finger to sink the lighter carrom men/coins, into one of the corner pockets. A carrom set contains 19 coins in three distinct colors: 18 white and black corresponding to each player and red for the queen. To win, you must pocket your own nine coins and the queen before your opponent. (The first player may only pocket white)
+The high-level objective is to use a striker disk with a flick of the finger to sink the lighter carrom men/coins, into one of the corner pockets. A carrom set contains 19 coins in three distinct colors: 9 white and 9 black corresponding to player 1 and player 2 respectively and red for the queen. To win, you must pocket your own nine coins and the queen before your opponent. (The first player may only pocket white)
 
 The full description and list of rules and regulations can be found at http://www.carrom.org/
 
