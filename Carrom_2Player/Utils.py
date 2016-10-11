@@ -25,7 +25,7 @@ Board_Size=800
 Board_Damping=0.95# Tune how much the velocity falls
 
 
-Board_Walls_Size=Board_Size*2/90
+Board_Walls_Size=Board_Size*2/75
 Board_Size_Walls_Elasticity=0.7
 
 Coin_Mass=1  ## weight is 5 grams but pymunk dont have any unit for mass ... set a value which suit other paramater 
@@ -91,7 +91,7 @@ def init_walls(space):  # Initializes the four outer walls of the board
 
 def init_holes(space):  # Initializes the four outer walls of the board
     Holes=[]
-    for i in [(39.1, 39.1),(760.9, 39.1),(760.9, 760.9),(39.1,760.9)]:
+    for i in [(44.1, 43.1),(756.5, 43),(756.5, 756.5),(44,756.5)]:
         inertia = pymunk.moment_for_circle(0.1, 0, Hole_Radius, (0,0))
         body = pymunk.Body(0.1, inertia)
         body.position = i

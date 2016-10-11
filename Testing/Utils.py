@@ -25,7 +25,7 @@ Board_Size=800
 Board_Damping=0.95# Tune how much the velocity falls
 
 
-Board_Walls_Size=Board_Size*2/90
+Board_Walls_Size=Board_Size*2/75
 Board_Size_Walls_Elasticity=0.7
 
 Coin_Mass=1  ## weight is 5 grams but pymunk dont have any unit for mass ... set a value which suit other paramater 

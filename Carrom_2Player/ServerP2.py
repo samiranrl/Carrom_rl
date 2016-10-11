@@ -207,8 +207,14 @@ def Play(State,Player,action):
 
         if Local_VIS==1:
             font = pygame.font.Font(None, 25)
-            text = font.render("Player 1: "+str(score1)+"     Player 2: "+str(score2)+"     TIME ELAPSED : "+ str(round(time.time()-t,2)) + "s", 1, (10, 10, 10))
-            screen.blit(text, (Board_Size/5,Board_Size/10,0,0))
+
+            text = font.render("Player 1 Score: "+str(score1), 1, (220, 220, 220))
+            screen.blit(text, (Board_Size/3 + 67,780,0,0))
+            text = font.render("Player 2 Score: "+str(score2), 1, (220, 220, 220))
+            screen.blit(text, (Board_Size/3 + 67,2,0,0))
+            text = font.render("Time Elapsed: "+str(round(time.time()-t,2)), 1, (50, 50, 50))
+            screen.blit(text, (Board_Size/3 + 57,25,0,0))
+
             if Ticks==1:
                 length=Striker_Radius+action[2]/500.0 # The length of the line denotes the action
                 startpos_x=action[1]
