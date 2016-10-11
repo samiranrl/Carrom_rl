@@ -95,7 +95,7 @@ The following examples demonstrate some shots you can perform:
 
 [72, 0.5, 0.7] |[200,0.75,0.3] |  [-18,0,0.7]
 ------------ | -------------  | -------------
-<img src="Images/example.gif" width="280" height="280">|<img src="Images/example.gif" width="280" height="280">|<img src="Images/example.gif" width="280" height="280">
+<img src="Images/example.gif" width="280" height="280">|<img src="Images/example2.gif" width="280" height="280">|<img src="Images/example3.gif" width="280" height="280">
 
 ### Server Rules
 
