@@ -377,7 +377,7 @@ if __name__ == '__main__':
 
     it=1
     
-    while it<400: # Number of Chances given to each player
+    while it<200: # Number of Chances given to each player
      
 
         it+=1
