@@ -316,7 +316,7 @@ if __name__ == '__main__':
     # Black Coins, White Coins, Red Coin, VISualization : On/Off, Score, Flip the board? 0 - no 1 - yes
     it=1
     
-    while it<100: # Number of Chances given to each player
+    while it<200: # Number of Chances given to each player
         it+=1
         prevScore = next_State["Score"]
         sendState(str(next_State) + ";REWARD" + str(reward1),conn1)

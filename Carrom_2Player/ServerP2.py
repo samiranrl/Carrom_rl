@@ -377,11 +377,8 @@ if __name__ == '__main__':
 
     it=1
     
-    while it<200: # Number of Chances given to each player
+    while it<400: # Number of Chances given to each player
      
-        if it>150:
-            global Vis
-            Vis=1 # To Be removed
 
         it+=1
 
