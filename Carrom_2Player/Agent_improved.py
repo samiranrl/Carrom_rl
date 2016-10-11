@@ -103,7 +103,7 @@ while 1:
 
             
         if  len(S["White_Locations"])!=0 or len(S["Black_Locations"])!=0 or len(S["Red_Location"])!=0:
-            if port==12122:
+            if port==12121:
                 to_hit_list=S["White_Locations"]+S["Red_Location"]
             else:
                 to_hit_list=S["Black_Locations"]+S["Red_Location"]
@@ -120,6 +120,9 @@ while 1:
             angle=math.atan2((to_hit[1]-loc[1]),(to_hit[0]-loc[0]))
             if angle < 0:
                 angle = angle + 2*3.14
+            angle=angle/3.14*180
+            if angle>=315 and angle<=360:
+                angle=angle-360
             
             a=str(angle)+ ',' + str(float(x-170)/float(460))+','+str(0.5)
                 #a=str(angle)+ ',' + str(float(x-170)/float(460))+','+str(random.random()/1.25) # Remove in actual test

@@ -302,8 +302,10 @@ def transform_state(state):
     return t_state
 
 def transform_action(action):
+    print "Recieved " , action[0]
+    print "Retuned", 360-action[0]
     
-    return (2*3.14 - action[0],action[1],action[2])
+    return (360 - action[0],action[1],action[2])
 
 
 
@@ -316,14 +318,21 @@ def tuplise(s) :
 # There is a min force with which you hit the striker: You cant give up turn: Ask sir is correct
  
 #SAMIRAN:IMPLEMENT last response of the agents are emplty.. account for that also
-def validate(action) :
-    #print "Action Recieved: ",action
+def validate(action, Player) :
+    print "Action Recieved: ",action
     angle=action[0]
     position=action[1]
     force=action[2]
-    if angle<0 or angle >3.14*2 or (angle<3.14*1.75 and angle>3.14*1.25):
-        print "Invalid Angle, taking random angle"
-        angle=random.random()*3.14
+    if (angle<-45 or angle >225) and Player==1:
+        print "Invalid Angle, taking random angle",
+        angle=random.randrange(-45,270)
+        print "which is ", angle
+    if (angle>45 and angle <135) and Player==2:
+        print "Invalid Angle, taking random angle",
+        angle=random.randrange(135,405)
+        if angle>360:
+            angle=angle-360
+        print "which is ", angle
     if position<0 or position>1:
         print "Invalid position, taking random position"
         position=random.random()    
@@ -331,12 +340,27 @@ def validate(action) :
         print "Invalid force, taking random position"
         force=random.random()  
     global Stochasticity
-       
-    angle=float(max(min(float(action[0]) + gauss(0,noise*360),360),0))
+    if Stochasticity==1 and Player==1:
+        angle=angle+randrange(-5,5)
+        if angle<-45:
+            angle=-45
+        if angle>225:
+            angle=225
+    if Stochasticity==1 and Player==1:
+        angle=angle+randrange(-5,5)
+        if angle>45:
+            angle=45
+        if angle<135:
+            angle=135
+
+    if angle<0:
+        angle=360+angle
+    angle=angle/180.0*3.14
     position=170+(float(max(min(float(action[1]) + gauss(0,noise),1),0))*(460))
     force=MIN_FORCE+float(max(min(float(action[2]) + gauss(0,noise),1),0))*MAX_FORCE
 
     action=(angle,position,force)
+    print "Final action", action
     return action
 
 if __name__ == '__main__':
@@ -395,7 +419,7 @@ if __name__ == '__main__':
             break
         else :
             action=tuplise(s.replace(" ","").split(','))
-        next_State,Queen_Flag=Play(next_State,1,validate(action))
+        next_State,Queen_Flag=Play(next_State,1,validate(action,1))
         print "Coins: ", len(next_State["Black_Locations"]),"B ", len(next_State["White_Locations"]),"W ",len(next_State["Red_Location"]),"R"
 
         reward1 = next_State["Score"] - prevScore
@@ -418,7 +442,7 @@ if __name__ == '__main__':
                 break
             else :
                 action=tuplise(s.replace(" ","").split(','))
-            next_State,Queen_Flag=Play(next_State,1,validate(action))
+            next_State,Queen_Flag=Play(next_State,1,validate(action,1))
             print "Coins: ", len(next_State["Black_Locations"]),"B ", len(next_State["White_Locations"]),"W ",len(next_State["Red_Location"]),"R"
 
 
@@ -452,7 +476,7 @@ if __name__ == '__main__':
 
 
 
-        next_State,Queen_Flag=Play(next_State,2,validate(action))
+        next_State,Queen_Flag=Play(next_State,2,validate(action,2))
         print "Coins: ", len(next_State["Black_Locations"]),"B ", len(next_State["White_Locations"]),"W ",len(next_State["Red_Location"]),"R"
 
         reward2 = next_State["Score"] - prevScore
@@ -474,7 +498,7 @@ if __name__ == '__main__':
             else :
                 action=transform_action(tuplise(s.replace(" ","").split(',')))
 
-            next_State,Queen_Flag=Play(next_State,2,validate(action))
+            next_State,Queen_Flag=Play(next_State,2,validate(action,2))
             print "Coins: ", len(next_State["Black_Locations"]),"B ", len(next_State["White_Locations"]),"W ",len(next_State["Red_Location"]),"R"
 
 

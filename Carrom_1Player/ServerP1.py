@@ -274,9 +274,10 @@ def validate(action) :
     angle=action[0]
     position=action[1]
     force=action[2]
-    if angle<0 or angle >3.14*2 or (angle<3.14*1.75 and angle>3.14*1.25):
-        print "Invalid Angle, taking random angle"
-        angle=random.random()*3.14
+    if angle<-45 or angle >225:
+        print "Invalid Angle, taking random angle",
+        angle=random.randrange(-45,270)
+        print "which is ", angle
     if position<0 or position>1:
         print "Invalid position, taking random position"
         position=random.random()    
@@ -284,12 +285,21 @@ def validate(action) :
         print "Invalid force, taking random position"
         force=random.random()  
     global Stochasticity
-       
-    angle=float(max(min(float(action[0]) + gauss(0,noise*360),360),0))
+    if Stochasticity==1:
+        angle=angle+randrange(-5,5)
+        if angle<-45:
+            angle=-45
+        if angle>225:
+            angle=225
+
+    if angle<0:
+        angle=360+angle
+    angle=angle/180.0*3.14
     position=170+(float(max(min(float(action[1]) + gauss(0,noise),1),0))*(460))
     force=MIN_FORCE+float(max(min(float(action[2]) + gauss(0,noise),1),0))*MAX_FORCE
 
     action=(angle,position,force)
+    #print "Final action", action
     return action
 
 if __name__ == '__main__':
