@@ -42,6 +42,7 @@ We slightly modify the rules of the game.
 The goal of single player carrom is to design an agent that clears the board as fast as possible, adhering to the following rules:
 
 - The player is allowed to pocket white and black coins. Each coin pocketed increases your score by 1.
+- You cannot pocket the queen unless you have pocketed another coin.
 - The queen must be pocketed before the last coin.
 - If all the coins are pocketed except the queen, one of the coins is taken out of the pocket and put in the center.
 - After pocketing the queen, you must sink one of your pieces, thereby 'covering' it, into any pocket in the next shot, or she is returned to the center spot.
@@ -58,7 +59,8 @@ The simulation displays the current score of the player, and the time elapsed si
 The goal of doubles is to design an agent, that wins against an opponent in a game of carrom, adhering to the following rules:
 
 - The player to start/break must target white coins only. The other player must target black. Players' score increases by 1 if they pocket their own coin. 
-- You get to strike in alternate turns unless you pocket the queen(see below)
+- You cannot pocket the queen unless you have pocketed another coin.
+- You get to strike in alternate turns unless you pocket the queen(see below)[Will be changed]
 - If the player pockets the opponent's coin, it counts as a foul. All coins pocketed that turn are kept in the center, and the score does not increase.
 - If all the coins are pocketed except the queen, the other player wins the match.
 - If you manage to pocket all of your own coins, and the opponent pockets and covers the queen, you win the match.
