@@ -115,7 +115,8 @@ You will pass the action [0.8 * 3.14/2, 0.5, 0.7]. It will look like this:
 "number_of_strikes real_time_taken winner player_1_score player_2_score \n" 
 ```
 - For single player, the server permits a maximum of 200 strikes. If the agent does not manage to clear the board, the game is treated as incomplete, and the log file is not written.
-- For doubles, the server permits a maximum of 200 strikes each. If any agent does not manage to clear the board, the game ends, and the player with the highest score is the winner. The log file is written.
+- For doubles, the server permits a maximum of 200 strikes(by any player). If the board is not cleared, the game ends, and the player with the highest score is the winner. The log file is written.
+
 
 
 #### Parameters
@@ -189,6 +190,7 @@ Agent code, and script to run it, for single player and doubles. Python is prefe
 ## To Do
 
 - Handle max strikes timeout in P1 and P2
+- Replace 3.14 by actual pi
 - Implement rule 2 - making sure it does not clash with above - Separately record p1 and p2 strikes
 - Add replayer
 - Test if scores are updated properly
