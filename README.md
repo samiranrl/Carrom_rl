@@ -85,21 +85,22 @@ It is returned in the form of a string to the agent, which must be parsed. The l
 
 ### Action
 
-The action is a three dimentional vector: [angle,position,force]
+The action is a three dimentional vector: [position,angle,force]
 
-- angle : The angle gives the direction (in radians), where you want to strike the striker. Accepts floats in the range -45 to 225 (including boundaries)
-- position: The legally valid x position of the striker on the board. Accepts floats in the range 0-1 (normalized, including boundaries). 0 is the extreme left position, and 1 is the extreme right. 
+- angle : The angle gives the direction (in degrees), where you want to hit the striker. Accepts floats in the range -45 to 225 (including boundaries)
+- position: The legally valid x position of the striker on the board. Accepts floats in the range 0-1 (normalized, including boundaries). 0 is the extreme left legal position, and 1 is the extreme right. 
 - force: The fractional force with which you want to hit the striker. Accepts floats between 0-1 (normalized, including boundaries). The maximum force makes the striker cover a distance of 3.5 times the width of the board, starting from the center at an angle of 0, striking the walls 4 times, and touching nothing else. There is a minimum force with which you strike (even if you pass 0)
 
 The following examples demonstrate some shots you can perform:
 
-[72, 0.5, 0.7] |[200,0.75,0.3] |  [-18,0,0.7]
+[0.5,72, 0.7] |[0.75,200,0.3] |  [0,-18,0.7]
 ------------ | -------------  | -------------
 <img src="Images/example.gif" width="280" height="280">|<img src="Images/example2.gif" width="280" height="280">|<img src="Images/example3.gif" width="280" height="280">
 
 ### Server Rules
 
-- If an illegal parameter is passed to the server, it generates it at uniformly at random.
+- If a certain parameter of an action is out of range, the server generates the parameter uniformly at random.
+- If the coin overlaps with the striker in the initial placement, the server generates a uniformly random free position.
 - For single player, the server permits a maximum of 200 strikes. If the agent does not manage to clear the board, the game is treated as incomplete, and the log file is not written.
 - The server accepts four decimal places of precision. 
 - The server also adds a zero mean gaussian noise to the actions. You can turn this off, but your final agent will be evaluated with noise.
@@ -119,7 +120,7 @@ The following examples demonstrate some shots you can perform:
 
 
 
-#### Parameters
+#### Server Parameters
 The single player server takes the following parameters:
 ```
 -v  [1/0] -- Turn visualization on/off [Default: 0]
@@ -140,7 +141,9 @@ The doubles server takes the following parameters:
 -rs [n] -- A random seed passed to the server rng [Default: 0]
 
 ```
+#### Configuration Parameters
 
+The parameters of the game such as friction, elasticity, dimentions and weights of objects, etc are coded in identical Utils.py for both Servers. Use this file as a reference. These parameters should not be changed, as agents must work using the parameters mentioned in the file.
 
 ### Sample Agents
 
@@ -165,23 +168,36 @@ sudo pip install pymunk
 ```
 
 Fork the repo/download it.
+
 ```
 git clone https://github.com/samiranrl/Carrom_rl.git
 ```
 
 Start the one player server. Server and agent must be launched from separate terminals.
+
 ```
 cd Carrom_rl/Carrom_1Player/
 python ServerP1.py -p 12121 -v 1
 python Agent_random.py -p 12121
 ```
+
 Start the doubles server. Server and agents must be launched from separate terminals.
+
 ```
 cd Carrom_rl/Carrom_2Player/
 python ServerP1.py -p1 12121 -p2 34343 -v 1
 python Agent_random.py -p 12121
 python Agent_improved.py -p 34343
 ```
+
+The function for computing the next state, given a state and action is provided, in case you want to compute one-step simulations. You can change the params.py file as required.
+
+```
+cd Carrom_rl/One_Step/
+python simulation.py
+
+```
+
 ## What to submit?
 
 Agent code, and script to run it, for single player and doubles. Python is preferred. If you are using another language, you must write the logic of connecting to the server on your own. You can use the sample agent as a template.
@@ -193,5 +209,5 @@ Agent code, and script to run it, for single player and doubles. Python is prefe
 - Replace 3.14 by actual pi
 - Implement rule 2 - making sure it does not clash with above - Separately record p1 and p2 strikes
 - Add replayer
-- Test if scores are updated properly
+- Test if scores are updated properly and clashing striker and coin positions
 - Refactoring and cleaning up code
