@@ -330,7 +330,7 @@ if __name__ == '__main__':
 
 
 
-    while it<200: # Number of Chances given to each player
+    while it<500: # Number of Chances given to each player
         it+=1
         prevScore = next_State["Score"]
         sendState(str(next_State) + ";REWARD" + str(reward1),conn1)

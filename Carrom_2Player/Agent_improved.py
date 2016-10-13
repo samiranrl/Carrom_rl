@@ -110,7 +110,10 @@ while 1:
             if len(to_hit_list) == 2 and len(S["Red_Location"])!=0 :
                 to_hit = S["Red_Location"][0]
             else :
-                to_hit = to_hit_list[get_coin_max_sep(to_hit_list)]
+                try:
+                    to_hit = to_hit_list[get_coin_max_sep(to_hit_list)]
+                except:
+                    to_hit = [(400,400)]
             hole,dist1 = find_nearest_hole(to_hit)
             angle_to_hole = math.atan2((to_hit[1]-hole[1]),(to_hit[0]-hole[0]))
             point_to_aim = ((to_hit[0]) - 20.6*math.cos(angle_to_hole),(to_hit[1]) - 20.6*math.sin(angle_to_hole))

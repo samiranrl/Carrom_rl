@@ -465,7 +465,7 @@ if __name__ == '__main__':
         reward1 = next_State["Score"] - prevScore
         prevScore = next_State["Score"]
         score1 = score1 + reward1
-        while Queen_Flag or reward1>0:
+        while Queen_Flag or reward1>0  and (len(next_State["Black_Locations"])!=0 and len(next_State["White_Locations"])!=0):
             if Queen_Flag==1:
                 print "Pocketed Queen, pocket any coin in this turn to cover it"
             prevScore = next_State["Score"]
@@ -482,13 +482,13 @@ if __name__ == '__main__':
                 break
             else :
                 action=tuplise(s.replace(" ","").split(','))
+            old_Queen_Flag=Queen_Flag
             next_State,Queen_Flag=Play(next_State,1,validate(action,1,next_State))
             print "Coins: ", len(next_State["Black_Locations"]),"B ", len(next_State["White_Locations"]),"W ",len(next_State["Red_Location"]),"R"
 
 
             reward1 = next_State["Score"] - prevScore
-            if Queen_Flag==1:
-
+            if old_Queen_Flag==1:
                 if reward1>0:
                     score1+=3
                     print "Sucessfully covered the queen"
@@ -497,9 +497,11 @@ if __name__ == '__main__':
                     next_State["Red_Location"].append(ret_pos(next_State))
             prevScore = next_State["Score"]
             score1 = score1 + reward1
+            if len(next_State["Black_Locations"])==0 or len(next_State["White_Locations"])==0:
+                break
 
 
-
+# Add authors
         if len(next_State["Black_Locations"])==0 or len(next_State["White_Locations"])==0:
             break
 
@@ -523,7 +525,7 @@ if __name__ == '__main__':
 
         reward2 = next_State["Score"] - prevScore
         score2 = score2 + reward2
-        while Queen_Flag or reward2>0:
+        while Queen_Flag or reward2>0 and  (len(next_State["Black_Locations"])!=0 and len(next_State["White_Locations"])!=0):
 
             prevScore = next_State["Score"]
             if Queen_Flag==1:
@@ -540,13 +542,13 @@ if __name__ == '__main__':
                 break
             else :
                 action=transform_action(tuplise(s.replace(" ","").split(',')))
-
+            old_Queen_Flag=Queen_Flag
             next_State,Queen_Flag=Play(next_State,2,validate(action,2,next_State))
             print "Coins: ", len(next_State["Black_Locations"]),"B ", len(next_State["White_Locations"]),"W ",len(next_State["Red_Location"]),"R"
 
 
             reward2 = next_State["Score"] - prevScore
-            if Queen_Flag==1:
+            if old_Queen_Flag==1:
 
                 if reward2>0:
                     score2+=3
@@ -555,6 +557,8 @@ if __name__ == '__main__':
                     print "Could not cover the queen"
                     next_State["Red_Location"].append(ret_pos(next_State))
             score2 = score2 + reward2
+            if len(next_State["Black_Locations"])==0 or len(next_State["White_Locations"])==0:
+                break
         
         print "P1 score: ",score1," P2 score: ", score2, " Turn "+str(it)
         print "Coins: ", len(next_State["Black_Locations"]),"B ", len(next_State["White_Locations"]),"W ",len(next_State["Red_Location"]),"R"
@@ -591,4 +595,4 @@ if __name__ == '__main__':
     f.close()
     don()
 
-
+# Generate Traces and report any inconsistencies
