@@ -202,21 +202,3 @@ python simulation.py
 ## What to submit?
 
 TBD
-
-
-
-## To Do
-
-- Pick empty positions uniformly at random
-- in single player case, write log file
-- Handle max strikes timeout in P1 and P2
-- collect data
-- Update readme with new rules
-- Replace 3.14 by actual pi
-- Add replayer
-- Test if scores are updated properly 
-- Refactoring and cleaning up code
-- remove evaluation scripts
-- hand coded agent
-- pass a parameter to the agent
-- shell script start agent.sh -1player -white -black -port
