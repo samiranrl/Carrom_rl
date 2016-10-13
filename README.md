@@ -101,7 +101,7 @@ The following examples demonstrate some shots you can perform:
 
 ### Server Rules
 
-- If a certain parameter of an action is out of range, the server generates the parameter uniformly at random.
+- If a certain parameter of an action is out of range, the server generates the parameter uniformly at random in the legal range.
 - If the coin overlaps with the striker in the initial placement, the server generates a uniformly random free position.
 - For single player, the server permits a maximum of 200 strikes. If the agent does not manage to clear the board, the game is treated as incomplete, and the log file is not written.
 - The server accepts four decimal places of precision. 
@@ -206,6 +206,8 @@ Agent code, and script to run it, for single player and doubles. Python is prefe
 
 ## To Do
 
+- Pick empty positions uniformly at random
+- in single player case, write log file
 - Handle max strikes timeout in P1 and P2
 - collect data
 - Update readme with new rules
@@ -213,3 +215,6 @@ Agent code, and script to run it, for single player and doubles. Python is prefe
 - Add replayer
 - Test if scores are updated properly 
 - Refactoring and cleaning up code
+- remove evaluation scripts
+- hand coded agent
+- pass a parameter to the agent
