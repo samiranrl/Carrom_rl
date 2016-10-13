@@ -1,4 +1,6 @@
 *.pyc
 Carrom_1Player/Agent_improved.py
 Carrom_2Player/Agent_improved.py
-Evaluation
+Evaluation/
+TODO.txt
+
