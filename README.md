@@ -207,8 +207,9 @@ Agent code, and script to run it, for single player and doubles. Python is prefe
 ## To Do
 
 - Handle max strikes timeout in P1 and P2
+- collect data
+- Update readme with new rules
 - Replace 3.14 by actual pi
-- Implement rule 2 - making sure it does not clash with above - Separately record p1 and p2 strikes
 - Add replayer
-- Test if scores are updated properly and clashing striker and coin positions
+- Test if scores are updated properly 
 - Refactoring and cleaning up code
