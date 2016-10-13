@@ -10,6 +10,7 @@ import os
 from math import sqrt,sin,cos,tan
 import ast
 from random import randrange
+from collections import OrderedDict
 
 # Global Variables
 
@@ -47,6 +48,8 @@ Red_Coin_Color=[169,53,53]
 Board_Walls_Color=[56,32,12]
 Board_Color=[242,209,158]
 
+initial = [(400, 403), (400, 368), (433, 385), (365, 390), (405, 437), (372, 428), (437, 420), (370, 350), (432, 350), (335, 406), (437, 455), (467, 402), (402, 332), (337, 367), (463, 367), (370, 465), (340, 443), (405, 474), (470, 437)]
+
 def parse_state_message(msg):
 
     s=msg.split(";REWARD")
@@ -55,12 +58,32 @@ def parse_state_message(msg):
     State=ast.literal_eval(s[0])
     return State, reward # Return next state and reward
 
-
-
-
-
+State={'White_Locations': [(400,368),(437,420), (372,428),(337,367), (402,332), (463,367), (470,437), (405,474), (340,443)], 'Red_Location': [(400, 403)], 'Score': 0, 'Black_Locations': [(433,385),(405,437), (365,390), (370,350), (432,350), (467,402), (437,455), (370,465), (335,406)]}  
 def dist(p1,p2):
-    return sqrt(pow(p1[0]-p2[0],2)+pow(p1[1]-p2[1],2))
+    return sqrt(pow(p1[0]-p2[0],2)+pow(p1[1]-p2[1],2))    
+
+
+
+def ret_pos(state):
+    s=state.copy()
+    try:
+        del s["Score"]
+    except KeyError:
+        pass
+    x = s.values()
+    x = reduce(lambda x,y: x+y,x)
+
+    for  i in initial:
+        free=1
+        for shape in x:
+            if dist(shape,i)<2*Coin_Radius:
+                free=0
+        if free==1:
+            return i
+
+
+    return initial[0]
+
 
 
 #N randomly generated coin positions around the center of the board
@@ -225,6 +248,10 @@ def init_coins(space,coords_black,coords_white,coord_red,passthrough):
     screen.fill((white))
     screen.blit(img,(0,0))
     pygame.display.flip()'''
+
+
+
+
 
 class Background(pygame.sprite.Sprite):
     def __init__(self, image_file, location):

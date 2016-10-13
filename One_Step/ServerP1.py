@@ -7,7 +7,7 @@ import os
 import pickle
 import argparse
 from random import gauss
-
+from random import randrange
 global Vis
 global Total_Ticks
 
@@ -15,41 +15,18 @@ Total_Ticks=0
 
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument('-v', '--visualization', dest="Vis", type=int,
-                        default=0,
-                        help='Visualization on/off')
 
-parser.add_argument('-rr', '--', dest="RENDER_RATE", type=int,
-                        default=10,
-                        help='Render every nth frame')
+# Parameters:
 
-parser.add_argument('-p', '--port', dest="PORT1", type=int,
-                        default=12121,
-                        help='Port for incoming connection')
-
-parser.add_argument('-rs', '--random-seed', dest="RNG_SEED", type=int,
-                        default=0,
-                        help='Random Seed')
-
-parser.add_argument('-s', '--stochasticity', dest="stochasticity", type=int,
-                        default=1,
-                        help='Turn Stochasticity on/off')
-
-
-args=parser.parse_args()
-
-RENDER_RATE=args.RENDER_RATE
-Vis=args.Vis
-PORT1=args.PORT1
-
-random.seed(args.RNG_SEED)
-HOST = '127.0.0.1'   # Symbolic name meaning all available interfaces
+RENDER_RATE=10
+Vis=1
+random.seed(0)
+Stochasticity=1
 
 t=time.time()
 
-global Stochasticity
-Stochasticity=args.stochasticity
+
+
 if Stochasticity==1:
     noise=0.0005
 else:
@@ -60,30 +37,13 @@ else:
 
 # Exception handlers here
 
-timeout_msg = "TIMED OUT"
-timeout_period = 0.5
 def is_Ended(space):
     for shape in space._get_shapes():
         if abs(shape.body.velocity[0])>Static_Velocity_Threshold or abs(shape.body.velocity[1])>Static_Velocity_Threshold:
             return False
     return True
 
-def requestAction(conn1) :
-    try : 
-        data=conn1.recv(1024)
-    except :
-        data = timeout_msg
-    finally :
-        return data
-    
-def sendState(state,conn1):
-    try:
-        conn1.send(state)
-    except socket.error:
-        print "Aborting, player timeout"
-        sys.exit()
 
-    return True
     
 '''
 Play S,A->S'
@@ -225,13 +185,13 @@ def Play(State,Player,action):
                 print "Foul!"
                 for coin in Pocketed:
                     if coin[0].color == Black_Coin_Color:
-                        State_new["Black_Locations"].append(ret_pos(State_new))
+                        State_new["Black_Locations"].append((400,400))
                         Score-=1
                     if coin[0].color == White_Coin_Color:
-                        State_new["White_Locations"].append(ret_pos(State_new))
+                        State_new["White_Locations"].append((400,400))
                         Score-=1
                     if coin[0].color == Red_Coin_Color:
-                        State_new["Red_Location"].append(ret_pos(State_new))
+                        State_new["Red_Location"].append((400,400))
                         #Score-=3
             # What will happen if there is a clash?? Fix it later
 
@@ -241,7 +201,7 @@ def Play(State,Player,action):
             if (Queen_Pocketed==True and Foul==False):
                 if len(State_new["Black_Locations"]) + len(State_new["White_Locations"]) == 18:
                     print "The queen cannot be the first to be pocketed: Player ", Player
-                    State_new["Red_Location"].append(ret_pos(State_new))
+                    State_new["Red_Location"].append((400,400))
                 else:
                     if Score-prevScore>0:
                         Score+=3
@@ -257,22 +217,10 @@ def Play(State,Player,action):
             return State_new,Queen_Flag
 
 
-
-def don():
-    s1.close()
-    conn1.close()
-    sys.exit()
-
-
-
-def tuplise(s) :
-
-    return (round(float(s[1]),4),round(float(s[0]),4),round(float(s[2]),4))
-
 def validate(action) :
     print "Action Recieved: ",action
-    angle=action[0]
-    position=action[1]
+    angle=action[1]
+    position=action[0]
     force=action[2]
     if angle<-45 or angle >225:
         print "Invalid Angle, taking random angle",
@@ -304,87 +252,7 @@ def validate(action) :
 
 if __name__ == '__main__':
 
-
-    s1=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    try:
-        s1.bind((HOST, PORT1))
-    except socket.error as msg:
-        print 'Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
-        sys.exit()
-    s1.listen(1)
-    conn1,addr1=s1.accept()
-    conn1.settimeout(timeout_period);
-    
-    winner = 0
-    reward1 = 0
-    score1 = 0
-    reward2 = 0
-    score2 = 0
-    #State={"Black_Locations":B,"White_Locations":W,"Red_Location":R,"Score":0, Message:" "}
     State={'White_Locations': [(400,368),(437,420), (372,428),(337,367), (402,332), (463,367), (470,437), (405,474), (340,443)], 'Red_Location': [(400, 403)], 'Score': 0, 'Black_Locations': [(433,385),(405,437), (365,390), (370,350), (432,350), (467,402), (437,455), (370,465), (335,406)]}  
-    next_State=State
-    # Black Coins, White Coins, Red Coin, VISualization : On/Off, Score, Flip the board? 0 - no 1 - yes
-    it=1
-
-
-
-
-
-    while it<200: # Number of Chances given to each player
-        it+=1
-        prevScore = next_State["Score"]
-        sendState(str(next_State) + ";REWARD" + str(reward1),conn1)
-        s=requestAction(conn1)
-        if not s :#response empty
-            print "No response from player 1"
-            sys.exit()
-        elif s == timeout_msg:
-            print "No response from player 1"
-            sys.exit()
-        else :
-            action=tuplise(s.replace(" ","").split(','))
-            
-        next_State,Queen_Flag=Play(next_State,1,validate(action))
-        reward1 = next_State["Score"] - prevScore
-        prevScore = next_State["Score"]
-        score1 += reward1
-        print " turns: "+str(it)
-        while Queen_Flag: # Extra turn
-
-            print "Pocketed Queen, pocket any coin in this turn to cover it"
-            it+=1
-            prevScore = next_State["Score"]
-            sendState(str(next_State) + ";REWARD" + str(reward1),conn1)
-            s=requestAction(conn1)
-            if not s :#response empty
-                print "Empty P1";
-            elif s == timeout_msg:
-                winner = 2
-                break
-            else :
-                action=tuplise(s.replace(" ","").split(','))    
-            next_State,Queen_Flag=Play(next_State,1,validate(action))
-            reward1 = next_State["Score"] - prevScore
-            prevScore = next_State["Score"]
-            if reward1>0:
-                next_State["Score"]+=3
-                print "Successfully covered the queen"
-            else:
-                print "Could not cover the queen"
-                next_State["Red_Location"].append(ret_pos(next_State))
-            score1+= reward1
-            print " turns: "+str(it)
-        if len(next_State["Black_Locations"])==0 and len(next_State["White_Locations"])==0:
-            if len(next_State["Red_Location"])>0:
-                next_State["Black_Locations"].append(ret_pos(next_State))
-                next_State["Score"]-=1
-                print "Failed to clear queen, getting another turn"
-            else:
-                break
-
-    print "Cleared Board in " + str(it)," turns."
-    f=open("logS1.txt","a")
-    f.write(str(it)+" "+str(round(time.time()-t,0))+"\n")
-    f.close()
-    don()
-
+    next_State=Play(State,1,validate([0.1,100,0.5]))
+    print next_State
+   

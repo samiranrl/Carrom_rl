@@ -246,19 +246,19 @@ def Play(State,Player,action):
             if Foul==True:
                 for coin in Pocketed:
                     if coin[0].color == Black_Coin_Color:
-                        State_new["Black_Locations"].append((400,400))
+                        State_new["Black_Locations"].append(ret_pos(State_new))
                         Score-=1
                     if coin[0].color == White_Coin_Color:
-                        State_new["White_Locations"].append((400,400))
+                        State_new["White_Locations"].append(ret_pos(State_new))
                         Score-=1
                     if coin[0].color == Red_Coin_Color:
-                        State_new["Red_Location"].append((400,400))
+                        State_new["Red_Location"].append(ret_pos(State_new))
                         #Score-=3
 
             if (Queen_Pocketed==True and Foul==False):
                 if len(State_new["Black_Locations"]) + len(State_new["White_Locations"]) == 18:
                     print "The queen cannot be the first to be pocketed: Player ", Player
-                    State_new["Red_Location"].append((400,400))
+                    State_new["Red_Location"].append(ret_pos(State_new))
                 else:
                     if Score-prevScore>0:
                         Score+=3
@@ -318,7 +318,7 @@ def tuplise(s) :
 # There is a min force with which you hit the striker: You cant give up turn: Ask sir is correct
  
 #SAMIRAN:IMPLEMENT last response of the agents are emplty.. account for that also
-def validate(action, Player) :
+def validate(action, Player, state) :
     print "Action Recieved: ",action
     angle=action[0]
     position=action[1]
@@ -335,29 +335,69 @@ def validate(action, Player) :
         print "which is ", angle
     if position<0 or position>1:
         print "Invalid position, taking random position"
-        position=random.random()    
+        position=random.random()
+
+
+    s=state.copy()
+    try:
+        del s["Score"]
+    except KeyError:
+        pass
+    x = s.values()
+    x = reduce(lambda x,y: x+y,x)
+
+
+
+
     if force<0 or force>1:
         print "Invalid force, taking random position"
         force=random.random()  
     global Stochasticity
+    if Stochasticity==1 and Player==2:
+        angle=angle+randrange(-5,5)
+        # if angle<-45:
+        #     angle=-45
+        # if angle>225:
+        #     angle=225
     if Stochasticity==1 and Player==1:
         angle=angle+randrange(-5,5)
-        if angle<-45:
-            angle=-45
-        if angle>225:
-            angle=225
-    if Stochasticity==1 and Player==1:
-        angle=angle+randrange(-5,5)
-        if angle>45:
-            angle=45
-        if angle<135:
-            angle=135
-
+        # if angle>45:
+        #     angle=45
+        # if angle<135:
+        #     angle=135
+    print ""
     if angle<0:
         angle=360+angle
     angle=angle/180.0*3.14
     position=170+(float(max(min(float(action[1]) + gauss(0,noise),1),0))*(460))
     force=MIN_FORCE+float(max(min(float(action[2]) + gauss(0,noise),1),0))*MAX_FORCE
+     
+    if Player==1: 
+        check = 0
+        fuse=10
+        while check==0 and fuse>0:
+            fuse-=1
+            check=1
+            
+            for i in x:
+                if dist((position,145),i)<Striker_Radius+Coin_Radius:
+                    check=0
+                    print "Position ",(position,145)," clashing with a coin, taking random"
+                    position=170+(float(max(min(float(random.random()) + gauss(0,noise),1),0))*(460))
+    if Player==2: 
+        check = 0
+        fuse=10
+        while check==0 and fuse>0:
+            fuse-=1
+            check=1
+            
+            for i in x:
+                if dist((position,Board_Size - 136),i)<Striker_Radius+Coin_Radius:
+                    check=0
+                    print "Position ",(position,145)," clashing with a coin, taking random"
+                    position=170+(float(max(min(float(random.random()) + gauss(0,noise),1),0))*(460))
+
+
 
     action=(angle,position,force)
     print "Final action", action
@@ -419,15 +459,15 @@ if __name__ == '__main__':
             break
         else :
             action=tuplise(s.replace(" ","").split(','))
-        next_State,Queen_Flag=Play(next_State,1,validate(action,1))
+        next_State,Queen_Flag=Play(next_State,1,validate(action,1,next_State))
         print "Coins: ", len(next_State["Black_Locations"]),"B ", len(next_State["White_Locations"]),"W ",len(next_State["Red_Location"]),"R"
 
         reward1 = next_State["Score"] - prevScore
         prevScore = next_State["Score"]
         score1 = score1 + reward1
-        if Queen_Flag:
-
-            print "Pocketed Queen, pocket any coin in this turn to cover it"
+        while Queen_Flag or reward1>0:
+            if Queen_Flag==1:
+                print "Pocketed Queen, pocket any coin in this turn to cover it"
             prevScore = next_State["Score"]
 
             sendState(str(next_State) + ";REWARD" + str(reward1),conn1)
@@ -442,17 +482,19 @@ if __name__ == '__main__':
                 break
             else :
                 action=tuplise(s.replace(" ","").split(','))
-            next_State,Queen_Flag=Play(next_State,1,validate(action,1))
+            next_State,Queen_Flag=Play(next_State,1,validate(action,1,next_State))
             print "Coins: ", len(next_State["Black_Locations"]),"B ", len(next_State["White_Locations"]),"W ",len(next_State["Red_Location"]),"R"
 
 
             reward1 = next_State["Score"] - prevScore
-            if reward1>0:
-                score1+=3
-                print "Sucessfully covered the queen"
-            else:
-                print "Could not cover the queen"
-                next_State["Red_Location"].append((400,400))
+            if Queen_Flag==1:
+
+                if reward1>0:
+                    score1+=3
+                    print "Sucessfully covered the queen"
+                else:
+                    print "Could not cover the queen"
+                    next_State["Red_Location"].append(ret_pos(next_State))
             prevScore = next_State["Score"]
             score1 = score1 + reward1
 
@@ -476,15 +518,16 @@ if __name__ == '__main__':
 
 
 
-        next_State,Queen_Flag=Play(next_State,2,validate(action,2))
+        next_State,Queen_Flag=Play(next_State,2,validate(action,2,next_State))
         print "Coins: ", len(next_State["Black_Locations"]),"B ", len(next_State["White_Locations"]),"W ",len(next_State["Red_Location"]),"R"
 
         reward2 = next_State["Score"] - prevScore
         score2 = score2 + reward2
-        if Queen_Flag:
+        while Queen_Flag or reward2>0:
 
             prevScore = next_State["Score"]
-            print "Pocketed Queen, pocket any coin in this turn to cover it"
+            if Queen_Flag==1:
+                print "Pocketed Queen, pocket any coin in this turn to cover it"
             sendState(str(transform_state(next_State))+";REWARD" + str(reward2),conn2)
             s=requestAction(conn2)
             if not s: #response empty
@@ -498,17 +541,19 @@ if __name__ == '__main__':
             else :
                 action=transform_action(tuplise(s.replace(" ","").split(',')))
 
-            next_State,Queen_Flag=Play(next_State,2,validate(action,2))
+            next_State,Queen_Flag=Play(next_State,2,validate(action,2,next_State))
             print "Coins: ", len(next_State["Black_Locations"]),"B ", len(next_State["White_Locations"]),"W ",len(next_State["Red_Location"]),"R"
 
 
             reward2 = next_State["Score"] - prevScore
-            if reward2>0:
-                score2+=3
-                print "Successfully covered the queen"
-            else:
-                print "Could not cover the queen"
-                next_State["Red_Location"].append((400,400))
+            if Queen_Flag==1:
+
+                if reward2>0:
+                    score2+=3
+                    print "Successfully covered the queen"
+                else:
+                    print "Could not cover the queen"
+                    next_State["Red_Location"].append(ret_pos(next_State))
             score2 = score2 + reward2
         
         print "P1 score: ",score1," P2 score: ", score2, " Turn "+str(it)

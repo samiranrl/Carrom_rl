@@ -103,7 +103,7 @@ while 1:
 
             
         if  len(S["White_Locations"])!=0 or len(S["Black_Locations"])!=0 or len(S["Red_Location"])!=0:
-            if port==12121:
+            if port%2==1:
                 to_hit_list=S["White_Locations"]+S["Red_Location"]
             else:
                 to_hit_list=S["Black_Locations"]+S["Red_Location"]
