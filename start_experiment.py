@@ -8,7 +8,7 @@ parser.add_argument('-np', '--num-players', dest="NUM_PLAYERS", type=int,
 
 parser.add_argument('-ne', '--num-experiments', dest="NUM_EXPERIMENTS", type=int,
                         default=1,
-                        help='1 Player or 2 Player')
+                        help='Number of experiments to run')
 
 parser.add_argument('-v', '--Visualization', dest="VIS", type=int,
                         default=0,
@@ -53,12 +53,15 @@ rng=args.RNG_SEED
 noise=args.NOISE
 a1=args.A1
 a2=args.A2
-
+ne=args.NUM_EXPERIMENTS
 
 
 for i in range(0,args.NUM_EXPERIMENTS) :
     try:
+        if ne>1:
+            rng=i
         if num_players==1:
+
             cmd='python 1_player_server/start_server.py'+' -v '+str(vis)+' -rr '+str(render_rate)+' -n '+str(noise)+' -p '+str(port1)+' -rs '+str(rng)
             cmd = os.path.join(cmd)
             print cmd
