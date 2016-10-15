@@ -11,7 +11,7 @@ An open source Carrom Simulator interface for testing intelligent/learning agent
 
 This is the 1.0 release of Carrom_rl - A Carrom Simulator, which provides an interface that allows you to design agents that that play carrom. It is built in python, using pygame + pymunk. This is the course project for [CS 747 - Foundations of Intelligent and Learning Agents](https://www.cse.iitb.ac.in/~shivaram/teaching/cs747-a2016/index.html), taught by [Prof. Shivaram Kalyanakrishnan](https://www.cse.iitb.ac.in/~shivaram/) at IIT Bombay.
 
-Bugs can be reported [here](https://github.com/samiranrl/Carrom_rl/issues).
+Please report bugs [here](https://github.com/samiranrl/Carrom_rl/issues), along with steps to reproduce it.
 Feedback is welcome. Enjoy!
 
 ## Carrom
@@ -60,7 +60,6 @@ The goal of doubles is to design an agent, that wins against an opponent in a ga
 
 - The player to start/break must target white coins only. The other player must target black. Players' score increases by 1 if they pocket their own coin. 
 - You cannot pocket the queen unless you have pocketed another coin.
-- You get to strike in alternate turns unless you pocket the queen(see below)[Will be changed]
 - If the player pockets the opponent's coin, it counts as a foul. All coins pocketed that turn are kept in the center, and the score does not increase.
 - If all the coins are pocketed except the queen, the other player wins the match.
 - If you manage to pocket all of your own coins, and the opponent pockets and covers the queen, you win the match.
@@ -105,60 +104,59 @@ The following examples demonstrate some shots you can perform:
 - If the coin overlaps with the striker in the initial placement, the server generates a uniformly random free position.
 - For single player, the server permits a maximum of 200 strikes. If the agent does not manage to clear the board, the game is treated as incomplete, and the log file is not written.
 - The server accepts four decimal places of precision. 
-- The server also adds a zero mean gaussian noise to the actions. You can turn this off, but your final agent will be evaluated with noise.
+- The server also adds a zero mean gaussian noise to the actions of std 0.005 to the position, 2 to the angle, 0.01 to the force.
 - If you are Player 2 - on the opposite side of the board, the state you receive is "mirrored" assuming you are playing from Player 1's perspective. You don't have to write separate agents for Player 1 and Player 2.
 - The server has a timeout of 0.5 seconds. If any agent takes more time to send an action/sends an empty message, it is disqualified, and the other agent is considered the winner. In the single player case, it ends the game.
 -  The ports the agents use to connect to the server can be specified in the parameters. 
-- For single player, when the game finishes, a log file [logS1.txt] is appended with the following:
+- For single player, when the game finishes, a log file [S1_log] is appended with the following:
 ```
 "number_of_strikes real_time_taken \n"
 ```
-- Similarly, for doubles, a log file [logS2.txt] is appended with the following:
+- Similarly, for doubles, a log file [S2_log] is appended with the following:
 ```
 "number_of_strikes real_time_taken winner player_1_score player_2_score \n" 
 ```
-- For single player, the server permits a maximum of 200 strikes. If the agent does not manage to clear the board, the game is treated as incomplete, and the log file is not written.
+- For single player, the server permits a maximum of 500 strikes. If the agent does not manage to clear the board, the game is treated as incomplete, and the log file is not written.
 - For doubles, the server permits a maximum of 200 strikes(by any player). If the board is not cleared, the game ends, and the player with the highest score is the winner. The log file is written.
 
 
 
-#### Server Parameters
-The single player server takes the following parameters:
-```
--v  [1/0] -- Turn visualization on/off [Default: 0]
--p  [n] -- The port the agent connects to. Must enter a valid port [Default: 12121]
--rr [1-20] -- Render rate, render every x frame. A higher number results in faster visualization, but choppy frames. Only used if -v is set to 1 [Default: 10]
--s  [1/0] -- Turn noise on/off. The final agent will be evaluated with noise. [Default: 1]
--rs [n] -- A random seed passed to the server rng [Default: 0]
-
-```
-
-The doubles server takes the following parameters:
-```
--v  [1/0]  -- Turn visualization on/off [Default: 0]
--p1 [n]  -- The port player 1(who strikes first) connects to. Must enter a valid port [Default: 12121]
--p2 [n] -- The port player 2 connects to. Must enter a valid port [Default: 34343]
--rr [1-20] -- Render rate, render every x frame. A higher number results in faster visualization, but choppy frames. Only used if -v is set to 1 [Default: 10]
--s  [1/0] -- Turn noise on/off. The final agent will be evaluated with noise. [Default: 1]
--rs [n] -- A random seed passed to the server rng [Default: 0]
-
-```
 #### Configuration Parameters
 
 The parameters of the game such as friction, elasticity, dimensions and weights of objects, etc are coded in identical Utils.py for both Servers. Use this file as a reference. These parameters should not be changed, as agents must work using the parameters mentioned in the file.
 
-### Sample Agents
+### Agent parameters
 
-There are 2 Sample agents to get you started.
+There is one sample agent to get you started.
 
-- Agent_random samples the action space uniformly at random.
-- Agent_improved has built in logic to target the coins into the pocket, and performs significantly better than random.
+start_agent.py samples the action space uniformly at random.
 
-The agents use one parameter:
+The agent is automatically called using start_experiment.py. It is the following parameters:
 
 ```
--p [n] -- The port the agent connects to. Must enter a valid port [Default: 12121]
+-np [1/2] -- 1 Player or 2 Player Carrom [Default: 1]
+-p  [n] -- The port the agent connects to. Must enter a valid port [Default: 12121]
+-rs [n] -- A random seed passed to the server rng [Default: 0]
+-c ["Black"/"White"] -- The color you have to target [Default: 0]
+
 ```
+The agent is not called with these parameters explicitly. This is taken care of in the next section. These parameters are passed to the agent to disambiguate between 1 player and 2 player games, and to inform the agent whether it is player 1 or 2. A seed is passed to the agent. You must initialize your rng with this seed, to make your results reproducible and consistent across several runs. If in doubt, look at the sample agent provided.
+
+#### Experiment Parameters
+The experiment is controlled by the parameters passed to start_experiment.py:
+```
+-np [1/2] -- 1 Player or 2 Player Carrom [Default: 1]
+-ne [n] -- Number of experiments to run [Default: 1]
+-v  [1/0] -- Turn visualization on/off [Default: 0]
+-p1  [n] -- The port player 1 agent connects to. Must enter a valid port [Default: 12121]
+-p2  [n] -- The port player 2 agent connects to. Must enter a valid port [Default: 34343]
+-rr [1-20] -- Render rate, render every x frame. A higher number results in faster visualization, but choppy frames. Only used if -v is set to 1 [Default: 10]
+-n  [1/0] -- Turn noise on/off. The final agent will be evaluated with noise. [Default: 1]
+-rs [n] -- A random seed passed to the server rng [Default: 0]
+-a1 [file_path] -- relative/full path to player 1 agent [Default: carrom_agent/start_agent.py]
+-a1 [file_path] -- relative/full path to player 2 agent [Default: carrom_agent/start_agent.py]
+```
+
 
 ## Quick Start
 
@@ -167,38 +165,36 @@ Install main dependences: pygame (1.9.2) and pymunk (5.0)
 sudo apt-get install python-pip
 sudo pip install pygame
 sudo pip install pymunk
+
 ```
 
 Fork the repo/download it.
 
 ```
 git clone https://github.com/samiranrl/Carrom_rl.git
-```
-
-Start the one player server. Server and agent must be launched from separate terminals.
 
 ```
-cd Carrom_rl/Carrom_1Player/
-python ServerP1.py -p 12121 -v 1
-python Agent_random.py -p 12121
-```
 
-Start the doubles server. Server and agents must be launched from separate terminals.
+Perform the experiment with 1 player Carrom
 
 ```
-cd Carrom_rl/Carrom_2Player/
-python ServerP1.py -p1 12121 -p2 34343 -v 1
-python Agent_random.py -p 12121
-python Agent_improved.py -p 34343
-```
+cd Carrom_rl/
+python start_experiment.sh -v 1
 
-The function for computing the next state, given a state and action is provided, in case you want to compute one-step simulations. You can change the params.py file as required.
+```
+Perform the experiment with 2 player Carrom
+
+```
+cd Carrom_rl/
+python start_experiment.sh -v 1 -np 2
+```
 
 ```
 cd Carrom_rl/One_Step/
 python simulation.py
+
 ```
 
 ## What to submit?
 
-TBD
+Please look at README.txt
