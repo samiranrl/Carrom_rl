@@ -155,7 +155,7 @@ The experiment is controlled by the parameters passed to start_experiment.py
 -n  [1/0] -- Turn noise on/off. The final agent will be evaluated with noise. [Default: 1]
 -rs [n] -- A random seed passed to the server rng [Default: 0]
 -a1 [file_path] -- relative/full path to player 1 agent [Default: carrom_agent/start_agent.py]
--a1 [file_path] -- relative/full path to player 2 agent [Default: carrom_agent/start_agent.py]
+-a2 [file_path] -- relative/full path to player 2 agent [Default: carrom_agent/start_agent.py]
 ```
 
 
