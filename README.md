@@ -31,7 +31,9 @@ It is a challenging domain:
 - The action space is continuous, with added noise
 - The agent must adhere to the rules of carrom
 - In the two-player case, the agent must plan a strategy against an adversary
-- In 2v2 Carrom you must cooperate with another agent against multiple adversaries, a multi-agent system.
+- In 2v2 Carrom you must cooperate with another agent
+
+In short, it is a multi-agent adversarial game with continious state and action spaces, with complex rules that cannot be intuited by the reward structure.
 
 ## Rules
 We slightly modify the rules of the game.
