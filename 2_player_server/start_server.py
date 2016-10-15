@@ -27,14 +27,15 @@ parser.add_argument('-rr', '--', dest="RENDER_RATE", type=int,
                         default=10,
                         help='Render every nth frame')
 
-parser.add_argument('-s', '--stochasticity', dest="stochasticity", type=int,
-                        default=1,
-                        help='Turn Stochasticity on/off')
+
 
 parser.add_argument('-rs', '--random-seed', dest="RNG_SEED", type=int,
                         default=0,
                         help='Random Seed')
 
+parser.add_argument('-n', '--noise', dest="NOISE", type=int,
+                        default=1,
+                        help='Turn noise on/off')
 
 args=parser.parse_args()
 
@@ -62,11 +63,16 @@ Total_Ticks=0
 
 
 global Stochasticity
-Stochasticity=args.stochasticity
+Stochasticity=args.NOISE
 if Stochasticity==1:
-    noise=0.0005
+    noise1=0.005
+    noise2=0.01
+    noise3=2
 else:
-    noise=0
+    noise1=0
+    noise2=0
+    noise3=0
+
 
 # Handle exceptions here
 
@@ -302,8 +308,8 @@ def transform_state(state):
     return t_state
 
 def transform_action(action):
-    print "Recieved " , action[0]
-    print "Retuned", 360-action[0]
+    #print "Recieved " , action[0]
+    #print "Retuned", 360-action[0]
     
     return (360 - action[0],action[1],action[2])
 
@@ -319,7 +325,7 @@ def tuplise(s) :
  
 #SAMIRAN:IMPLEMENT last response of the agents are emplty.. account for that also
 def validate(action, Player, state) :
-    print "Action Recieved: ",action
+    #print "Action Recieved: ",action
     angle=action[0]
     position=action[1]
     force=action[2]
@@ -360,17 +366,16 @@ def validate(action, Player, state) :
         # if angle>225:
         #     angle=225
     if Stochasticity==1 and Player==1:
-        angle=angle+randrange(-5,5)
+        angle=angle+(random.choice([-1,1])*gauss(0,noise3))
         # if angle>45:
         #     angle=45
         # if angle<135:
         #     angle=135
-    print ""
     if angle<0:
         angle=360+angle
     angle=angle/180.0*3.14
-    position=170+(float(max(min(float(action[1]) + gauss(0,noise),1),0))*(460))
-    force=MIN_FORCE+float(max(min(float(action[2]) + gauss(0,noise),1),0))*MAX_FORCE
+    position=170+(float(max(min(float(action[1]) + gauss(0,noise2),1),0))*(460))
+    force=MIN_FORCE+float(max(min(float(action[2]) + gauss(0,noise3),1),0))*MAX_FORCE
      
     if Player==1: 
         check = 0
@@ -383,7 +388,7 @@ def validate(action, Player, state) :
                 if dist((position,145),i)<Striker_Radius+Coin_Radius:
                     check=0
                     print "Position ",(position,145)," clashing with a coin, taking random"
-                    position=170+(float(max(min(float(random.random()) + gauss(0,noise),1),0))*(460))
+                    position=170+(float(max(min(float(random.random()) + gauss(0,noise1),1),0))*(460))
     if Player==2: 
         check = 0
         fuse=10
@@ -395,12 +400,12 @@ def validate(action, Player, state) :
                 if dist((position,Board_Size - 136),i)<Striker_Radius+Coin_Radius:
                     check=0
                     print "Position ",(position,145)," clashing with a coin, taking random"
-                    position=170+(float(max(min(float(random.random()) + gauss(0,noise),1),0))*(460))
+                    position=170+(float(max(min(float(random.random()) + gauss(0,noise1),1),0))*(460))
 
 
 
     action=(angle,position,force)
-    print "Final action", action
+    #print "Final action", action
     return action
 
 if __name__ == '__main__':
@@ -585,12 +590,9 @@ if __name__ == '__main__':
         else:
             msg = "Draw"
 
-    try:
-        print msg
-    except NameError:
-        pass
+
     
-    f=open("logS2.txt","a")
+    f=open("S2_log","a")
     f.write(str(it)+" "+str(round(time.time()-t,0))+" "+str(winner)+" "+str(score1)+" "+str(score2)+"\n")
     f.close()
     don()
