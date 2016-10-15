@@ -171,7 +171,6 @@ Fork the repo/download it.
 
 ```
 git clone https://github.com/samiranrl/Carrom_rl.git
-
 ```
 
 Perform the experiment with 1 player Carrom
