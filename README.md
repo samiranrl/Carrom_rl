@@ -194,4 +194,4 @@ python simulation.py
 
 ## What to submit?
 
-Please look at README.txt
+Please take a look at Readme.txt
