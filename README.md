@@ -30,7 +30,8 @@ It is a challenging domain:
 - The state space is continuous
 - The action space is continuous, with added noise
 - The agent must adhere to the rules of carrom
-- In the two-player case, the agent must plan a strategy against an adversary, a multi-agent system.
+- In the two-player case, the agent must plan a strategy against an adversary
+- In 2v2 Carrom you must cooperate with another agent against multiple adversaries, a multi-agent system.
 
 ## Rules
 We slightly modify the rules of the game.
