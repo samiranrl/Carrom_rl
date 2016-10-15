@@ -105,7 +105,6 @@ The following examples demonstrate some shots you can perform:
 
 - If a certain parameter of an action is out of range, the server generates the parameter uniformly at random in the legal range.
 - If the coin overlaps with the striker in the initial placement, the server generates a uniformly random free position.
-- For single player, the server permits a maximum of 200 strikes. If the agent does not manage to clear the board, the game is treated as incomplete, and the log file is not written.
 - The server accepts four decimal places of precision. 
 - The server also adds a zero mean gaussian noise to the actions of std 0.005 to the position, 2 to the angle, 0.01 to the force.
 - If you are Player 2 - on the opposite side of the board, the state you receive is "mirrored" assuming you are playing from Player 1's perspective. You don't have to write separate agents for Player 1 and Player 2.
