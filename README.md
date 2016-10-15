@@ -25,7 +25,7 @@ The full description and list of rules and regulations can be found at http://ww
 
 ### Why Carrom? 
 
-It is a challenging domain:
+It is an exciting and challenging domain:
 
 - The state space is continuous
 - The action space is continuous, with added noise
@@ -33,7 +33,7 @@ It is a challenging domain:
 - In the two-player case, the agent must plan a strategy against an adversary
 - In 2v2 Carrom you must cooperate with another agent
 
-In short, it is a multi-agent adversarial game with continious state and action spaces, with complex rules that cannot be intuited by the reward structure.
+It is a multi-agent adversarial game with continious state and action spaces, with noise added in the actions, with complex rules that cannot be intuited by the reward structure.
 
 ## Rules
 We slightly modify the rules of the game.
