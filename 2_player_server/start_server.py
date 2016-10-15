@@ -374,8 +374,8 @@ def validate(action, Player, state) :
     if angle<0:
         angle=360+angle
     angle=angle/180.0*3.14
-    position=170+(float(max(min(float(action[1]) + gauss(0,noise2),1),0))*(460))
-    force=MIN_FORCE+float(max(min(float(action[2]) + gauss(0,noise3),1),0))*MAX_FORCE
+    position=170+(float(max(min(position+ gauss(0,noise2),1),0))*(460))
+    force=MIN_FORCE+float(max(min(force + gauss(0,noise3),1),0))*MAX_FORCE
      
     if Player==1: 
         check = 0

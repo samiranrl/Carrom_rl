@@ -11,11 +11,14 @@ Total_Ticks=0
 t=time.time()
 
 
-
 if Stochasticity==1:
-    noise=0.0005
+    noise1=0.005
+    noise2=0.01
+    noise3=2
 else:
-    noise=0
+    noise1=0
+    noise2=0
+    noise3=0
 
 
 # Handle exceptions here
@@ -38,6 +41,7 @@ Action: [Angle,X,Force] Legal Actions: ? If action is illegal, take random actio
 Player: 1 or 2
 Vis: Visualization? Will be handled later
 '''
+
 
 def Play(State,Player,action):
     #print "Turn Started with Score: ", State["Score"]
@@ -170,13 +174,13 @@ def Play(State,Player,action):
                 print "Foul!"
                 for coin in Pocketed:
                     if coin[0].color == Black_Coin_Color:
-                        State_new["Black_Locations"].append((400,400))
+                        State_new["Black_Locations"].append(ret_pos(State_new))
                         Score-=1
                     if coin[0].color == White_Coin_Color:
-                        State_new["White_Locations"].append((400,400))
+                        State_new["White_Locations"].append(ret_pos(State_new))
                         Score-=1
                     if coin[0].color == Red_Coin_Color:
-                        State_new["Red_Location"].append((400,400))
+                        State_new["Red_Location"].append(ret_pos(State_new))
                         #Score-=3
             # What will happen if there is a clash?? Fix it later
 
@@ -186,7 +190,7 @@ def Play(State,Player,action):
             if (Queen_Pocketed==True and Foul==False):
                 if len(State_new["Black_Locations"]) + len(State_new["White_Locations"]) == 18:
                     print "The queen cannot be the first to be pocketed: Player ", Player
-                    State_new["Red_Location"].append((400,400))
+                    State_new["Red_Location"].append(ret_pos(State_new))
                 else:
                     if Score-prevScore>0:
                         Score+=3
@@ -211,6 +215,7 @@ def validate(action) :
         print "Invalid Angle, taking random angle",
         angle=random.randrange(-45,270)
         print "which is ", angle
+
     if position<0 or position>1:
         print "Invalid position, taking random position"
         position=random.random()    
@@ -218,21 +223,23 @@ def validate(action) :
         print "Invalid force, taking random position"
         force=random.random()  
     global Stochasticity
-    if Stochasticity==1:
-        angle=angle+randrange(-5,5)
-        if angle<-45:
-            angle=-45
-        if angle>225:
-            angle=225
+
+    angle=angle+(random.choice([-1,1])*gauss(0,noise3))
+    if angle<-45:
+        angle=-45
+    if angle>225:
+        angle=225
 
     if angle<0:
         angle=360+angle
     angle=angle/180.0*3.14
-    position=170+(float(max(min(float(action[1]) + gauss(0,noise),1),0))*(460))
-    force=MIN_FORCE+float(max(min(float(action[2]) + gauss(0,noise),1),0))*MAX_FORCE
+
+    position=170+(float(max(min(float(action[0]) + gauss(0,noise1),1),0))*(460))
+
+    force=MIN_FORCE+float(max(min(float(action[2]) + gauss(0,noise2),1),0))*MAX_FORCE
 
     action=(angle,position,force)
-    #print "Final action", action
+    print "Final action", action
     return action
 
 if __name__ == '__main__':
