@@ -143,12 +143,11 @@ The agent is automatically called using start_experiment.py. It is the following
 ```
 The agent is not called with these parameters explicitly. This is taken care of in the next section. These parameters are passed to the agent to disambiguate between 1 player and 2 player games, and to inform the agent whether it is player 1 or 2. A seed is passed to the agent. You must initialize your rng with this seed, to make your results reproducible and consistent across several runs. If in doubt, look at the sample agent provided.
 
-#### Experiment Parameters
-The experiment is controlled by the parameters passed to start_experiment.py:
-It passes the same random seed for each experiment,
+### Experiment Parameters
+The experiment is controlled by the parameters passed to start_experiment.py
 ```
 -np [1/2] -- 1 Player or 2 Player Carrom [Default: 1]
--ne [n] -- Number of experiments to run. If this is set > 1. the rng passed to the servers and the agents is the current trial. [Default: 1]
+-ne [n] -- Number of experiments to run. If this is set > 1. the rng passed to the servers and the agents is the current trial number. [Default: 1]
 -v  [1/0] -- Turn visualization on/off [Default: 0]
 -p1  [n] -- The port player 1 agent connects to. Must enter a valid port [Default: 12121]
 -p2  [n] -- The port player 2 agent connects to. Must enter a valid port [Default: 34343]
