@@ -25,12 +25,15 @@ The full description and list of rules and regulations can be found at http://ww
 
 ### Why Carrom? 
 
-It is a challenging domain:
+It is an exciting and challenging domain:
 
 - The state space is continuous
 - The action space is continuous, with added noise
 - The agent must adhere to the rules of carrom
-- In the two-player case, the agent must plan a strategy against an adversary, a multi-agent system.
+- In the two-player case, the agent must plan a strategy against an adversary
+- In 2v2 Carrom you must cooperate with another agent
+
+It is a multi-agent adversarial game with continious state and action spaces, with noise added in the actions, with complex rules that cannot be intuited by the reward structure.
 
 ## Rules
 We slightly modify the rules of the game.
@@ -102,7 +105,6 @@ The following examples demonstrate some shots you can perform:
 
 - If a certain parameter of an action is out of range, the server generates the parameter uniformly at random in the legal range.
 - If the coin overlaps with the striker in the initial placement, the server generates a uniformly random free position.
-- For single player, the server permits a maximum of 200 strikes. If the agent does not manage to clear the board, the game is treated as incomplete, and the log file is not written.
 - The server accepts four decimal places of precision. 
 - The server also adds a zero mean gaussian noise to the actions of std 0.005 to the position, 2 to the angle, 0.01 to the force.
 - If you are Player 2 - on the opposite side of the board, the state you receive is "mirrored" assuming you are playing from Player 1's perspective. You don't have to write separate agents for Player 1 and Player 2.
@@ -141,12 +143,11 @@ The agent is automatically called using start_experiment.py. It is the following
 ```
 The agent is not called with these parameters explicitly. This is taken care of in the next section. These parameters are passed to the agent to disambiguate between 1 player and 2 player games, and to inform the agent whether it is player 1 or 2. A seed is passed to the agent. You must initialize your rng with this seed, to make your results reproducible and consistent across several runs. If in doubt, look at the sample agent provided.
 
-#### Experiment Parameters
-The experiment is controlled by the parameters passed to start_experiment.py:
-It passes the same random seed for each experiment,
+### Experiment Parameters
+The experiment is controlled by the parameters passed to start_experiment.py
 ```
 -np [1/2] -- 1 Player or 2 Player Carrom [Default: 1]
--ne [n] -- Number of experiments to run. If this is set > 1. the rng passed to the servers and the agents is the current trial. [Default: 1]
+-ne [n] -- Number of experiments to run. If this is set > 1. the rng passed to the servers and the agents is the current trial number. [Default: 1]
 -v  [1/0] -- Turn visualization on/off [Default: 0]
 -p1  [n] -- The port player 1 agent connects to. Must enter a valid port [Default: 12121]
 -p2  [n] -- The port player 2 agent connects to. Must enter a valid port [Default: 34343]
@@ -171,7 +172,6 @@ Fork the repo/download it.
 
 ```
 git clone https://github.com/samiranrl/Carrom_rl.git
-
 ```
 
 Perform the experiment with 1 player Carrom
