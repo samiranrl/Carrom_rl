@@ -61,7 +61,7 @@ def agent_1player(state):
 
 
 
-    # For assignment 1, your agent's logic should be coded here
+    # Assignment 1: your agent's logic should be coded here
 
     a = str(random.random()) + ',' + \
         str(random.randrange(-45, 225)) + ',' + str(random.random())
@@ -80,7 +80,7 @@ def agent_2player(state, color):
 
     flag = 1
 
-    # Your agent's logic should be coded here
+    # Can be ignored for now
     a = str(random.random()) + ',' + \
         str(random.randrange(-45, 225)) + ',' + str(random.random())
 
