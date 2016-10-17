@@ -114,6 +114,7 @@ The following examples demonstrate some shots you can perform:
 - For single player, the server permits a maximum of 500 strikes. If the agent does not manage to clear the board, the game is treated as incomplete.
 - For doubles, the server permits a maximum of 200 strikes(by any player). If the board is not cleared, the game ends, and the player with the highest score is the winner. 
 - Severs write out experiment results in log files with current time stamps. They can be found in Carrom_rl/logs/ . You can generate the mean statistics using generate_stats.py in the same folder:
+- The Server is automatically called using start_experiment.py. 
 ```
 python generate_stats.py <logfile>
 ```
@@ -125,24 +126,24 @@ The parameters of the game such as friction, elasticity, dimensions and weights 
 ### Agent parameters
 
 There is one sample agent to get you started. start_agent.py samples the action space uniformly at random. The agent is automatically called using start_experiment.py. 
+
 Parameters passed to the agent are solely disambiguate between 1 player and 2 player games, and to inform the agent whether it is player 1 or 2. A seed is passed to the agent. You must initialize your rng with this seed, to make your results reproducible and consistent across several runs. If in doubt, look at the sample agent provided.
 
 ### Experiment Parameters
-The experiment is controlled by the parameters passed to start_experiment.py.
-<b>The experiments can be be controlled.</b>
+The experiment is controlled by the parameters passed to start_experiment.py. It calls the server and the agent with appropriate parameters.
 ```
--np [1/2] -- 1 Player or 2 Player Carrom [Default: 1]
--ne [n] -- Number of experiments to run. If this is set > 1. the rng passed to the servers and the agents is the current trial number. [Default: 1]
--v  [1/0] -- Turn visualization on/off [Default: 0]
--p1  [n] -- The port player 1 agent connects to. Must enter a valid port [Default: 12121]
--p2  [n] -- The port player 2 agent connects to. Must enter a valid port [Default: 34343]
--rr [1-20] -- Render rate, render every x frame. A higher number results in faster visualization, but choppy frames. Only used if -v is set to 1 [Default: 10]
--n  [1/0] -- Turn noise on/off. The final agent will be evaluated with noise. [Default: 1]
--rs [n] -- A random seed passed to the server rng [Default: 0]
--a1 [file_path] -- relative/full path to player 1 agent [Default: carrom_agent/start_agent.py]
--a2 [file_path] -- relative/full path to player 2 agent [Default: carrom_agent/start_agent.py]
+-np or --num-players [1/2] - 1 Player or 2 Player Carrom [Default: 1]
+-ne or --num-experiments [n] - Number of experiments to run. If this is set > 1. the rng passed to the servers and the agents is the current trial number. [Default: 1]
+-v or --visualization  [1/0] - Turn visualization on/off [Default: 0]
+-p1 or --port1 [n] - The port player 1 agent connects to. Must enter a valid port [Default: 12121]
+-p2 or --port1 [n] - The port player 2 agent connects to. Must enter a valid port [Default: 34343]
+-rr or --render-rate [1-20] - Render rate, render every x frame. A higher number results in faster visualization, but choppy frames. Only used if -v is set to 1 [Default: 10]
+-n or --noise  [1/0] - Turn noise on/off. The final agent will be evaluated with noise. [Default: 1]
+-rs or --random-seed [n] - A random seed passed to the server rng [Default: 0]
+-a1 or --agent-1-location [file_path] - relative/full path to player 1 agent [Default: carrom_agent/start_agent.py]
+-a2 or --agent-2-location [file_path] - relative/full path to player 2 agent [Default: carrom_agent/start_agent.py]
 ```
-At the end of an experiment, a logfile is written summarising the statistics.
+At the end of an experiment, a logfile is written summarising the statistics in logs/
 
 ## Quick Start
 
@@ -196,10 +197,11 @@ python simulation.py
 
 ## What to submit?
 
-First take a look at Readme.txt
-You must write a carrom agent, which clears the single player board in <30 turns on average. generate_stats.py will be called for >=1000 experiments. If the data is invalid, for eg: you have a connection timeout/runtime error, the statistics will not be counted, so make sure your agent is fully functional (in the sl2 machines) before submission. If confused, open start_agent.py, which has helpful built in logic to connect to the carrom server, parse the state and send an action.
+Please read Readme.txt
+
+You must write a carrom agent, which clears the single player board in <30 turns on average. generate_stats.py will be called for >=1000 experiments. If the data is invalid, for eg: you have a connection timeout/runtime error, the statistics will not be counted, so make sure your agent is fully functional (in the sl2 machines) before submission. If confused, open **start_agent.py**, which has helpful built in logic to connect to the carrom server, parse the state and send an action.
 
 ### Changes
 <b>Version 1.0 - Initial release</b>
-Single player server is ready.
-There might be some issues with the doubles server, they will be fixed later.
+
+Single player server is ready.There might be some issues with the doubles server, they will be fixed later.
