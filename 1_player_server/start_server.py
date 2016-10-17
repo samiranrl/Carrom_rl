@@ -1,117 +1,85 @@
 from Utils import *
-import time,datetime
-import socket
-import sys
 from thread import *
+from math import pi
+import time
+import sys
 import os
-import pickle
 import argparse
-from random import gauss
+import socket
 
-global Vis
-global Total_Ticks
+start_time = time.time()
 
-Total_Ticks=0
-
-
+# Parse arguments
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-v', '--visualization', dest="Vis", type=int,
-                        default=0,
-                        help='Visualization on/off')
 
-parser.add_argument('-rr', '--', dest="RENDER_RATE", type=int,
-                        default=10,
-                        help='Render every nth frame')
+parser.add_argument('-v', '--visualization', dest="vis", type=int,
+                    default=0,
+                    help='visualization on/off')
 
-parser.add_argument('-p', '--port', dest="PORT1", type=int,
-                        default=12121,
-                        help='Port for incoming connection')
+parser.add_argument('-rr', '--', dest="render_rate", type=int,
+                    default=10,
+                    help='Render every nth frame')
 
-parser.add_argument('-rs', '--random-seed', dest="RNG_SEED", type=int,
-                        default=0,
-                        help='Random Seed')
+parser.add_argument('-p', '--port', dest="port1", type=int,
+                    default=12121,
+                    help='Port for incoming connection')
 
-parser.add_argument('-n', '--noise', dest="NOISE", type=int,
-                        default=1,
-                        help='Turn noise on/off')
+parser.add_argument('-rs', '--random-seed', dest="rng", type=int,
+                    default=0,
+                    help='Random Seed')
 
+parser.add_argument('-n', '--noise', dest="noise", type=int,
+                    default=1,
+                    help='Turn noise on/off')
 
-args=parser.parse_args()
+parser.add_argument('-log', '--log', dest="log", type=str,
+                    default="log1",
+                    help='Name of logfile')
 
-RENDER_RATE=args.RENDER_RATE
-Vis=args.Vis
-PORT1=args.PORT1
+args = parser.parse_args()
 
-random.seed(args.RNG_SEED)
-HOST = '127.0.0.1'   # Symbolic name meaning all available interfaces
+log = args.log
+render_rate = args.render_rate
+vis = args.vis
+port1 = args.port1
+random.seed(args.rng)
 
-t=time.time()
+host = '127.0.0.1'   # Symbolic name meaning all available interfaces
 
-
-noise1=0
-noise2=0
-noise3=0
-
-global Stochasticity
-Stochasticity=args.NOISE
-if Stochasticity==1:
-    noise1=0.005
-    noise2=0.01
-    noise3=2
+noise = args.noise
+if noise == 1:
+    noise1 = 0.005
+    noise2 = 0.01
+    noise3 = 2
 else:
-    noise1=0
-    noise2=0
-    noise3=0
-
-
-# Handle exceptions here
-
-# Exception handlers here
+    noise1 = 0
+    noise2 = 0
+    noise3 = 0
 
 timeout_msg = "TIMED OUT"
 timeout_period = 0.5
-def is_Ended(space):
-    for shape in space._get_shapes():
-        if abs(shape.body.velocity[0])>Static_Velocity_Threshold or abs(shape.body.velocity[1])>Static_Velocity_Threshold:
-            return False
-    return True
 
-def requestAction(conn1) :
-    try : 
-        data=conn1.recv(1024)
-    except :
-        data = timeout_msg
-    finally :
-        return data
-    
-def sendState(state,conn1):
-    try:
-        conn1.send(state)
-    except socket.error:
-        print "Aborting, player timeout"
-        sys.exit()
+##########################################################################
 
-    return True
-    
+# Play one step of carrom
+# Input: state, player, action
+# Output: next_state, queen_flag, reward
+# queen_flag denotes that the queen is pocketed and must be covered in the
+# next turn
 
-def Play(State,Player,action):
-    #print "Turn Started with Score: ", State["Score"]
-    #print "Coins: ", len(next_State["Black_Locations"]),len(next_State["White_Locations"]),len(next_State["Red_Location"])
-    
 
-    global Vis
+def play(state, player, action):
     pygame.init()
     clock = pygame.time.Clock()
 
-    if Vis==1:
-        screen = pygame.display.set_mode((Board_Size, Board_Size))
+    if vis == 1:
+        screen = pygame.display.set_mode((BOARD_SIZE, BOARD_SIZE))
         pygame.display.set_caption("Carrom RL Simulation")
 
     space = pymunk.Space(threaded=True)
-    Score = State["Score"]
-    prevScore = State["Score"]
-
+    score = state["Score"]
+    prevscore = state["Score"]
 
     # pass through object // Dummy Object for handling collisions
     passthrough = pymunk.Segment(space.static_body, (0, 0), (0, 0), 5)
@@ -120,272 +88,313 @@ def Play(State,Player,action):
 
     init_space(space)
     init_walls(space)
-    Holes=init_holes(space)
-    ##added
-    BackGround = Background('use_layout.png', [-30,-30])
+    pockets = init_pockets(space)
+    background = BACKGROUND('use_layout.png', [-30, -30])
 
-    Coins=init_coins(space,State["Black_Locations"],State["White_Locations"],State["Red_Location"],passthrough)
-    #load_image("layout.jpg")
-    Striker=init_striker(space,Board_Size/2+10, passthrough,action, Player)
-        
-    if Vis==1:
+    coins = init_coins(space, state["Black_Locations"], state[
+                       "White_Locations"], state["Red_Location"], passthrough)
+
+    striker = init_striker(space, BOARD_SIZE / 2 + 10,
+                           passthrough, action, player)
+
+    if vis == 1:
         draw_options = pymunk.pygame_util.DrawOptions(screen)
 
+    ticks = 0
+    foul = False
+    pocketed = []
+    queen_pocketed = False
+    queen_flag = False
 
-    Ticks=0
-    Foul=False
-    Pocketed=[]
+    while 1:
 
-
-    #print "Force: ",1000-+action[2]*1000
-    Queen_Pocketed=False
-    Queen_Flag=False
-    while 1: 
-
-        if Ticks%RENDER_RATE==0 and Vis==1:
-            Local_VIS=True
+        if ticks % render_rate == 0 and vis == 1:
+            local_vis = True
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    sys.exit(0)
+                elif event.type == KEYDOWN and event.key == K_ESCAPE:
+                    sys.exit(0)
         else:
-            Local_VIS=False
+            local_vis = False
 
-        Ticks+=1
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                sys.exit(0)
-            elif event.type == KEYDOWN and event.key == K_ESCAPE:
-                sys.exit(0)
+        ticks += 1
 
-        if Local_VIS==1:
-            screen.blit(BackGround.image, BackGround.rect)
+        if local_vis == 1:
+            screen.blit(background.image, background.rect)
             space.debug_draw(draw_options)
 
-        space.step(1/TIME_STEP)
-        #print Striker[0].position
-        for hole in Holes:
-            if dist(hole.body.position,Striker[0].position)<Hole_Radius-Striker_Radius+(Striker_Radius*0.75):
-                Foul=True
-                for coin in space._get_shapes():
-                    if coin.color==Striker_Color:
-                        space.remove(coin,coin.body)
+        space.step(1 / TIME_STEP)
+
+        # Remove pocketed striker
+
+        for pocket in pockets:
+            if dist(pocket.body.position, striker[0].position) < POCKET_RADIUS - STRIKER_RADIUS + (STRIKER_RADIUS * 0.75):
+                Foul = True
+                for shape in space._get_shapes():
+                    if shape.color == STRIKER_COLOR:
+                        space.remove(shape, shape.body)
                         break
+        # Remove pocketed coins
 
-
-        for hole in Holes:
+        for pocket in pockets:
             for coin in space._get_shapes():
-                if dist(hole.body.position,coin.body.position)<Hole_Radius-Coin_Radius+(Coin_Radius*0.75):
-                    if coin.color == Black_Coin_Color:
-                        Score+=1
-                        Pocketed.append((coin,coin.body))
-                        space.remove(coin,coin.body)
-                    if coin.color == White_Coin_Color:
-                        Score+=1
-                        Pocketed.append((coin,coin.body))
-                        space.remove(coin,coin.body)
-                    if coin.color == Red_Coin_Color:
-                        #Score+=3
-                        Pocketed.append((coin,coin.body))
-                        space.remove(coin,coin.body)
-                        Queen_Pocketed=True
+                if dist(pocket.body.position, coin.body.position) < POCKET_RADIUS - COIN_RADIUS + (COIN_RADIUS * 0.75):
+                    if coin.color == BLACK_COIN_COLOR:
+                        score += 1
+                        pocketed.append((coin, coin.body))
+                        space.remove(coin, coin.body)
+                    if coin.color == WHITE_COIN_COLOR:
+                        score += 1
+                        pocketed.append((coin, coin.body))
+                        space.remove(coin, coin.body)
+                    if coin.color == RED_COIN_COLOR:
+                        pocketed.append((coin, coin.body))
+                        space.remove(coin, coin.body)
+                        queen_pocketed = True
 
-
-        if Local_VIS==1:
+        if local_vis == 1:
             font = pygame.font.Font(None, 25)
-            text = font.render("Player 1 Score: "+str(Score), 1, (220, 220, 220))
-            screen.blit(text, (Board_Size/3 + 67,780,0,0))
+            text = font.render("Score: " +
+                               str(score), 1, (220, 220, 220))
+            screen.blit(text, (BOARD_SIZE / 2 - 40, 780, 0, 0))
 
-            text = font.render("Time Elapsed: "+str(round(time.time()-t,2)), 1, (50, 50, 50))
-            screen.blit(text, (Board_Size/3 + 57,25,0,0))
-            if Ticks==1:
-                length=Striker_Radius+action[2]/500.0 # The length of the line denotes the action
-                startpos_x=action[1]
-                angle=action[0]
-                if Player==2:
-                    startpos_y=145
-                else:
-                    startpos_y=Board_Size - 136
-                endpos_x=(startpos_x+cos(angle)*length)
-                endpos_y=(startpos_y-(length)*sin(angle))
-                pygame.draw.line(screen, (50,255,50), (endpos_x, endpos_y), (startpos_x,startpos_y),3)
-                pygame.draw.circle(screen,(50,255,50), (int(endpos_x), int(endpos_y)), 5)
+            text = font.render("Time Elapsed: " +
+                               str(round(time.time() - start_time, 2)), 1, (50, 50, 50))
+            screen.blit(text, (BOARD_SIZE / 3 + 57, 25, 0, 0))
+
+            # First tick, draw an arrow representing action
+
+            if ticks == 1:
+                force = action[2]
+                angle = action[1]
+                position = action[0]
+                draw_arrow(screen, position, angle, force, player)
+
             pygame.display.flip()
-            if Ticks==1:
+            if ticks == 1:
                 time.sleep(1)
+
             clock.tick()
-        
+
         # Do post processing and return the next State
-        if is_Ended(space) or Ticks>TICKS_LIMIT:
-            State_new={"Black_Locations":[],"White_Locations":[],"Red_Location":[],"Score":0}
+        if is_ended(space) or ticks > TICKS_LIMIT:
+            state_new = {"Black_Locations": [],
+                         "White_Locations": [], "Red_Location": [], "Score": 0}
 
             for coin in space._get_shapes():
-                    if coin.color == Black_Coin_Color:
-                        State_new["Black_Locations"].append(coin.body.position)
-                    if coin.color == White_Coin_Color:
-                        State_new["White_Locations"].append(coin.body.position)
-                    if coin.color == Red_Coin_Color:
-                        State_new["Red_Location"].append(coin.body.position)
-            if Foul==True:
-                print "Foul!"
-                for coin in Pocketed:
-                    if coin[0].color == Black_Coin_Color:
-                        State_new["Black_Locations"].append(ret_pos(State_new))
-                        Score-=1
-                    if coin[0].color == White_Coin_Color:
-                        State_new["White_Locations"].append(ret_pos(State_new))
-                        Score-=1
-                    if coin[0].color == Red_Coin_Color:
-                        State_new["Red_Location"].append(ret_pos(State_new))
-                        #Score-=3
-            # What will happen if there is a clash?? Fix it later
+                if coin.color == BLACK_COIN_COLOR:
+                    state_new["Black_Locations"].append(coin.body.position)
+                if coin.color == WHITE_COIN_COLOR:
+                    state_new["White_Locations"].append(coin.body.position)
+                if coin.color == RED_COIN_COLOR:
+                    state_new["Red_Location"].append(coin.body.position)
+            if foul == True:
+                print "Foul.. striker pocketed"
+                for coin in pocketed:
+                    if coin[0].color == BLACK_COIN_COLOR:
+                        state_new["Black_Locations"].append(ret_pos(state_new))
+                        Score -= 1
+                    if coin[0].color == WHITE_COIN_COLOR:
+                        state_new["White_Locations"].append(ret_pos(state_new))
+                        Score -= 1
+                    if coin[0].color == RED_COIN_COLOR:
+                        state_new["Red_Location"].append(ret_pos(state_new))
 
-
-        
-
-            if (Queen_Pocketed==True and Foul==False):
-                if len(State_new["Black_Locations"]) + len(State_new["White_Locations"]) == 18:
-                    print "The queen cannot be the first to be pocketed: Player ", Player
-                    State_new["Red_Location"].append(ret_pos(State_new))
+            if (queen_pocketed == True and foul == False):
+                if len(state_new["Black_Locations"]) + len(state_new["White_Locations"]) == 18:
+                    print "The queen cannot be the first to be pocketed: player ", player
+                    state_new["Red_Location"].append(ret_pos(state_new))
                 else:
-                    if Score-prevScore>0:
-                        Score+=3
+                    if score - prevscore > 0:
+                        score += 3
                         print "Queen pocketed and covered in one shot"
                     else:
-                        Queen_Flag=True
+                        queen_flag = True
 
-            global Total_Ticks
-            Total_Ticks+=Ticks
-            State_new["Score"]=Score
-            print "Turn Ended with Score: ", Score, " in ", Ticks, " Ticks"
-            print "Coins: ", len(State_new["Black_Locations"]),"B ", len(State_new["White_Locations"]),"W ",len(State_new["Red_Location"]),"R"
-            return State_new,Queen_Flag
+            state_new["Score"] = score
+            print "Coins Remaining: ", len(state_new["Black_Locations"]), "B ", len(state_new["White_Locations"]), "W ", len(state_new["Red_Location"]), "R"
+            return state_new, queen_flag, score-prevscore
 
 
+# Validate parsed action
 
-def don():
-    s1.close()
-    conn1.close()
-    sys.exit()
-
-
-
-def tuplise(s) :
-
-    return (round(float(s[1]),4),round(float(s[0]),4),round(float(s[2]),4))
-
-def validate(action) :
-    print "Action Recieved: ",action
-    angle=action[0]
-    position=action[1]
-    force=action[2]
-    if angle<-45 or angle >225:
+def validate(action, state):
+    print "Server received action: ", action
+    position = action[0]
+    angle = action[1]
+    force = action[2]
+    if angle < -45 or angle > 225:
         print "Invalid Angle, taking random angle",
-        angle=random.randrange(-45,270)
+        angle = random.randrange(-45, 270)
         print "which is ", angle
-    if position<0 or position>1:
+    if position < 0 or position > 1:
         print "Invalid position, taking random position"
-        position=random.random()    
-    if force<0 or force>1:
+        position = random.random()
+    if force < 0 or force > 1:
         print "Invalid force, taking random position"
-        force=random.random()  
-    global Stochasticity
+        force = random.random()
 
-    angle=angle+(random.choice([-1,1])*gauss(0,noise3))
-    if angle<-45:
-        angle=-45
-    if angle>225:
-        angle=225
+    angle = angle + (random.choice([-1, 1]) * gauss(0, noise3))
+    if angle < -45:
+        angle = -45
+    if angle > 225:
+        angle = 225
 
-    if angle<0:
-        angle=360+angle
-    angle=angle/180.0*3.14
-    position=170+(float(max(min(position + gauss(0,noise1),1),0))*(460))
-    force=MIN_FORCE+float(max(min(force + gauss(0,noise2),1),0))*MAX_FORCE
+    if angle < 0:
+        angle = 360 + angle
+    angle = angle / 180.0 * pi
+    position = 170 + \
+        (float(max(min(position + gauss(0, noise1), 1), 0)) * (460))
+    force = MIN_FORCE + \
+        float(max(min(force + gauss(0, noise2), 1), 0)) * MAX_FORCE
 
-    action=(angle,position,force)
-    #print "Final action", action
+    tmp_state = state.copy()
+
+    try:
+        del tmp_state["Score"]
+    except KeyError:
+        pass
+    tmp_state = tmp_state.values()
+    tmp_state = reduce(lambda x, y: x + y, tmp_state)
+
+    check = 0
+    fuse = 10
+
+    while check == 0 and fuse > 0:
+        fuse -= 1
+        check = 1
+        for coin in tmp_state:
+            # print coin, dist((position, 145), coin)
+            if dist((position, 145), coin) < STRIKER_RADIUS + COIN_RADIUS:
+                check = 0
+                # print "Position ", (position, 145), " clashing with a coin,
+                # taking random"
+                position = random.randrange(170, 530)
+                # print "checking", position
+
+    # print "Final action", action
+    action = (position, angle, force)
     return action
+
+# Generate logs
+
+
+def logger(log, msg):
+    f = open("logs/"+log, "a")
+    f.write(msg)
+    f.close()
+
+
+# The server receives an action from the agent
+def request_action(conn1):
+    try:
+        data = conn1.recv(1024)
+    except:
+        data = timeout_msg
+    finally:
+        return data
+
+# The server sends it's state to the agent
+
+
+def send_state(state, conn1):
+    try:
+        conn1.send(state)
+    except socket.error:
+        print "Aborting, player did not respond within timeout"
+        logger(log, "Aborting, player did not respond within timeout\n")
+        sys.exit()
+    return True
+
 
 if __name__ == '__main__':
 
-
-    s1=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # Bind to socket, and wait for the agent to connect
+    s1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
-        s1.bind((HOST, PORT1))
+        s1.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s1.bind((host, port1))
     except socket.error as msg:
         print 'Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
         sys.exit()
+
     s1.listen(1)
-    conn1,addr1=s1.accept()
-    conn1.settimeout(timeout_period);
-    
+    conn1, addr1 = s1.accept()
+    conn1.settimeout(timeout_period)
+
     winner = 0
-    reward1 = 0
+    reward = 0
     score1 = 0
-    reward2 = 0
-    score2 = 0
-    #State={"Black_Locations":B,"White_Locations":W,"Red_Location":R,"Score":0, Message:" "}
-    State={'White_Locations': [(400,368),(437,420), (372,428),(337,367), (402,332), (463,367), (470,437), (405,474), (340,443)], 'Red_Location': [(400, 403)], 'Score': 0, 'Black_Locations': [(433,385),(405,437), (365,390), (370,350), (432,350), (467,402), (437,455), (370,465), (335,406)]}  
-    next_State=State
-    # Black Coins, White Coins, Red Coin, VISualization : On/Off, Score, Flip the board? 0 - no 1 - yes
-    it=1
 
+    state = INITIAL_STATE
+    next_state = state
 
+    it = 0
 
+    while it < 500:  # Number of chances given to the player
+        it += 1
 
-
-    while it<500: # Number of Chances given to each player
-        it+=1
-        prevScore = next_State["Score"]
-        sendState(str(next_State) + ";REWARD" + str(reward1),conn1)
-        s=requestAction(conn1)
-        if not s :#response empty
-            print "No response from player 1"
+        send_state(str(next_state) + ";REWARD" + str(reward), conn1)
+        s = request_action(conn1)
+        if not s:  # response empty
+            print "No response from player 1, aborting"
+            logger(log, "No response from player 1, aborting\n")
             sys.exit()
         elif s == timeout_msg:
-            print "No response from player 1"
+            print "Player 1 timeout, aborting"
+            logger(log, "Player 1 timeout, aborting\n")
             sys.exit()
-        else :
-            action=tuplise(s.replace(" ","").split(','))
-            
-        next_State,Queen_Flag=Play(next_State,1,validate(action))
-        reward1 = next_State["Score"] - prevScore
-        prevScore = next_State["Score"]
-        score1 += reward1
-        print " turns: "+str(it)
-        while Queen_Flag: # Extra turn
+        else:
+            action = tuplise(s.replace(" ", "").split(','))
 
+        next_state, queen_flag, reward = play(
+            next_state, 1, validate(action, next_state))
+
+        score1 += reward
+        print "turn: " + str(it) + " score: " + str(score1)
+        while queen_flag:  # Extra turn to cover queen
             print "Pocketed Queen, pocket any coin in this turn to cover it"
-            it+=1
-            prevScore = next_State["Score"]
-            sendState(str(next_State) + ";REWARD" + str(reward1),conn1)
-            s=requestAction(conn1)
-            if not s :#response empty
-                print "Empty P1";
+            it += 1
+
+            send_state(str(next_state) + ";REWARD" + str(reward), conn1)
+            s = request_action(conn1)
+            if not s:  # response empty
+                print "No response from player 1, aborting"
+                logger(log, "No response from player 1, aborting\n")
+                sys.exit()
             elif s == timeout_msg:
-                winner = 2
-                break
-            else :
-                action=tuplise(s.replace(" ","").split(','))    
-            next_State,Queen_Flag=Play(next_State,1,validate(action))
-            reward1 = next_State["Score"] - prevScore
-            prevScore = next_State["Score"]
-            if reward1>0:
-                next_State["Score"]+=3
+                print "Player 1 timeout, aborting"
+                logger(log, "Player 1 timeout, aborting\n")
+                sys.exit()
+            else:
+                action = tuplise(s.replace(" ", "").split(','))
+            next_state, queen_flag, reward = play(
+                next_state, 1, validate(action, next_state))
+            if reward > 0:
+                next_state["Score"] += 3
                 print "Successfully covered the queen"
             else:
                 print "Could not cover the queen"
-                next_State["Red_Location"].append(ret_pos(next_State))
-            score1+= reward1
-            print " turns: "+str(it)
-        if len(next_State["Black_Locations"])==0 and len(next_State["White_Locations"])==0:
-            if len(next_State["Red_Location"])>0:
-                next_State["Black_Locations"].append(ret_pos(next_State))
-                next_State["Score"]-=1
+                next_state["Red_Location"].append(ret_pos(next_state))
+            score1 += reward
+            print "Score: ", score1, " turns: " + str(it)
+
+        # Finally
+        if len(next_state["Black_Locations"]) == 0 and len(next_state["White_Locations"]) == 0:
+            if len(next_state["Red_Location"]) > 0:
+                next_state["Black_Locations"].append(ret_pos(next_state))
+                next_state["Score"] -= 1
                 print "Failed to clear queen, getting another turn"
             else:
                 break
+    if it>=500:
+        logger(log,"Player took more than 500 turns, aborting\n")
+        print "Player took more than 500 turns, aborting"
+        sys.exit()
 
-    print "Cleared Board in " + str(it)," turns."
-    f=open("S1_log","a")
-    f.write(str(it)+" "+str(round(time.time()-t,0))+"\n")
-    f.close()
-    don()
 
+    tmp = "Cleared Board in " + str(it) + " turns. Realtime taken: "+str(time.time(
+    ) - start_time)+" s @ "+str(round((it*1.0)/(time.time() - start_time), 2)) + " turns/s\n"
+    logger(log, tmp)
+    don(s1, conn1)
