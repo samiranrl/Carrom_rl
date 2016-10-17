@@ -31,7 +31,7 @@ args = parser.parse_args()
 host = '127.0.0.1'
 port = args.port
 num_players = args.num_players
-random.seed(args.rng) # Important
+random.seed(args.rng)  # Important
 color = args.color
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -53,13 +53,11 @@ def parse_state_message(msg):
 def agent_1player(state):
 
     flag = 1
-    #print state
+    # print state
     try:
-        state, reward = parse_state_message(state) # Get the state and reward
+        state, reward = parse_state_message(state)  # Get the state and reward
     except:
         pass
-
-
 
     # Assignment 1: your agent's logic should be coded here
 

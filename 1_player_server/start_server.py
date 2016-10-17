@@ -388,11 +388,10 @@ if __name__ == '__main__':
                 print "Failed to clear queen, getting another turn"
             else:
                 break
-    if it>=500:
-        logger(log,"Player took more than 500 turns, aborting\n")
+    if it >= 500:
+        logger(log, "Player took more than 500 turns, aborting\n")
         print "Player took more than 500 turns, aborting"
         sys.exit()
-
 
     tmp = "Cleared Board in " + str(it) + " turns. Realtime taken: "+str(time.time(
     ) - start_time)+" s @ "+str(round((it*1.0)/(time.time() - start_time), 2)) + " turns/s\n"

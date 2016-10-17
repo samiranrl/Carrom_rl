@@ -58,10 +58,10 @@ a1 = args.a1
 a2 = args.a2
 ne = args.num_experiments
 
-if num_players==1:
-    log="log1_" + str(time.strftime('%Y_%m_%d_%H_%M_%S'))
+if num_players == 1:
+    log = "log1_" + str(time.strftime('%Y_%m_%d_%H_%M_%S'))
 else:
-    log="log2_" + str(time.strftime('%Y_%m_%d_%H_%M_%S'))
+    log = "log2_" + str(time.strftime('%Y_%m_%d_%H_%M_%S'))
 
 for i in range(0, args.num_experiments):
     print "Running experiment ", i+1
@@ -71,7 +71,7 @@ for i in range(0, args.num_experiments):
         if num_players == 1:
 
             cmd = 'python 1_player_server/start_server.py' + ' -v ' + str(vis) + ' -rr ' + str(
-                render_rate) + ' -n ' + str(noise) + ' -p ' + str(port1) + ' -rs ' + str(rng) + ' -log ' +log
+                render_rate) + ' -n ' + str(noise) + ' -p ' + str(port1) + ' -rs ' + str(rng) + ' -log ' + log
             cmd = os.path.join(cmd)
             print cmd
             try:
@@ -131,6 +131,3 @@ for i in range(0, args.num_experiments):
             time.sleep(1)
         except:
             pass
-
-
-
