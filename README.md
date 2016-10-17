@@ -12,6 +12,7 @@ An open source Carrom Simulator interface for testing intelligent/learning agent
 This is the 1.0 release of Carrom_rl - A Carrom Simulator, which provides an interface that allows you to design agents that that play carrom. It is built in python, using pygame + pymunk. This is the course project for [CS 747 - Foundations of Intelligent and Learning Agents](https://www.cse.iitb.ac.in/~shivaram/teaching/cs747-a2016/index.html), taught by [Prof. Shivaram Kalyanakrishnan](https://www.cse.iitb.ac.in/~shivaram/) at IIT Bombay.
 
 Please report bugs [here](https://github.com/samiranrl/Carrom_rl/issues), along with steps to reproduce it.
+
 Feedback is welcome. Enjoy!
 
 ## Carrom
@@ -33,7 +34,7 @@ It is an exciting and challenging domain:
 - In the two-player case, the agent must plan a strategy against an adversary
 - In 2v2 Carrom you must cooperate with another agent
 
-It is a multi-agent adversarial game with continious state and action spaces, with noise added in the actions, with complex rules that cannot be intuited by the reward structure.
+In short, it is a multi-agent adversarial game with continious state and action spaces, with noise added in the actions, with complex rules that cannot be intuited by the reward structure.
 
 ## Rules
 We slightly modify the rules of the game.
@@ -110,18 +111,12 @@ The following examples demonstrate some shots you can perform:
 - If you are Player 2 - on the opposite side of the board, the state you receive is "mirrored" assuming you are playing from Player 1's perspective. You don't have to write separate agents for Player 1 and Player 2.
 - The server has a timeout of 0.5 seconds. If any agent takes more time to send an action/sends an empty message, it is disqualified, and the other agent is considered the winner. In the single player case, it ends the game.
 -  The ports the agents use to connect to the server can be specified in the parameters. 
-- For single player, when the game finishes, a log file [S1_log] is appended with the following:
+- For single player, the server permits a maximum of 500 strikes. If the agent does not manage to clear the board, the game is treated as incomplete.
+- For doubles, the server permits a maximum of 200 strikes(by any player). If the board is not cleared, the game ends, and the player with the highest score is the winner. 
+- Severs write out experiment results in log files with current time stamps. They can be found in Carrom_rl/logs/ . You can generate the mean statistics using generate_stats.py in the same folder:
 ```
-"number_of_strikes real_time_taken \n"
+python generate_stats.py <logfile>
 ```
-- Similarly, for doubles, a log file [S2_log] is appended with the following:
-```
-"number_of_strikes real_time_taken winner player_1_score player_2_score \n" 
-```
-- For single player, the server permits a maximum of 500 strikes. If the agent does not manage to clear the board, the game is treated as incomplete, and the log file is not written.
-- For doubles, the server permits a maximum of 200 strikes(by any player). If the board is not cleared, the game ends, and the player with the highest score is the winner. The log file is written.
-
-
 
 #### Configuration Parameters
 
@@ -129,22 +124,12 @@ The parameters of the game such as friction, elasticity, dimensions and weights 
 
 ### Agent parameters
 
-There is one sample agent to get you started.
-
-start_agent.py samples the action space uniformly at random.
-
-The agent is automatically called using start_experiment.py. It is the following parameters:
-
-```
--np [1/2] -- 1 Player or 2 Player Carrom [Default: 1]
--p  [n] -- The port the agent connects to. Must enter a valid port [Default: 12121]
--rs [n] -- A random seed passed to the server rng [Default: 0]
--c ["Black"/"White"] -- The color you have to target [Default: 0]
-```
-The agent is not called with these parameters explicitly. This is taken care of in the next section. These parameters are passed to the agent to disambiguate between 1 player and 2 player games, and to inform the agent whether it is player 1 or 2. A seed is passed to the agent. You must initialize your rng with this seed, to make your results reproducible and consistent across several runs. If in doubt, look at the sample agent provided.
+There is one sample agent to get you started. start_agent.py samples the action space uniformly at random. The agent is automatically called using start_experiment.py. 
+Parameters passed to the agent are solely disambiguate between 1 player and 2 player games, and to inform the agent whether it is player 1 or 2. A seed is passed to the agent. You must initialize your rng with this seed, to make your results reproducible and consistent across several runs. If in doubt, look at the sample agent provided.
 
 ### Experiment Parameters
-The experiment is controlled by the parameters passed to start_experiment.py
+The experiment is controlled by the parameters passed to start_experiment.py.
+<b>The experiments can be be controlled.</b>
 ```
 -np [1/2] -- 1 Player or 2 Player Carrom [Default: 1]
 -ne [n] -- Number of experiments to run. If this is set > 1. the rng passed to the servers and the agents is the current trial number. [Default: 1]
@@ -157,7 +142,7 @@ The experiment is controlled by the parameters passed to start_experiment.py
 -a1 [file_path] -- relative/full path to player 1 agent [Default: carrom_agent/start_agent.py]
 -a2 [file_path] -- relative/full path to player 2 agent [Default: carrom_agent/start_agent.py]
 ```
-
+At the end of an experiment, a logfile is written summarising the statistics.
 
 ## Quick Start
 
@@ -174,12 +159,27 @@ Fork the repo/download it.
 git clone https://github.com/samiranrl/Carrom_rl.git
 ```
 
-Perform the experiment with 1 player Carrom
+Visualize one single player game
 
 ```
 cd Carrom_rl/
 python start_experiment.sh -v 1
 ```
+
+Simulate 10 single player games
+
+```
+cd Carrom_rl/
+python start_experiment.sh -ne 10
+```
+
+Generate statistics from the previous experiment
+
+```
+cd logs/
+python generate_stats.py <logfile>
+```
+
 Perform the experiment with 2 player Carrom
 
 ```
@@ -187,11 +187,19 @@ cd Carrom_rl/
 python start_experiment.sh -v 1 -np 2
 ```
 
+You have access to one step noise free ground truth data using: simulate(state,action)->next_state, reward
+
 ```
-cd Carrom_rl/One_Step/
+cd Carrom_rl/one_step/
 python simulation.py
 ```
 
 ## What to submit?
 
-Please take a look at Readme.txt
+First take a look at Readme.txt
+You must write a carrom agent, which clears the single player board in <30 turns on average. generate_stats.py will be called for >=1000 experiments. If the data is invalid, for eg: you have a connection timeout/runtime error, the statistics will not be counted, so make sure your agent is fully functional (in the sl2 machines) before submission. If confused, open start_agent.py, which has helpful built in logic to connect to the carrom server, parse the state and send an action.
+
+### Changes
+<b>Version 1.0 - Initial release</b>
+Single player server is ready.
+There might be some issues with the doubles server, they will be fixed later.
