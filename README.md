@@ -148,6 +148,7 @@ At the end of an experiment, a logfile is written summarising the statistics in 
 ## Quick Start
 
 Install main dependences: pygame (1.9.2) and pymunk (5.0)
+The code works on python (2.7.12)
 ```
 sudo apt-get install python-pip
 sudo pip install pygame
