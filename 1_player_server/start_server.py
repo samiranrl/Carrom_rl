@@ -270,7 +270,7 @@ def validate(action, state):
                 check = 0
                 # print "Position ", (position, 145), " clashing with a coin,
                 # taking random"
-                position = random.randrange(170, 530)
+                position = random.randrange(170, 630)
                 # print "checking", position
 
     # print "Final action", action
