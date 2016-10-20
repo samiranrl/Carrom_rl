@@ -194,10 +194,10 @@ def play(state, player, action):
                 for coin in pocketed:
                     if coin[0].color == BLACK_COIN_COLOR:
                         state_new["Black_Locations"].append(ret_pos(state_new))
-                        Score -= 1
+                        score -= 1
                     if coin[0].color == WHITE_COIN_COLOR:
                         state_new["White_Locations"].append(ret_pos(state_new))
-                        Score -= 1
+                        score -= 1
                     if coin[0].color == RED_COIN_COLOR:
                         state_new["Red_Location"].append(ret_pos(state_new))
 
