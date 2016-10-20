@@ -130,7 +130,7 @@ def play(state, player, action):
 
         for pocket in pockets:
             if dist(pocket.body.position, striker[0].position) < POCKET_RADIUS - STRIKER_RADIUS + (STRIKER_RADIUS * 0.75):
-                Foul = True
+                foul = True
                 for shape in space._get_shapes():
                     if shape.color == STRIKER_COLOR:
                         space.remove(shape, shape.body)
