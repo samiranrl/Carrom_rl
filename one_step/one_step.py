@@ -7,6 +7,80 @@ from math import pi
 import time
 
 
+noise = 1
+if noise == 1:
+    noise1 = 0.005
+    noise2 = 0.01
+    noise3 = 2
+else:
+    noise1 = 0
+    noise2 = 0
+    noise3 = 0
+
+
+# Validate parsed action
+
+def validate(action, state):
+    print "Server received action: ", action
+    position = action[0]
+    angle = action[1]
+    force = action[2]
+    if angle < -45 or angle > 225:
+        print "Invalid Angle, taking random angle",
+        angle = random.randrange(-45, 225)
+        print "which is ", angle
+    if position < 0 or position > 1:
+        print "Invalid position, taking random position"
+        position = random.random()
+    if force < 0 or force > 1:
+        print "Invalid force, taking random position"
+        force = random.random()
+
+    angle = angle + (random.choice([-1, 1]) * gauss(0, noise3))
+    if angle < -45:
+        angle = -45
+    if angle > 225:
+        angle = 225
+
+    if angle < 0:
+        angle = 360 + angle
+    angle = angle / 180.0 * pi
+    position = 170 + \
+        (float(max(min(position + gauss(0, noise1), 1), 0)) * (460))
+    force = MIN_FORCE + \
+        float(max(min(force + gauss(0, noise2), 1), 0)) * MAX_FORCE
+
+    tmp_state = state.copy()
+
+    try:
+        del tmp_state["Score"]
+    except KeyError:
+        pass
+    tmp_state = tmp_state.values()
+    tmp_state = reduce(lambda x, y: x + y, tmp_state)
+
+    check = 0
+    fuse = 10
+
+    while check == 0 and fuse > 0:
+        fuse -= 1
+        check = 1
+        for coin in tmp_state:
+            # print coin, dist((position, 145), coin)
+            if dist((position, 145), coin) < STRIKER_RADIUS + COIN_RADIUS:
+                check = 0
+                # print "Position ", (position, 145), " clashing with a coin,
+                # taking random"
+                position = random.randrange(170, 630)
+                # print "checking", position
+
+    # print "Final action", action
+    action = (position, angle, force)
+    return action
+
+
+
+
 def simulate(state, action):
     pygame.init()
     clock = pygame.time.Clock()
@@ -114,5 +188,5 @@ def simulate(state, action):
 
 if __name__ == "__main__":
     state = INITIAL_STATE
-    next_state, reward = simulate(state, [0.1, 200, 0.5])
+    next_state, reward = simulate(state,validate([0.5, 90, 0.5],state))
     print reward

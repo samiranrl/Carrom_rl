@@ -130,7 +130,7 @@ def play(state, player, action):
 
         for pocket in pockets:
             if dist(pocket.body.position, striker[0].position) < POCKET_RADIUS - STRIKER_RADIUS + (STRIKER_RADIUS * 0.75):
-                Foul = True
+                foul = True
                 for shape in space._get_shapes():
                     if shape.color == STRIKER_COLOR:
                         space.remove(shape, shape.body)
@@ -194,10 +194,10 @@ def play(state, player, action):
                 for coin in pocketed:
                     if coin[0].color == BLACK_COIN_COLOR:
                         state_new["Black_Locations"].append(ret_pos(state_new))
-                        Score -= 1
+                        score -= 1
                     if coin[0].color == WHITE_COIN_COLOR:
                         state_new["White_Locations"].append(ret_pos(state_new))
-                        Score -= 1
+                        score -= 1
                     if coin[0].color == RED_COIN_COLOR:
                         state_new["Red_Location"].append(ret_pos(state_new))
 
@@ -226,7 +226,7 @@ def validate(action, state):
     force = action[2]
     if angle < -45 or angle > 225:
         print "Invalid Angle, taking random angle",
-        angle = random.randrange(-45, 270)
+        angle = random.randrange(-45, 225)
         print "which is ", angle
     if position < 0 or position > 1:
         print "Invalid position, taking random position"
@@ -270,7 +270,7 @@ def validate(action, state):
                 check = 0
                 # print "Position ", (position, 145), " clashing with a coin,
                 # taking random"
-                position = random.randrange(170, 530)
+                position = random.randrange(170, 630)
                 # print "checking", position
 
     # print "Final action", action
