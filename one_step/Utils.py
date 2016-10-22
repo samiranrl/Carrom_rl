@@ -120,7 +120,7 @@ def init_walls(space):  # Initializes the four outer walls of the board
 
 def init_pockets(space):
     pockets = []
-    for i in [(44.1, 43.1), (756.5, 43), (756.5, 756.5), (44, 756.5)]:
+    for i in [(44.1, 44.1), (755.9, 44.1), (755.9, 755.9), (44.1, 755.9)]:
         inertia = pymunk.moment_for_circle(0.1, 0, POCKET_RADIUS, (0, 0))
         body = pymunk.Body(0.1, inertia)
         body.position = i
