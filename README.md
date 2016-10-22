@@ -148,6 +148,7 @@ At the end of an experiment, a logfile is written summarising the statistics in 
 ## Quick Start
 
 Install main dependences: pygame (1.9.2) and pymunk (5.0)
+The code works on python (2.7.12)
 ```
 sudo apt-get install python-pip
 sudo pip install pygame
@@ -199,7 +200,7 @@ python simulation.py
 
 Please read Readme.txt
 
-You must write a carrom agent, which clears the single player board in <30 turns on average. generate_stats.py will be called for >=1000 experiments. If the data is invalid, for eg: you have a connection timeout/runtime error, the statistics will not be counted, so make sure your agent is fully functional (in the sl2 machines) before submission. If confused, open **start_agent.py**, which has helpful built in logic to connect to the carrom server, parse the state and send an action.
+You must write a carrom agent, which clears the single player board in <=30 turns on average. generate_stats.py will be called for >=1000 experiments. If the data is invalid, for eg: you have a connection timeout/runtime error/exceed 500 strikes, the statistics will not be counted, so make sure your agent is fully functional (in the sl2 machines) before submission. If confused, open **start_agent.py**, which has helpful built in logic to connect to the carrom server, parse the state and send an action.
 
 ### Changes
 <b>Version 1.0 - Initial release</b>

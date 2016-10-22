@@ -59,7 +59,7 @@ def agent_1player(state):
     except:
         pass
 
-    # Assignment 1: your agent's logic should be coded here
+    # Assignment 4: your agent's logic should be coded here
 
     a = str(random.random()) + ',' + \
         str(random.randrange(-45, 225)) + ',' + str(random.random())
