@@ -212,6 +212,12 @@ def play(state, player, action):
                     else:
                         queen_flag = True
 
+            if len(state_new["Black_Locations"]) == 0 and len(state_new["White_Locations"]) == 0:
+                if len(state_new["Red_Location"]) > 0:
+                    state_new["Black_Locations"].append(ret_pos(state_new))
+                    score -= 1
+                    print "Failed to clear queen, getting another turn"
+
             state_new["Score"] = score
             print "Coins Remaining: ", len(state_new["Black_Locations"]), "B ", len(state_new["White_Locations"]), "W ", len(state_new["Red_Location"]), "R"
             return state_new, queen_flag, score-prevscore
@@ -334,7 +340,7 @@ if __name__ == '__main__':
 
     while it < 500:  # Number of chances given to the player
         it += 1
-
+        # print "Sending ", next_state
         send_state(str(next_state) + ";REWARD" + str(reward), conn1)
         s = request_action(conn1)
         if not s:  # response empty
@@ -372,22 +378,23 @@ if __name__ == '__main__':
             next_state, queen_flag, reward = play(
                 next_state, 1, validate(action, next_state))
             if reward > 0:
+                # print "Reward > 0, is the score updated?
+                # ",next_state["Score"]
                 next_state["Score"] += 3
+                reward += 3
+                # print "Reward > 0, is the score updated?
+                # ",next_state["Score"]
                 print "Successfully covered the queen"
             else:
                 print "Could not cover the queen"
                 next_state["Red_Location"].append(ret_pos(next_state))
             score1 += reward
             print "Score: ", score1, " turns: " + str(it)
+        if len(next_state["Black_Locations"]) + len(next_state["White_Locations"]) + len(next_state["Red_Location"]) == 0:
+            print "Cleared Board in " + str(it) + " turns. Realtime taken: "+str(time.time(
+            ) - start_time)+" s @ "+str(round((it*1.0)/(time.time() - start_time), 2)) + " turns/s\n"
+            break
 
-        # Finally
-        if len(next_state["Black_Locations"]) == 0 and len(next_state["White_Locations"]) == 0:
-            if len(next_state["Red_Location"]) > 0:
-                next_state["Black_Locations"].append(ret_pos(next_state))
-                next_state["Score"] -= 1
-                print "Failed to clear queen, getting another turn"
-            else:
-                break
     if it >= 500:
         logger(log, "Player took more than 500 turns, aborting\n")
         print "Player took more than 500 turns, aborting"
