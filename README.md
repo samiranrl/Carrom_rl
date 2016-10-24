@@ -205,4 +205,10 @@ You must write a carrom agent, which clears the single player board in <=30 turn
 ### Changes
 <b>Version 1.0 - Initial release</b>
 
-Single player server is ready.There might be some issues with the doubles server, they will be fixed later.
+Single player server is ready. There might be some issues with the doubles server, they will be fixed later.
+The following changes have been made to the server. Please use the latest version of the Server for your assignment.
+
+- fixed fouls in 1p server
+- made pockets symmetric
+- fixed angle range
+- fixed one step simulations
