@@ -212,3 +212,5 @@ The following changes have been made to the server. Please use the latest versio
 - made pockets symmetric
 - fixed angle range
 - fixed one step simulations
+- fixed generate_stats.py
+- fixed scoring issue
