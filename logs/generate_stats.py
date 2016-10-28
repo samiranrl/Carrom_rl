@@ -1,4 +1,6 @@
 import sys
+import numpy as np
+
 
 try:
     file = sys.argv[1]
@@ -19,11 +21,12 @@ try:
                          [1].split(" turns")[0])
             time += float(sample.split("Realtime taken: ")[1].split(" s")[0])
 
-    print "Average turn to clear the board: ", turns/experiments
+    print "Average turns to clear the board: ", turns*1.0/experiments
+    print "Standard deviation turns to clear the board: ", np.std(turns)
     print "Total time taken: ", time
     print "Number of Experiments: ", experiments
     if flag == 0:
-        print "Some of the experiments failed, these statistics may not be valid, please run the experiments again."
+	    print "Some of the experiments failed, these statistics may not be valid, please run the experiments again."
 
 except Exception as e:
     print e
