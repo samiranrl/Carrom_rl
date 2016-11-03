@@ -1,71 +1,76 @@
-# Defines Headers, State For Carromimport sys, random
-import pygame
+# Utility functions for the carrom server
+
 from pygame.locals import *
 from pygame.color import *
+from math import sqrt, sin, cos, tan
+import numpy as np
+from random import randrange, gauss
+from collections import OrderedDict
+import pygame
 import pymunk
 import pymunk.pygame_util
 import random
 import sys
 import os
-from math import sqrt, sin, cos, tan
-import ast
-from random import randrange
-from collections import OrderedDict
+import copy
+
 
 # Global Variables
 
-# Velocity below which an object is considered to be static
-Static_Velocity_Threshold = 1
 
-MIN_FORCE = 1000  # Don't Touch
-MAX_FORCE = 34000  # Don't Touch
-TIME_STEP = 20.0  # (Lower is Faster) # Don't Touch
-TICKS_LIMIT = 3000  # Don't Touch
-
-
-Board_Size = 800
-Board_Damping = 0.95  # Tune how much the velocity falls
+STATIC = 1  # Velocity below which an object is considered to be static
+MIN_FORCE = 500  # Min Force to hit the striker
+MAX_FORCE = 34000  # Max force to hit the striker
+TIME_STEP = 20.0  # Step size for pymunk
+TICKS_LIMIT = 3000  # Max ticks to consider
 
 
-Board_Walls_Size = Board_Size * 2 / 75
-Board_Size_Walls_Elasticity = 0.7
+BOARD_SIZE = 800
+BOARD_DAMPING = 0.95  # Velocity fall per second
 
-Coin_Mass = 1  # weight is 5 grams but pymunk dont have any unit for mass ... set a value which suit other paramater
-Coin_Radius = 15.01
-Coin_Elasticity = 0.5
+BOARD_WALLS_SIZE = BOARD_SIZE * 2 / 75
+WALLS_ELASTICITY = 0.7
 
-Striker_Mass = 2.8
-Striker_Radius = 20.6
-Striker_Elasticity = 0.7
+COIN_MASS = 1
+COIN_RADIUS = 15.01
+COIN_ELASTICITY = 0.5
 
-Hole_Radius = 22.51
+STRIKER_MASS = 2.8
+STRIKER_RADIUS = 20.6
+STRIKER_ELASTICITY = 0.7
 
-Striker_Color = [65, 125, 212]
-Hole_Color = [0, 0, 0]
-Black_Coin_Color = [43, 43, 43]
-White_Coin_Color = [169, 121, 47]
-Red_Coin_Color = [169, 53, 53]
-Board_Walls_Color = [56, 32, 12]
-Board_Color = [242, 209, 158]
+POCKET_RADIUS = 22.51
 
-initial = [(400, 403), (400, 368), (433, 385), (365, 390), (405, 437), (372, 428), (437, 420), (370, 350), (432, 350),
-           (335, 406), (437, 455), (467, 402), (402, 332), (337, 367), (463, 367), (370, 465), (340, 443), (405, 474), (470, 437)]
+STRIKER_COLOR = [65, 125, 212]
+POCKET_COLOR = [0, 0, 0]
+BLACK_COIN_COLOR = [43, 43, 43]
+WHITE_COIN_COLOR = [169, 121, 47]
+RED_COIN_COLOR = [169, 53, 53]
+BOARD_WALLS_COLOR = [56, 32, 12]
+BOARD_COLOR = [242, 209, 158]
 
 
-def parse_state_message(msg):
+# Array of initial coin positions
+INITIAL = [(400, 403), (400, 368), (433, 385), (365, 390),
+           (405, 437), (372, 428), (437, 420), (370, 350),
+           (432, 350), (335, 406), (437, 455), (467, 402),
+           (402, 332), (337, 367), (463, 367), (370, 465),
+           (340, 443), (405, 474), (470, 437)]
 
-    s = msg.split(";REWARD")
-    s[0] = s[0].replace("Vec2d", "")
-    reward = float(s[1])
-    State = ast.literal_eval(s[0])
-    return State, reward  # Return next state and reward
+INITIAL_STATE = {'White_Locations': [(400, 368), (437, 420), (372, 428), (337, 367), (402, 332),
+                                     (463, 367), (470, 437), (405, 474), (340, 443)],
+                 'Red_Location': [(400, 403)],
+                 'Score': 0,
+                 'Black_Locations': [(433, 385), (405, 437), (365, 390), (370, 350), (432, 350),
+                                     (467, 402), (437, 455), (370, 465), (335, 406)]}
 
-State = {'White_Locations': [(400, 368), (437, 420), (372, 428), (337, 367), (402, 332), (463, 367), (470, 437), (405, 474), (340, 443)], 'Red_Location': [(
-    400, 403)], 'Score': 0, 'Black_Locations': [(433, 385), (405, 437), (365, 390), (370, 350), (432, 350), (467, 402), (437, 455), (370, 465), (335, 406)]}
+# Eucilidean Distance between two points
 
 
 def dist(p1, p2):
     return sqrt(pow(p1[0] - p2[0], 2) + pow(p1[1] - p2[1], 2))
+
+#  Given a state, return next free coin position
 
 
 def ret_pos(state):
@@ -76,77 +81,79 @@ def ret_pos(state):
         pass
     x = s.values()
     x = reduce(lambda x, y: x + y, x)
-
-    for i in initial:
+    for i in INITIAL:
         free = 1
         for shape in x:
-            if dist(shape, i) < 2 * Coin_Radius:
+            if dist(shape, i) < 2 * COIN_RADIUS:
                 free = 0
         if free == 1:
             return i
 
-    return initial[0]
+    return INITIAL[0]
 
-
-# N randomly generated coin positions around the center of the board
-def generate_coin_locations(N):
-    # Later do collision handling
-    L = []
-    for i in range(N):
-        L.append((random.randrange(0.3 * Board_Size, 0.7 * Board_Size),
-                  (random.randrange(0.3 * Board_Size, 0.7 * Board_Size))))
-
-    return L
+# Initialize space
 
 
 def init_space(space):
-    space.damping = Board_Damping
+    space.damping = BOARD_DAMPING
     space.threads = 2
+
+# Initialize walls
 
 
 def init_walls(space):  # Initializes the four outer walls of the board
     body = pymunk.Body(body_type=pymunk.Body.STATIC)
-    walls = [pymunk.Segment(body, (0, 0), (0, Board_Size), Board_Walls_Size), pymunk.Segment(body, (0, 0), (Board_Size, 0), Board_Walls_Size), pymunk.Segment(body, (Board_Size, Board_Size), (Board_Size, 0), Board_Walls_Size), pymunk.Segment(body, (Board_Size, Board_Size), (0, Board_Size), Board_Walls_Size)
+    walls = [pymunk.Segment(body, (0, 0), (0, BOARD_SIZE), BOARD_WALLS_SIZE),
+             pymunk.Segment(body, (0, 0), (BOARD_SIZE, 0), BOARD_WALLS_SIZE),
+             pymunk.Segment(
+                 body, (BOARD_SIZE, BOARD_SIZE), (BOARD_SIZE, 0), BOARD_WALLS_SIZE),
+             pymunk.Segment(
+                 body, (BOARD_SIZE, BOARD_SIZE), (0, BOARD_SIZE), BOARD_WALLS_SIZE)
              ]
     for wall in walls:
-        wall.color = Board_Walls_Color
-        wall.elasticity = Board_Size_Walls_Elasticity
-
+        wall.color = BOARD_WALLS_COLOR
+        wall.elasticity = WALLS_ELASTICITY
     space.add(walls)
 
+# Initialize pockets
 
-def init_holes(space):  # Initializes the four outer walls of the board
-    Holes = []
+
+def init_pockets(space):
+    pockets = []
     for i in [(44.1, 43.1), (756.5, 43), (756.5, 756.5), (44, 756.5)]:
-        inertia = pymunk.moment_for_circle(0.1, 0, Hole_Radius, (0, 0))
+        inertia = pymunk.moment_for_circle(0.1, 0, POCKET_RADIUS, (0, 0))
         body = pymunk.Body(0.1, inertia)
         body.position = i
-        shape = pymunk.Circle(body, Hole_Radius, (0, 0))
-        shape.color = Hole_Color
+        shape = pymunk.Circle(body, POCKET_RADIUS, (0, 0))
+        shape.color = POCKET_COLOR
         shape.collision_type = 2
         shape.filter = pymunk.ShapeFilter(categories=0b1000)
         space.add(body, shape)
-        Holes.append(shape)
+        pockets.append(shape)
         del body
         del shape
-    return Holes
+    return pockets
+
+# Initialize striker with force
 
 
-def init_striker(space, x, passthrough, action, Player):
-    """Add a ball to the given space at a random position"""
+def init_striker(space, passthrough, action, player):
 
-    inertia = pymunk.moment_for_circle(Striker_Mass, 0, Striker_Radius, (0, 0))
-    body = pymunk.Body(Striker_Mass, inertia)
-    if Player == 1:
-        body.position = (action[1], 145)
-    if Player == 2:
-        body.position = (action[1], Board_Size - 136)
-    body.apply_force_at_world_point((cos(action[0]) * action[2], sin(
-        action[0]) * action[2]), body.position + (Striker_Radius * 0, Striker_Radius * 0))
-    # print body.position
-    shape = pymunk.Circle(body, Striker_Radius, (0, 0))
-    shape.elasticity = Striker_Elasticity
-    shape.color = Striker_Color
+    inertia = pymunk.moment_for_circle(STRIKER_MASS, 0, STRIKER_RADIUS, (0, 0))
+    body = pymunk.Body(STRIKER_MASS, inertia)
+
+    if player == 1:
+        body.position = (action[0], 140)
+    if player == 2:
+        body.position = (action[0], BOARD_SIZE - 140)
+    #print " Final Position: ", body.position
+    #body.position=(100,145)
+    body.apply_force_at_world_point((cos(action[1]) * action[2], sin(
+        action[1]) * action[2]), body.position + (STRIKER_RADIUS * 0, STRIKER_RADIUS * 0))
+
+    shape = pymunk.Circle(body, STRIKER_RADIUS, (0, 0))
+    shape.elasticity = STRIKER_ELASTICITY
+    shape.color = STRIKER_COLOR
 
     mask = pymunk.ShapeFilter.ALL_MASKS ^ passthrough.filter.categories
 
@@ -157,20 +164,19 @@ def init_striker(space, x, passthrough, action, Player):
     space.add(body, shape)
     return [body, shape]
 
+# Adds coins to the board at the given coordinates
+
 
 def init_coins(space, coords_black, coords_white, coord_red, passthrough):
-    # Adds coins to the board at the given coordinates
-    Coins = []
-    inertia = pymunk.moment_for_circle(Coin_Mass, 0, Coin_Radius, (0, 0))
+
+    coins = []
+    inertia = pymunk.moment_for_circle(COIN_MASS, 0, COIN_RADIUS, (0, 0))
     for coord in coords_black:
-
-        # shape.elasticity=1
-        #body.position = i
-        body = pymunk.Body(Coin_Mass, inertia)
+        body = pymunk.Body(COIN_MASS, inertia)
         body.position = coord
-        shape = pymunk.Circle(body, Coin_Radius, (0, 0))
-        shape.elasticity = Coin_Elasticity
-        shape.color = Black_Coin_Color
+        shape = pymunk.Circle(body, COIN_RADIUS, (0, 0))
+        shape.elasticity = COIN_ELASTICITY
+        shape.color = BLACK_COIN_COLOR
 
         mask = pymunk.ShapeFilter.ALL_MASKS ^ passthrough.filter.categories
 
@@ -179,20 +185,16 @@ def init_coins(space, coords_black, coords_white, coord_red, passthrough):
         shape.collision_type = 2
 
         space.add(body, shape)
-        Coins.append(shape)
+        coins.append(shape)
         del body
         del shape
 
-        # body.apply_force_at_world_point((-1000,-1000),body.position)
-
-        # shape.elasticity=1
-        #body.position = i
     for coord in coords_white:
-        body = pymunk.Body(Coin_Mass, inertia)
+        body = pymunk.Body(COIN_MASS, inertia)
         body.position = coord
-        shape = pymunk.Circle(body, Coin_Radius, (0, 0))
-        shape.elasticity = Coin_Elasticity
-        shape.color = White_Coin_Color
+        shape = pymunk.Circle(body, COIN_RADIUS, (0, 0))
+        shape.elasticity = COIN_ELASTICITY
+        shape.color = WHITE_COIN_COLOR
 
         mask = pymunk.ShapeFilter.ALL_MASKS ^ passthrough.filter.categories
 
@@ -201,17 +203,16 @@ def init_coins(space, coords_black, coords_white, coord_red, passthrough):
         shape.collision_type = 2
 
         space.add(body, shape)
-        Coins.append(shape)
+        coins.append(shape)
         del body
         del shape
-        # body.apply_force_at_world_point((-1000,-1000),body.position)
 
     for coord in coord_red:
-        body = pymunk.Body(Coin_Mass, inertia)
+        body = pymunk.Body(COIN_MASS, inertia)
         body.position = coord
-        shape = pymunk.Circle(body, Coin_Radius, (0, 0))
-        shape.elasticity = Coin_Elasticity
-        shape.color = Red_Coin_Color
+        shape = pymunk.Circle(body, COIN_RADIUS, (0, 0))
+        shape.elasticity = COIN_ELASTICITY
+        shape.color = RED_COIN_COLOR
         mask = pymunk.ShapeFilter.ALL_MASKS ^ passthrough.filter.categories
 
         sf = pymunk.ShapeFilter(mask=mask)
@@ -219,42 +220,77 @@ def init_coins(space, coords_black, coords_white, coord_red, passthrough):
         shape.collision_type = 2
 
         space.add(body, shape)
-        Coins.append(shape)
+        coins.append(shape)
         del body
         del shape
-    return Coins
+    return coins
 
-# load image in game
-
-"""def load_image(name, colorkey=None):
-    fullname = os.path.join('images', name)
-    try:
-        image = pygame.image.load(fullname)
-    except pygame.error, message:
-        print 'Cannot load image:', name
-        raise SystemExit, message
-    surface = pygame.display.set_mode((Board_Size, Board_Size))
-    image = image.convert()
-    if colorkey is not None:
-        if colorkey is -1:
-            colorkey = image.get_at((0,0))
-        image.set_colorkey(colorkey, RLEACCEL)
-    return image, image.get_rect()
-
-"""
-
-'''def load_image(name, colorkey=None):
-    img = pygame.image.load(name)
-    white = (255, 64, 64)
-    screen = pygame.display.set_mode((Board_Size, Board_Size))
-    screen.fill((white))
-    running = 1
-    screen.fill((white))
-    screen.blit(img,(0,0))
-    pygame.display.flip()'''
+ # Returns true is the speed of all objects on the board < STATIC
 
 
-class Background(pygame.sprite.Sprite):
+def is_ended(space):
+    for shape in space._get_shapes():
+        if abs(shape.body.velocity[0]) > STATIC or abs(shape.body.velocity[1]) > STATIC:
+            return False
+    return True
+
+# Mirrors the state for P2
+
+
+def transform_state(state):
+    t_state = {}
+    t_state["White_Locations"] = []
+    t_state["Black_Locations"] = []
+    t_state["Red_Location"] = []
+    t_state["Score"] = state["Score"]
+    for pos in state["White_Locations"]:
+        t_state["White_Locations"].append((pos[0], 800 - pos[1]))
+    for pos in state["Black_Locations"]:
+        t_state["Black_Locations"].append((pos[0], 800 - pos[1]))
+    for pos in state["Red_Location"]:
+        t_state["Red_Location"].append((pos[0], 800 - pos[1]))
+    return t_state
+
+
+# Mirrors action for P2
+
+def transform_action(action):
+    return (action[0], 360 - action[1], action[2])
+
+
+# A helpful visualization for the action
+def draw_arrow(screen, position, angle, force, player):
+    length = STRIKER_RADIUS + force / 500.0
+    startpos_x = position
+    if player == 2:
+        startpos_y = 145
+    else:
+        startpos_y = BOARD_SIZE - 136
+    endpos_x = (startpos_x + cos(angle) * length)
+    endpos_y = (startpos_y - (length) * sin(angle))
+    pygame.draw.line(
+        screen, (50, 255, 50), (endpos_x, endpos_y), (startpos_x, startpos_y), 3)
+    pygame.draw.circle(screen, (50, 255, 50),
+                       (int(endpos_x), int(endpos_y)), 5)
+
+# Everything done
+
+
+def don(s1, conn1):
+    s1.close()
+    conn1.close()
+    sys.exit()
+
+# Parse the received action
+
+
+def tuplise(s):
+    return (round(float(s[0]), 4), round(float(s[1]), 4), round(float(s[2]), 4))
+
+# Board background class
+
+
+class BACKGROUND(pygame.sprite.Sprite):
 
     def __init__(self, image_file, location):
         pygame.sprite.Sprite.__init__(self)  # call Sprite initializer
