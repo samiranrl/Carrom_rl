@@ -213,8 +213,9 @@ For Project, Please refer to:
 
 2 Player Server is now fixed, the following changes have been made:
 
-Fix action related bugs
-Striker positions are symmetric
+- Fixed action related bugs
+- Striker positions are symmetric
+
 
 
 <b>Version 1.0 - Initial release</b>
