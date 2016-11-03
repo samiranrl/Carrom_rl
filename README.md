@@ -205,7 +205,7 @@ Please read Readme.txt
 You must write a carrom agent, which clears the single player board in <=30 turns on average. generate_stats.py will be called for >=1000 experiments. If the data is invalid, for eg: you have a connection timeout/runtime error/exceed 500 strikes, the statistics will not be counted, so make sure your agent is fully functional (in the sl2 machines) before submission. If confused, open **start_agent.py**, which has helpful built in logic to connect to the carrom server, parse the state and send an action.
 
 
-For Project, Please refer to:
+For Project, Please refer to: Project.txt
 
 ### Changes
 
@@ -215,7 +215,7 @@ For Project, Please refer to:
 
 - Fixed action related bugs
 - Striker positions are symmetric
-
+- added generate_statsP2.sh to evaluate player 2 server
 
 
 <b>Version 1.0 - Initial release</b>
