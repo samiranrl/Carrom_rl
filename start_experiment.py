@@ -71,7 +71,7 @@ for i in range(0, args.num_experiments):
         if num_players == 1:
 
             cmd = 'python 1_player_server/start_server.py' + ' -v ' + str(vis) + ' -rr ' + str(
-                render_rate) + ' -n ' + str(noise) + ' -p ' + str(port1) + ' -rs ' + str(rng) + ' -log ' + log
+                render_rate) + ' -n ' + str(noise) + ' -p ' + str(port1) + ' -rs ' + str(rng) + ' -log ' + log + ''
             cmd = os.path.join(cmd)
             print cmd
             try:
@@ -92,6 +92,7 @@ for i in range(0, args.num_experiments):
             p1.communicate()
 
         if num_players == 2:
+
             cmd = 'python 2_player_server/start_server.py' + ' -v ' + str(vis) + ' -rr ' + str(
                 render_rate) + ' -n ' + str(noise) + ' -p1 ' + str(port1) + ' -p2 ' + str(port2) + ' -rs ' + str(rng)
             print cmd
@@ -109,6 +110,7 @@ for i in range(0, args.num_experiments):
             print cmd2
             p3 = subprocess.Popen(cmd2.split(' '), shell=False)
             print 'Launched Player 2 Agent'
+
             p1.communicate()
     except Exception as e:
         print "Error: ", e

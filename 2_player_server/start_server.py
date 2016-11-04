@@ -290,9 +290,9 @@ def validate(action, player, state):
             check = 1
 
             for coin in tmp_state:
-                if dist((position, 145), coin) < STRIKER_RADIUS + COIN_RADIUS:
+                if dist((position, 140), coin) < STRIKER_RADIUS + COIN_RADIUS:
                     check = 0
-                    print "Position ", (position, 145), " clashing with a coin, taking random"
+                    print "Position ", (position, 140), " clashing with a coin, taking random"
                     position = 170 + \
                         (float(
                             max(min(float(random.random()) + gauss(0, noise1), 1), 0)) * (460))
@@ -305,9 +305,9 @@ def validate(action, player, state):
             check = 1
 
             for coin in tmp_state:
-                if dist((position, BOARD_SIZE - 136), coin) < STRIKER_RADIUS + COIN_RADIUS:
+                if dist((position, BOARD_SIZE - 140), coin) < STRIKER_RADIUS + COIN_RADIUS:
                     check = 0
-                    print "Position ", (position, 145), " clashing with a coin, taking random"
+                    print "Position ", (position, 140), " clashing with a coin, taking random"
                     position = 170 + \
                         (float(
                             max(min(float(random.random()) + gauss(0, noise1), 1), 0)) * (460))
