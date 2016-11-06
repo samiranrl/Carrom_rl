@@ -84,8 +84,15 @@ def play(state, player, action):
         pygame.display.set_caption("Carrom RL Simulation")
 
     space = pymunk.Space(threaded=True)
-    score = State["Score"]
-    prevscore = State["Score"]
+    if player == 1:
+        global score1
+        score = score1
+        prevscore = score1
+
+    if player == 2:
+        global score2
+        score = score2
+        prevscore = score2
 
     # pass through object // Dummy Object for handling collisions
     passthrough = pymunk.Segment(space.static_body, (0, 0), (0, 0), 5)
@@ -112,8 +119,6 @@ def play(state, player, action):
     queen_flag = False
 
     while 1:
-        global score1
-        global score2
 
         if ticks % render_rate == 0 and vis == 1:
             local_vis = True
@@ -234,7 +239,7 @@ def play(state, player, action):
 
 
 def validate(action, player, state):
-    #print "Action Received", action
+    # print "Action Received", action
 
     position = action[0]
     angle = action[1]
@@ -313,7 +318,7 @@ def validate(action, player, state):
                             max(min(float(random.random()) + gauss(0, noise1), 1), 0)) * (460))
 
     action = (position, angle, force)
-    #print "Final action", action
+    # print "Final action", action
     return action
 
 # Generate logs
@@ -374,18 +379,13 @@ if __name__ == '__main__':
     conn2, addr2 = s2.accept()
     conn2.settimeout(timeout_period)
 
-    global score1
-    global score2
-
     winner = 0
     reward1 = 0
     score1 = 0
     reward2 = 0
     score2 = 0
 
-    State = {'White_Locations': [(400, 368), (437, 420), (372, 428), (337, 367), (402, 332), (463, 367), (470, 437), (405, 474), (340, 443)], 'Red_Location': [(
-        400, 403)], 'Score': 0, 'Black_Locations': [(433, 385), (405, 437), (365, 390), (370, 350), (432, 350), (467, 402), (437, 455), (370, 465), (335, 406)]}
-    next_state = State
+    next_state = INITIAL_STATE
 
     it = 1
 
@@ -393,23 +393,22 @@ if __name__ == '__main__':
 
         it += 1
 
-        prevscore = next_state["Score"]
         send_state(str(next_state) + ";REWARD" + str(reward1), conn1)
         s = request_action(conn1)
         if not s:  # response empty
             print "No response from player 1"
+            logger(log, "No response from player 1, aborting\n")
             winner = 2
             break
         elif s == timeout_msg:
             print "Timeout from player 1"
+            logger(log, "player 1 timeout, aborting\n")
             winner = 2
             break
         else:
             action = tuplise(s.replace(" ", "").split(','))
         next_state, queen_flag, reward1 = play(
             next_state, 1, validate(action, 1, next_state))
-
-        prevscore = next_state["Score"]
         score1 = score1 + reward1
 
         while queen_flag or reward1 > 0 and (len(next_state["Black_Locations"]) != 0 and len(next_state["White_Locations"]) != 0):
@@ -441,7 +440,6 @@ if __name__ == '__main__':
                 else:
                     print "Could not cover the queen"
                     next_state["Red_Location"].append(ret_pos(next_state))
-            prevscore = next_state["Score"]
             score1 = score1 + reward1
 
         if len(next_state["Black_Locations"]) == 0 or len(next_state["White_Locations"]) == 0:
@@ -470,7 +468,6 @@ if __name__ == '__main__':
         score2 = score2 + reward2
         while queen_flag or reward2 > 0 and (len(next_state["Black_Locations"]) != 0 and len(next_state["White_Locations"]) != 0):
 
-            prevscore = next_state["Score"]
             if queen_flag == 1:
                 print "Pocketed Queen, pocket any coin in this turn to cover it"
             send_state(str(transform_state(next_state)) +
@@ -531,7 +528,7 @@ if __name__ == '__main__':
         else:
             msg = "Draw"
     print msg
-    msg+= " , "+str(round(time.time() - start_time, 2))+ " s time taken\n"
+    msg += " , "+str(round(time.time() - start_time, 2)) + " s time taken\n"
     logger(log, msg)
-    don(s1,conn1)
-    don(s2,conn2)
+    don(s1, conn1)
+    don(s2, conn2)

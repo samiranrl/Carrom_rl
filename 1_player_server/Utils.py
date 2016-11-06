@@ -51,18 +51,15 @@ BOARD_COLOR = [242, 209, 158]
 
 
 # Array of initial coin positions
-INITIAL = [(400, 403), (400, 368), (433, 385), (365, 390),
-           (405, 437), (372, 428), (437, 420), (370, 350),
-           (432, 350), (335, 406), (437, 455), (467, 402),
-           (402, 332), (337, 367), (463, 367), (370, 465),
-           (340, 443), (405, 474), (470, 437)]
+INITIAL = [(399, 368), (437, 420), (372, 424), (336, 366), (400, 332), (463, 367), (464, 434), (400, 468), (337, 433), (400, 400), (401, 432), (363, 380), (428, 376),  (370, 350), (430, 346),
+           (470, 400), (430, 450), (370, 454), (330, 400)]
 
-INITIAL_STATE = {'White_Locations': [(400, 368), (437, 420), (372, 428), (337, 367), (402, 332),
-                                     (463, 367), (470, 437), (405, 474), (340, 443)],
-                 'Red_Location': [(400, 403)],
+INITIAL_STATE = {'White_Locations': [(399, 368), (437, 420), (372, 424), (336, 366), (400, 332),
+                                     (463, 367), (464, 434), (400, 468), (337, 433)],
+                 'Red_Location': [(400, 400)],
                  'Score': 0,
-                 'Black_Locations': [(433, 385), (405, 437), (365, 390), (370, 350), (432, 350),
-                                     (467, 402), (437, 455), (370, 465), (335, 406)]}
+                 'Black_Locations': [(401, 432), (363, 380), (428, 376),  (370, 350), (430, 346),
+                                     (470, 400), (430, 450), (370, 454), (330, 400)]}
 
 # Eucilidean Distance between two points
 
@@ -232,8 +229,6 @@ def is_ended(space):
     return True
 
 
-
-
 # A helpful visualization for the action
 def draw_arrow(screen, position, angle, force, player):
     length = STRIKER_RADIUS + force / 500.0
@@ -252,7 +247,7 @@ def draw_arrow(screen, position, angle, force, player):
 # Everything done
 
 
-def don(s1,conn1):
+def don(s1, conn1):
     s1.close()
     conn1.close()
     sys.exit()
@@ -273,5 +268,3 @@ class BACKGROUND(pygame.sprite.Sprite):
         self.image = pygame.image.load(image_file)
         self.rect = self.image.get_rect()
         self.rect.left, self.rect.top = location
-
-
