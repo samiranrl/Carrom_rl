@@ -3,7 +3,6 @@ Carrom_rl
 
 An open source Carrom Simulator interface for testing intelligent/learning agents.
 
-[![Join the chat at https://gitter.im/Carrom_rl/Lobby](https://badges.gitter.im/Carrom_rl/Lobby.svg)](https://gitter.im/Carrom_rl/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
 
 
@@ -216,6 +215,7 @@ For Project, Please refer to: Project.txt
 - Fixed action related bugs
 - Striker positions are symmetric
 - added generate_statsP2.sh to evaluate player 2 server
+- made board symmetric
 
 
 <b>Version 1.0 - Initial release</b>
