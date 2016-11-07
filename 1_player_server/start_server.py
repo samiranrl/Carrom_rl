@@ -272,7 +272,7 @@ def validate(action, state):
         check = 1
         for coin in tmp_state:
             # print coin, dist((position, 145), coin)
-            if dist((position, 145), coin) < STRIKER_RADIUS + COIN_RADIUS:
+            if dist((position, 140), coin) < STRIKER_RADIUS + COIN_RADIUS:
                 check = 0
                 # print "Position ", (position, 145), " clashing with a coin,
                 # taking random"

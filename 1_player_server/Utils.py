@@ -139,9 +139,9 @@ def init_striker(space, x, passthrough, action, player):
     inertia = pymunk.moment_for_circle(STRIKER_MASS, 0, STRIKER_RADIUS, (0, 0))
     body = pymunk.Body(STRIKER_MASS, inertia)
     if player == 1:
-        body.position = (action[0], 145)
+        body.position = (action[0], 140)
     if player == 2:
-        body.position = (action[0], BOARD_SIZE - 136)
+        body.position = (action[0], BOARD_SIZE - 140)
     body.apply_force_at_world_point((cos(action[1]) * action[2], sin(
         action[1]) * action[2]), body.position + (STRIKER_RADIUS * 0, STRIKER_RADIUS * 0))
 
@@ -234,9 +234,9 @@ def draw_arrow(screen, position, angle, force, player):
     length = STRIKER_RADIUS + force / 500.0
     startpos_x = position
     if player == 2:
-        startpos_y = 145
+        startpos_y = 140
     else:
-        startpos_y = BOARD_SIZE - 136
+        startpos_y = BOARD_SIZE - 140
     endpos_x = (startpos_x + cos(angle) * length)
     endpos_y = (startpos_y - (length) * sin(angle))
     pygame.draw.line(
