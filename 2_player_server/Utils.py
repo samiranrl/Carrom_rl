@@ -252,7 +252,7 @@ def transform_state(state):
 # Mirrors action for P2
 
 def transform_action(action):
-    return (action[0], 360 - action[1], action[2])
+    return (action[0], 180 + action[1], action[2])
 
 
 # A helpful visualization for the action
