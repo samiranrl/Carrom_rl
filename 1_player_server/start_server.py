@@ -401,6 +401,6 @@ if __name__ == '__main__':
         sys.exit()
 
     tmp = "Cleared Board in " + str(it) + " turns. Realtime taken: "+str(time.time(
-    ) - start_time)+" s @ "+str(round((it*1.0)/(time.time() - start_time), 2)) + " turns/s\n"
+    ) - start_time)+" s @ "+str(round((it*1.0)/(time.time() - start_time), 2)) + " turns/s" +" with random seed " + str(args.rng) + "\n"
     logger(log, tmp)
     don(s1, conn1)
