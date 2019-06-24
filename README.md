@@ -25,7 +25,7 @@ The high-level objective is to use a striker disk with a flick of the finger to 
 
 The full description and list of rules and regulations can be found at http://www.carrom.org/
 
-### Why Carrom? 
+### Why Carrom?
 
 It is an exciting and challenging domain:
 
@@ -63,7 +63,7 @@ The simulation displays the current score of the player, and the time elapsed si
 
 The goal of doubles is to design an agent, that wins against an opponent in a game of carrom, adhering to the following rules:
 
-- The player to start/break must target white coins only. The other player must target black. Players' score increases by 1 if they pocket their own coin. 
+- The player to start/break must target white coins only. The other player must target black. Players' score increases by 1 if they pocket their own coin.
 - You cannot pocket the queen unless you have pocketed another coin.
 - If the player pockets the opponent's coin, it counts as a foul. All coins pocketed that turn are kept in the center, and the score does not increase.
 - If all the coins are pocketed except the queen, the other player wins the match.
@@ -87,13 +87,13 @@ The State is a list of current coin positions (x,y) coordinates returned to the 
 "State={'White_Locations': [(400,368),(437,420), (372,428),(337,367), (402,332), (463,367), (470,437), (405,474), (340,443)], 'Red_Location': [(400, 403)], 'Score': 0, 'Black_Locations': [(433,385),(405,437), (365,390), (370,350), (432,350), (467,402), (437,455), (370,465), (335,406)]}"
 ```
 
-It is returned in the form of a string to the agent, which must be parsed. The logic for parsing such a state is built in the sample agent for your reference. 
+It is returned in the form of a string to the agent, which must be parsed. The logic for parsing such a state is built in the sample agent for your reference.
 
 ### Action
 
 The action is a three dimentional vector: [position,angle,force]
 
-- position: The legally valid x position of the striker on the board. Accepts floats in the range 0-1 (normalized, including boundaries). 0 is the extreme left legal position, and 1 is the extreme right. 
+- position: The legally valid x position of the striker on the board. Accepts floats in the range 0-1 (normalized, including boundaries). 0 is the extreme left legal position, and 1 is the extreme right.
 - angle : The angle gives the direction (in degrees), where you want to hit the striker. Accepts floats in the range -45 to 225 (including boundaries)
 - force: The fractional force with which you want to hit the striker. Accepts floats between 0-1 (normalized, including boundaries). The maximum force makes the striker cover a distance of 3.5 times the width of the board, starting from the center at an angle of 0, striking the walls 4 times, and touching nothing else. There is a minimum force with which you strike (even if you pass 0)
 
@@ -107,15 +107,15 @@ The following examples demonstrate some shots you can perform:
 
 - If a certain parameter of an action is out of range, the server generates the parameter uniformly at random in the legal range.
 - If the coin overlaps with the striker in the initial placement, the server generates a uniformly random free position.
-- The server accepts four decimal places of precision. 
+- The server accepts four decimal places of precision.
 - The server also adds a zero mean gaussian noise to the actions of std 0.005 to the position, 2 to the angle, 0.01 to the force.
 - If you are Player 2 - on the opposite side of the board, the state you receive is "mirrored" assuming you are playing from Player 1's perspective. You don't have to write separate agents for Player 1 and Player 2.
 - The server has a timeout of 0.5 seconds. If any agent takes more time to send an action/sends an empty message, it is disqualified, and the other agent is considered the winner. In the single player case, it ends the game.
--  The ports the agents use to connect to the server can be specified in the parameters. 
+-  The ports the agents use to connect to the server can be specified in the parameters.
 - For single player, the server permits a maximum of 500 strikes. If the agent does not manage to clear the board, the game is treated as incomplete.
-- For doubles, the server permits a maximum of 200 strikes(by any player). If the board is not cleared, the game ends, and the player with the highest score is the winner. 
+- For doubles, the server permits a maximum of 200 strikes(by any player). If the board is not cleared, the game ends, and the player with the highest score is the winner.
 - Severs write out experiment results in log files with current time stamps. They can be found in Carrom_rl/logs/ . You can generate the mean statistics using generate_stats.py in the same folder:
-- The Server is automatically called using start_experiment.py. 
+- The Server is automatically called using start_experiment.py.
 ```
 python generate_stats.py <logfile>
 ```
@@ -126,7 +126,7 @@ The parameters of the game such as friction, elasticity, dimensions and weights 
 
 ### Agent parameters
 
-There is one sample agent to get you started. start_agent.py samples the action space uniformly at random. The agent is automatically called using start_experiment.py. 
+There is one sample agent to get you started. start_agent.py samples the action space uniformly at random. The agent is automatically called using start_experiment.py.
 
 Parameters passed to the agent are solely disambiguate between 1 player and 2 player games, and to inform the agent whether it is player 1 or 2. A seed is passed to the agent. You must initialize your rng with this seed, to make your results reproducible and consistent across several runs. If in doubt, look at the sample agent provided.
 
@@ -148,12 +148,12 @@ At the end of an experiment, a logfile is written summarising the statistics in 
 
 ## Quick Start
 
-Install main dependences: pygame (1.9.2) and pymunk (5.0)
-The code works on python (2.7.12)
+Install main dependences: pygame (1.9.6) and pymunk (5.5.0).
+Ensure that you have python3 running
+
 ```
-sudo apt-get install python-pip
-sudo pip install pygame
-sudo pip install pymunk
+sudo pip3 install pygame
+sudo pip3 install pymunk
 ```
 
 Fork the repo/download it.
@@ -166,36 +166,30 @@ Visualize one single player game
 
 ```
 cd Carrom_rl/
-python start_experiment.sh -v 1
+python3 start_experiment.py -v 1
 ```
 
 Simulate 10 single player games
 
 ```
 cd Carrom_rl/
-python start_experiment.sh -ne 10
+python3 start_experiment.py -ne 10
 ```
 
 Generate statistics from the previous experiment
 
 ```
 cd logs/
-python generate_stats.py <logfile>
+python3 generate_stats.py <logfile>
 ```
 
 Perform the experiment with 2 player Carrom
 
 ```
 cd Carrom_rl/
-python start_experiment.sh -v 1 -np 2
+python3 start_experiment.py -v 1 -np 2
 ```
 
-You have access to one step noise free ground truth data using: simulate(state,action)->next_state, reward
-
-```
-cd Carrom_rl/one_step/
-python simulation.py
-```
 
 ## What to submit?
 
@@ -210,6 +204,10 @@ For Project, Please refer to: Project.txt
 
 ### Changes
 
+<b>Version 1.2 - Upgraded to python3, upgraded pymunk and pygame to the latest versions</b>
+
+- Remove 1 step noise free simulation
+
 <b>Version 1.1 - 2 Player Server</b>
 
 2 Player Server is now fixed, the following changes have been made:
@@ -218,7 +216,6 @@ For Project, Please refer to: Project.txt
 - Striker positions are symmetric
 - added generate_statsP2.sh to evaluate player 2 server
 - made board symmetric
-
 
 <b>Version 1.0 - Initial release</b>
 
