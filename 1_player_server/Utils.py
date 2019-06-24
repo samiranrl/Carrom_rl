@@ -13,6 +13,7 @@ import random
 import sys
 import os
 import copy
+from functools import reduce
 
 
 # Global Variables
@@ -76,7 +77,7 @@ def ret_pos(state):
         del s["Score"]
     except KeyError:
         pass
-    x = s.values()
+    x = list(s.values())
     x = reduce(lambda x, y: x + y, x)
     for i in INITIAL:
         free = 1

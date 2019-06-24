@@ -64,56 +64,56 @@ else:
     log = "log2_" + str(time.strftime('%Y_%m_%d_%H_%M_%S'))
 
 for i in range(0, args.num_experiments):
-    print "Running experiment ", i+1
+    print("Running experiment ", i+1)
     try:
         if ne > 1:
             rng = i
         if num_players == 1:
 
-            cmd = 'python 1_player_server/start_server.py' + ' -v ' + str(vis) + ' -rr ' + str(
+            cmd = 'python3 1_player_server/start_server.py' + ' -v ' + str(vis) + ' -rr ' + str(
                 render_rate) + ' -n ' + str(noise) + ' -p ' + str(port1) + ' -rs ' + str(rng) + ' -log ' + log + ''
             cmd = os.path.join(cmd)
-            print cmd
+            print(cmd)
             try:
                 p1 = subprocess.Popen(cmd.split(' '), shell=False)
-                print 'Launched Server'
+                print('Launched Server')
             except Exception as e:
-                print e
+                print(e)
             time.sleep(1)
-            cmd1 = 'python ' + a1 + ' -p ' + \
+            cmd1 = 'python3 ' + a1 + ' -p ' + \
                 str(port1) + ' -rs ' + str(rng) + ' -np 1'
             cmd1 = os.path.join(cmd1)
-            print cmd1
+            print(cmd1)
             try:
                 p2 = subprocess.Popen(cmd1.split(' '), shell=False)
-                print 'Launched Agent'
+                print('Launched Agent')
             except Exception as e:
-                print e
+                print(e)
             p1.communicate()
 
         if num_players == 2:
 
-            cmd = 'python 2_player_server/start_server.py' + ' -v ' + str(vis) + ' -rr ' + str(
+            cmd = 'python3 2_player_server/start_server.py' + ' -v ' + str(vis) + ' -rr ' + str(
                 render_rate) + ' -n ' + str(noise) + ' -p1 ' + str(port1) + ' -p2 ' + str(port2) + ' -rs ' + str(rng)
-            print cmd
+            print(cmd)
             p1 = subprocess.Popen(cmd.split(' '), shell=False)
-            print 'Launched Server'
+            print('Launched Server')
             time.sleep(1)
-            cmd1 = 'python ' + a1 + ' -p ' + \
+            cmd1 = 'python3 ' + a1 + ' -p ' + \
                 str(port1) + ' -rs ' + str(rng) + ' -np 2' + ' -c White'
-            print cmd1
+            print(cmd1)
             p2 = subprocess.Popen(cmd1.split(' '), shell=False)
-            print 'Launched Player 1 Agent'
+            print('Launched Player 1 Agent')
             time.sleep(1)
-            cmd2 = 'python ' + a2 + ' -p ' + \
+            cmd2 = 'python3 ' + a2 + ' -p ' + \
                 str(port2) + ' -rs ' + str(rng) + ' -np 2' + ' -c Black'
-            print cmd2
+            print(cmd2)
             p3 = subprocess.Popen(cmd2.split(' '), shell=False)
-            print 'Launched Player 2 Agent'
+            print('Launched Player 2 Agent')
 
             p1.communicate()
     except Exception as e:
-        print "Error: ", e
+        print("Error: ", e)
     finally:
         try:
             p1.terminate()

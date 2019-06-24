@@ -1,11 +1,12 @@
 from Utils import *
-from thread import *
+from _thread import *
 from math import pi
 import time
 import sys
 import os
 import argparse
 import socket
+from functools import reduce
 
 start_time = time.time()
 
@@ -190,7 +191,7 @@ def play(state, player, action):
                 if coin.color == RED_COIN_COLOR:
                     state_new["Red_Location"].append(coin.body.position)
             if foul == True:
-                print "Foul.. striker pocketed"
+                print("Foul.. striker pocketed")
                 for coin in pocketed:
                     if coin[0].color == BLACK_COIN_COLOR:
                         state_new["Black_Locations"].append(ret_pos(state_new))
@@ -203,12 +204,12 @@ def play(state, player, action):
 
             if (queen_pocketed == True and foul == False):
                 if len(state_new["Black_Locations"]) + len(state_new["White_Locations"]) == 18:
-                    print "The queen cannot be the first to be pocketed: player ", player
+                    print("The queen cannot be the first to be pocketed: player ", player)
                     state_new["Red_Location"].append(ret_pos(state_new))
                 else:
                     if score - prevscore > 0:
                         score += 3
-                        print "Queen pocketed and covered in one shot"
+                        print("Queen pocketed and covered in one shot")
                     else:
                         queen_flag = True
 
@@ -216,29 +217,29 @@ def play(state, player, action):
                 if len(state_new["Red_Location"]) > 0:
                     state_new["Black_Locations"].append(ret_pos(state_new))
                     score -= 1
-                    print "Failed to clear queen, getting another turn"
+                    print("Failed to clear queen, getting another turn")
 
             state_new["Score"] = score
-            print "Coins Remaining: ", len(state_new["Black_Locations"]), "B ", len(state_new["White_Locations"]), "W ", len(state_new["Red_Location"]), "R"
+            print("Coins Remaining: ", len(state_new["Black_Locations"]), "B ", len(state_new["White_Locations"]), "W ", len(state_new["Red_Location"]), "R")
             return state_new, queen_flag, score-prevscore
 
 
 # Validate parsed action
 
 def validate(action, state):
-    print "Server received action: ", action
+    print("Server received action: ", action)
     position = action[0]
     angle = action[1]
     force = action[2]
     if angle < -45 or angle > 225:
-        print "Invalid Angle, taking random angle",
+        print("Invalid Angle, taking random angle", end=' ')
         angle = random.randrange(-45, 225)
-        print "which is ", angle
+        print("which is ", angle)
     if position < 0 or position > 1:
-        print "Invalid position, taking random position"
+        print("Invalid position, taking random position")
         position = random.random()
     if force < 0 or force > 1:
-        print "Invalid force, taking random position"
+        print("Invalid force, taking random position")
         force = random.random()
 
     angle = angle + (random.choice([-1, 1]) * gauss(0, noise3))
@@ -261,7 +262,7 @@ def validate(action, state):
         del tmp_state["Score"]
     except KeyError:
         pass
-    tmp_state = tmp_state.values()
+    tmp_state = list(tmp_state.values())
     tmp_state = reduce(lambda x, y: x + y, tmp_state)
 
     check = 0
@@ -306,9 +307,9 @@ def request_action(conn1):
 
 def send_state(state, conn1):
     try:
-        conn1.send(state)
+        conn1.send(state.encode())
     except socket.error:
-        print "Aborting, player did not respond within timeout"
+        print("Aborting, player did not respond within timeout")
         logger(log, "Aborting, player did not respond within timeout\n")
         sys.exit()
     return True
@@ -322,7 +323,7 @@ if __name__ == '__main__':
         s1.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s1.bind((host, port1))
     except socket.error as msg:
-        print 'Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
+        print('Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
         sys.exit()
 
     s1.listen(1)
@@ -344,37 +345,37 @@ if __name__ == '__main__':
         send_state(str(next_state) + ";REWARD" + str(reward), conn1)
         s = request_action(conn1)
         if not s:  # response empty
-            print "No response from player 1, aborting"
+            print("No response from player 1, aborting")
             logger(log, "No response from player 1, aborting\n")
             sys.exit()
         elif s == timeout_msg:
-            print "Player 1 timeout, aborting"
+            print("Player 1 timeout, aborting")
             logger(log, "Player 1 timeout, aborting\n")
             sys.exit()
         else:
-            action = tuplise(s.replace(" ", "").split(','))
+            action = tuplise(s.decode().replace(" ", "").split(','))
 
         next_state, queen_flag, reward = play(
             next_state, 1, validate(action, next_state))
 
         score1 += reward
-        print "turn: " + str(it) + " score: " + str(score1)
+        print("turn: " + str(it) + " score: " + str(score1))
         while queen_flag:  # Extra turn to cover queen
-            print "Pocketed Queen, pocket any coin in this turn to cover it"
+            print("Pocketed Queen, pocket any coin in this turn to cover it")
             it += 1
 
             send_state(str(next_state) + ";REWARD" + str(reward), conn1)
             s = request_action(conn1)
             if not s:  # response empty
-                print "No response from player 1, aborting"
+                print("No response from player 1, aborting")
                 logger(log, "No response from player 1, aborting\n")
                 sys.exit()
             elif s == timeout_msg:
-                print "Player 1 timeout, aborting"
+                print("Player 1 timeout, aborting")
                 logger(log, "Player 1 timeout, aborting\n")
                 sys.exit()
             else:
-                action = tuplise(s.replace(" ", "").split(','))
+                action = tuplise(s.decode().replace(" ", "").split(','))
             next_state, queen_flag, reward = play(
                 next_state, 1, validate(action, next_state))
             if reward > 0:
@@ -384,20 +385,20 @@ if __name__ == '__main__':
                 reward += 3
                 # print "Reward > 0, is the score updated?
                 # ",next_state["Score"]
-                print "Successfully covered the queen"
+                print("Successfully covered the queen")
             else:
-                print "Could not cover the queen"
+                print("Could not cover the queen")
                 next_state["Red_Location"].append(ret_pos(next_state))
             score1 += reward
-            print "Score: ", score1, " turns: " + str(it)
+            print("Score: ", score1, " turns: " + str(it))
         if len(next_state["Black_Locations"]) + len(next_state["White_Locations"]) + len(next_state["Red_Location"]) == 0:
-            print "Cleared Board in " + str(it) + " turns. Realtime taken: "+str(time.time(
-            ) - start_time)+" s @ "+str(round((it*1.0)/(time.time() - start_time), 2)) + " turns/s\n"
+            print("Cleared Board in " + str(it) + " turns. Realtime taken: "+str(time.time(
+            ) - start_time)+" s @ "+str(round((it*1.0)/(time.time() - start_time), 2)) + " turns/s\n")
             break
 
     if it >= 500:
         logger(log, "Player took more than 500 turns, aborting\n")
-        print "Player took more than 500 turns, aborting"
+        print("Player took more than 500 turns, aborting")
         sys.exit()
 
     tmp = "Cleared Board in " + str(it) + " turns. Realtime taken: "+str(time.time(

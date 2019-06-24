@@ -13,7 +13,7 @@ import random
 import sys
 import os
 import copy
-
+from functools import reduce
 
 # Global Variables
 

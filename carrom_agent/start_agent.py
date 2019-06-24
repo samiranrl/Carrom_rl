@@ -1,7 +1,7 @@
 # A Sample Carrom Agent to get you started. The logic for parsing a state
 # is built in
 
-from thread import *
+from _thread import *
 import time
 import socket
 import sys
@@ -36,6 +36,9 @@ color = args.color
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+
+
 s.connect((host, port))
 
 
@@ -67,10 +70,10 @@ def agent_1player(state):
         str(random.randrange(-45, 225)) + ',' + str(random.random())
 
     try:
-        s.send(a)
+        s.send(a.encode())
     except Exception as e:
-        print "Error in sending:",  a, " : ", e
-        print "Closing connection"
+        print("Error in sending:",  a, " : ", e)
+        print("Closing connection")
         flag = 0
 
     return flag
@@ -80,15 +83,15 @@ def agent_2player(state, color):
 
     flag = 1
 
-   
+
     a = str(random.random()) + ',' + \
         str(random.randrange(-45, 225)) + ',' + str(random.random())
 
     try:
-        s.send(a)
+        s.send(a.encode())
     except Exception as e:
-        print "Error in sending:",  a, " : ", e
-        print "Closing connection"
+        print("Error in sending:",  a, " : ", e)
+        print("Closing connection")
         flag = 0
 
     return flag
